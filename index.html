@@ -19,22 +19,9 @@
     --nebula: #7b6fd4;
     --luna: #c45c3a;
     --meteorito: #4a9e6b;
-    --flag1: #e8c97a;
-    --flag2: #e85a3a;
-    --done: #3a9e6b;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 0;
-  }
-
-  /* GRAIN OVERLAY */
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
   body::before {
     content: '';
     position: fixed;
@@ -44,118 +31,43 @@
     z-index: 1000;
     opacity: 0.4;
   }
-
-  /* HEADER */
   .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 2.5rem;
     border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
+    position: sticky; top: 0;
     background: rgba(14,14,14,0.92);
     backdrop-filter: blur(12px);
     z-index: 100;
   }
+  .header-left { display: flex; align-items: baseline; gap: 1rem; }
+  .logo { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+  .date-pill { font-size: 0.75rem; color: var(--muted); }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); display: inline-block; margin-right: 6px; transition: background 0.3s; }
+  .status-dot.live { background: #4a9e6b; box-shadow: 0 0 6px rgba(74,158,107,0.5); }
+  .status-dot.error { background: var(--accent2); }
+  .status-label { font-size: 0.72rem; color: var(--muted); }
 
-  .header-left {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-  }
+  .main { display: grid; grid-template-columns: 1fr 360px; gap: 0; min-height: calc(100vh - 60px); }
 
-  .logo {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
+  /* LEFT */
+  .left { padding: 2rem 2.5rem; border-right: 1px solid var(--border); }
+  .section-title { font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem; }
 
-  .date-pill {
-    font-size: 0.75rem;
-    color: var(--muted);
-    letter-spacing: 0.04em;
-  }
-
-  .header-actions {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-  }
-
-  .btn {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.78rem;
-    padding: 0.45rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    border: 1px solid var(--border2);
-    background: var(--surface2);
-    color: var(--muted);
-    letter-spacing: 0.03em;
-    transition: all 0.15s;
-  }
-  .btn:hover { border-color: var(--accent); color: var(--accent); }
-  .btn.active { border-color: var(--accent); color: var(--accent); background: rgba(232,201,122,0.08); }
-  .btn-save { border-color: var(--done); color: var(--done); background: rgba(58,158,107,0.08); display: none; }
-  .btn-save:hover { background: rgba(58,158,107,0.18); }
-
-  /* MAIN LAYOUT */
-  .main {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 0;
-    min-height: calc(100vh - 65px);
-  }
-
-  /* LEFT — ANTOLOGÍAS */
-  .left {
-    padding: 2rem 2.5rem;
-    border-right: 1px solid var(--border);
-  }
-
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 1.5rem;
-  }
+  /* LOADING */
+  .loading-state { display: flex; flex-direction: column; gap: 0.75rem; }
+  .skeleton { height: 48px; background: var(--surface); border-radius: 8px; animation: pulse 1.5s ease infinite; }
+  .skeleton.tall { height: 120px; }
+  @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 0.8; } }
 
   /* SELLO */
-  .sello-block {
-    margin-bottom: 2.5rem;
-  }
-
-  .sello-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .sello-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  .sello-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
+  .sello-block { margin-bottom: 2.5rem; animation: fadeIn 0.4s ease both; }
+  .sello-block:nth-child(2) { animation-delay: 0.05s; }
+  .sello-block:nth-child(3) { animation-delay: 0.1s; }
+  .sello-block:nth-child(4) { animation-delay: 0.15s; }
+  .sello-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+  .sello-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .sello-name { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
   .sello-nebula .sello-dot { background: var(--nebula); }
   .sello-nebula .sello-name { color: var(--nebula); }
   .sello-luna .sello-dot { background: var(--luna); }
@@ -164,293 +76,52 @@
   .sello-meteorito .sello-name { color: var(--meteorito); }
 
   /* ANTOLOGÍA */
-  .antologia {
-    margin-bottom: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
+  .antologia { margin-bottom: 0.75rem; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: border-color 0.2s; }
   .antologia:hover { border-color: var(--border2); }
-
-  .antologia-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.7rem 1rem;
-    cursor: pointer;
-    background: var(--surface);
-    user-select: none;
-  }
-
-  .antologia-title {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.88rem;
-    font-weight: 500;
-  }
-
-  .antologia-emoji {
-    font-size: 0.95rem;
-  }
-
-  .antologia-badge {
-    font-size: 0.65rem;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    letter-spacing: 0.04em;
-    font-weight: 500;
-  }
+  .antologia-header { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 1rem; cursor: pointer; background: var(--surface); user-select: none; }
+  .antologia-title { display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; font-weight: 500; }
+  .antologia-badge { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 4px; letter-spacing: 0.04em; font-weight: 500; }
   .badge-prox { background: rgba(196,92,58,0.2); color: #e07a5f; }
   .badge-activa { background: rgba(123,111,212,0.2); color: #a89fe8; }
   .badge-cierra { background: rgba(232,201,122,0.2); color: var(--accent); }
-
-  .chevron {
-    font-size: 0.7rem;
-    color: var(--muted);
-    transition: transform 0.2s;
-  }
+  .badge-pub { background: rgba(74,158,107,0.2); color: #6ecfa0; }
+  .chevron { font-size: 0.7rem; color: var(--muted); transition: transform 0.2s; }
   .open .chevron { transform: rotate(180deg); }
-
-  .task-list {
-    display: none;
-    padding: 0.5rem 0;
-    background: var(--surface2);
-  }
+  .task-list { display: none; padding: 0.5rem 0; background: var(--surface2); }
   .open .task-list { display: block; }
 
-  .task-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
-    padding: 0.4rem 1rem;
-    font-size: 0.82rem;
-    line-height: 1.5;
-    transition: background 0.1s;
-  }
-  .task-item:hover { background: rgba(255,255,255,0.03); }
+  .task-item { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.45rem 1rem; font-size: 0.82rem; line-height: 1.5; }
+  .task-bullet { color: var(--muted); flex-shrink: 0; margin-top: 1px; }
+  .task-text { flex: 1; color: #d0cdc8; }
+  .task-text.done { text-decoration: line-through; color: var(--muted); }
+  .task-owner { font-size: 0.72rem; color: var(--muted); font-style: italic; flex-shrink: 0; }
+  .task-flags { flex-shrink: 0; }
 
-  .task-cb {
-    width: 14px;
-    height: 14px;
-    border: 1.5px solid var(--border2);
-    border-radius: 3px;
-    flex-shrink: 0;
-    margin-top: 3px;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .task-cb.checked {
-    background: var(--done);
-    border-color: var(--done);
-  }
-  .task-cb.checked::after {
-    content: '✓';
-    font-size: 9px;
-    color: white;
-  }
+  .general-block { margin-top: 0.5rem; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+  .general-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
 
-  .task-text {
-    flex: 1;
-    color: var(--text);
-  }
-  .task-text.done-text {
-    text-decoration: line-through;
-    color: var(--muted);
-  }
+  /* STATS */
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1.75rem; padding-bottom: 1.75rem; border-bottom: 1px solid var(--border); }
+  .stat-item { text-align: center; padding: 0.75rem 0.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface2); }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--accent); line-height: 1; }
+  .stat-label { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; margin-top: 4px; }
 
-  .task-flags {
-    display: flex;
-    gap: 2px;
-    flex-shrink: 0;
-  }
-  .flag { font-size: 0.65rem; }
+  /* RIGHT */
+  .right { padding: 2rem 1.75rem; display: flex; flex-direction: column; gap: 1.5rem; overflow-y: auto; }
+  .news-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; animation: fadeIn 0.4s ease both; animation-delay: 0.2s; }
+  .news-card-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .news-card-title { font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+  .news-body { padding: 1rem; font-size: 0.83rem; line-height: 1.8; color: #c8c5bf; white-space: pre-wrap; }
+  .news-loading { padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .news-skel { height: 14px; background: var(--surface2); border-radius: 4px; animation: pulse 1.5s ease infinite; }
+  .news-skel.short { width: 60%; }
 
-  .task-owner {
-    font-size: 0.72rem;
-    color: var(--muted);
-    font-style: italic;
-    flex-shrink: 0;
-  }
+  .links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; padding: 1rem; }
+  .quick-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.75rem; border-radius: 7px; border: 1px solid var(--border); background: var(--surface2); text-decoration: none; color: var(--text); font-size: 0.78rem; transition: all 0.15s; }
+  .quick-link:hover { border-color: var(--accent); color: var(--accent); background: rgba(232,201,122,0.06); }
 
-  /* GENERAL block */
-  .general-block {
-    margin-top: 0.5rem;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--surface);
-  }
-
-  .general-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.5rem;
-  }
-
-  /* RIGHT — NOTICIAS */
-  .right {
-    padding: 2rem 1.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .news-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-
-  .news-card-header {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .news-card-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .news-body {
-    padding: 1rem;
-    font-size: 0.83rem;
-    line-height: 1.75;
-    color: #c8c5bf;
-    white-space: pre-wrap;
-    outline: none;
-  }
-  .news-body[contenteditable="true"] {
-    background: rgba(255,255,255,0.02);
-    border-radius: 0 0 10px 10px;
-  }
-  .news-body[contenteditable="true"]:focus {
-    background: rgba(232,201,122,0.04);
-  }
-
-  .edit-hint {
-    font-size: 0.7rem;
-    color: var(--muted);
-    padding: 0 1rem 0.75rem;
-    display: none;
-    font-style: italic;
-  }
-  .editing .edit-hint { display: block; }
-
-  /* LINKS RÁPIDOS */
-  .links-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    padding: 1rem;
-  }
-
-  .quick-link {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.55rem 0.75rem;
-    border-radius: 7px;
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    text-decoration: none;
-    color: var(--text);
-    font-size: 0.78rem;
-    transition: all 0.15s;
-  }
-  .quick-link:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: rgba(232,201,122,0.06);
-  }
-  .link-icon { font-size: 0.9rem; }
-
-  /* ESTADO GLOBAL */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
-    padding: 1rem;
-  }
-
-  .stat-item {
-    text-align: center;
-    padding: 0.75rem 0.5rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--surface2);
-  }
-
-  .stat-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: var(--accent);
-    line-height: 1;
-  }
-
-  .stat-label {
-    font-size: 0.65rem;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
-
-  /* EDIT MODE */
-  .edit-overlay {
-    display: none;
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    background: var(--surface2);
-    border: 1px solid var(--accent);
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
-    font-size: 0.8rem;
-    color: var(--accent);
-    z-index: 200;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  }
-  .edit-overlay.visible { display: block; }
-
-  /* ANIMATIONS */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .sello-block {
-    animation: fadeIn 0.4s ease both;
-  }
-  .sello-block:nth-child(2) { animation-delay: 0.05s; }
-  .sello-block:nth-child(3) { animation-delay: 0.1s; }
-  .sello-block:nth-child(4) { animation-delay: 0.15s; }
-
-  .news-card {
-    animation: fadeIn 0.4s ease both;
-    animation-delay: 0.2s;
-  }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 </style>
 </head>
 <body>
@@ -460,382 +131,307 @@
     <span class="logo">Rubin Editorial</span>
     <span class="date-pill" id="currentDate"></span>
   </div>
-  <div class="header-actions">
-    <button class="btn" id="btnEdit" onclick="toggleEdit()">✏️ Editar</button>
-    <button class="btn btn-save" id="btnSave" onclick="saveAll()">💾 Guardar</button>
-    <button class="btn" onclick="exportHTML()">⬇️ Exportar</button>
+  <div style="display:flex;align-items:center;gap:0.5rem;">
+    <span class="status-dot" id="statusDot"></span>
+    <span class="status-label" id="statusLabel">Conectando con Notion...</span>
   </div>
 </header>
 
 <div class="main">
 
-  <!-- IZQUIERDA: ANTOLOGÍAS -->
   <div class="left">
     <div class="section-title">Estado de antologías</div>
 
-    <!-- STATS -->
-    <div class="stats-row" style="margin-bottom:1.5rem; padding:0 0 1.5rem 0; border-bottom:1px solid var(--border);">
-      <div class="stat-item"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Antologías</div></div>
-      <div class="stat-item"><div class="stat-num" id="statPending">0</div><div class="stat-label">Tareas pend.</div></div>
-      <div class="stat-item"><div class="stat-num" id="statDone">0</div><div class="stat-label">Completadas</div></div>
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-num" id="statAnt">—</div><div class="stat-label">Antologías</div></div>
+      <div class="stat-item"><div class="stat-num" id="statPend">—</div><div class="stat-label">Tareas pend.</div></div>
+      <div class="stat-item"><div class="stat-num" id="statDone">—</div><div class="stat-label">Completadas</div></div>
     </div>
 
-    <!-- NÉBULA -->
-    <div class="sello-block sello-nebula">
-      <div class="sello-header">
-        <div class="sello-dot"></div>
-        <span class="sello-name">Nébula</span>
-      </div>
-
-      <div class="antologia" id="a-ano3000">
-        <div class="antologia-header" onclick="toggle('a-ano3000')">
-          <div class="antologia-title"><span class="antologia-emoji">⚙️</span> Año 3000 <span class="antologia-badge badge-activa">Activa</span></div>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="task-list">
-          <div class="task-item"><div class="task-cb checked" onclick="toggleTask(this)"></div><span class="task-text done-text">Iniciar correcciones</span><div class="task-flags"></div><span class="task-owner"></span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Crear formulario de selección de nombre</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner">Vic</span></div>
-        </div>
-      </div>
-
-      <div class="antologia" id="a-distopia">
-        <div class="antologia-header" onclick="toggle('a-distopia')">
-          <div class="antologia-title"><span class="antologia-emoji">☢️</span> Distopía II <span class="antologia-badge badge-prox">Próx. publicación</span></div>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="task-list">
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Corrección: Aplicar revisiones</span><div class="task-flags"><span class="flag">🚩</span><span class="flag">🚩</span></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Maquetación: Generar primera versión</span><div class="task-flags"><span class="flag">🚩</span><span class="flag">🚩</span></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Segunda instancia de revisión</span><div class="task-flags"><span class="flag">🚩</span><span class="flag">🚩</span></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Adaptar portada final</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Registrar ISBN</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Aplicar correcciones segunda instancia</span><div class="task-flags"></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Adaptar formatos para plataformas</span><div class="task-flags"></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Subir a KDP</span><div class="task-flags"></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Subir a Draft2Digital</span><div class="task-flags"></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Subir a BMG</span><div class="task-flags"></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Solicitar alta de título en BMG</span><div class="task-flags"></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Programar correo de lanzamiento</span><div class="task-flags"></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Programar correo archivos finales</span><div class="task-flags"></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Programar correo adquisición de ejemplares</span><div class="task-flags"></div><span class="task-owner">Nacho</span></div>
-        </div>
-      </div>
-
-      <div class="antologia" id="a-microcuentos">
-        <div class="antologia-header" onclick="toggle('a-microcuentos')">
-          <div class="antologia-title"><span class="antologia-emoji">📒</span> Microcuentos <span class="antologia-badge badge-activa">Activa</span></div>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="task-list">
-          <div class="task-item"><div class="task-cb checked" onclick="toggleTask(this)"></div><span class="task-text done-text">Iniciar correcciones</span><div class="task-flags"></div><span class="task-owner"></span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Revisar formulario de sugerencia de nombres</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner">Vic</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Crear formulario de selección de nombre</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner">Vic</span></div>
-        </div>
-      </div>
-
-      <div class="antologia" id="a-fantasia">
-        <div class="antologia-header" onclick="toggle('a-fantasia')">
-          <div class="antologia-title"><span class="antologia-emoji">🗝️</span> Fantasía Urbana <span class="antologia-badge badge-activa">Activa</span></div>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="task-list">
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Email: Selección (los que faltan)</span><div class="task-flags"><span class="flag">🚩</span><span class="flag">🚩</span></div><span class="task-owner">Vic</span></div>
-        </div>
-      </div>
-
-      <div class="general-block">
-        <div class="general-label">📦 General Nébula</div>
-        <div class="task-list" style="display:block; padding:0;">
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Revisar / Enviar presupuestos ARG y Mundo</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner">Vic</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Confirmar pedidos</span><div class="task-flags"></div><span class="task-owner">Nacho, Vic</span></div>
-        </div>
+    <div id="antologias-container">
+      <div class="loading-state">
+        <div class="skeleton"></div>
+        <div class="skeleton tall"></div>
+        <div class="skeleton"></div>
+        <div class="skeleton tall"></div>
       </div>
     </div>
-
-    <!-- LUNA ROJA -->
-    <div class="sello-block sello-luna">
-      <div class="sello-header">
-        <div class="sello-dot"></div>
-        <span class="sello-name">Luna Roja</span>
-      </div>
-
-      <div class="antologia" id="a-criaturas">
-        <div class="antologia-header" onclick="toggle('a-criaturas')">
-          <div class="antologia-title"><span class="antologia-emoji">🧟</span> Criaturas de la noche <span class="antologia-badge badge-prox" style="background:rgba(58,158,107,0.2);color:#6ecfa0;">Publicada ✅</span></div>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="task-list">
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Pedir ejemplares + Bitácora</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner">Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Emitir presupuestos</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner">John</span></div>
-        </div>
-      </div>
-
-      <div class="antologia" id="a-terror">
-        <div class="antologia-header" onclick="toggle('a-terror')">
-          <div class="antologia-title"><span class="antologia-emoji">🎃</span> Terror y misterio <span class="antologia-badge badge-activa">Activa</span></div>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="task-list">
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Definir prólogo ¿Está hecho?</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner"></span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Revisar la lista uno a uno</span><div class="task-flags"><span class="flag">🚩</span><span class="flag">🚩</span></div><span class="task-owner">John, Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Correo de lista cerrada</span><div class="task-flags"><span class="flag">🚩</span><span class="flag">🚩</span></div><span class="task-owner">John, Nacho</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Generar y enviar formulario de sugerencia de nombre</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner"></span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Separar cuentos para iniciar correcciones</span><div class="task-flags"><span class="flag">🚩</span><span class="flag">🚩</span></div><span class="task-owner">John</span></div>
-        </div>
-      </div>
-
-      <div class="antologia" id="a-micterror">
-        <div class="antologia-header" onclick="toggle('a-micterror')">
-          <div class="antologia-title"><span class="antologia-emoji">🧫</span> Microcuento Terror <span class="antologia-badge badge-cierra">Cierra 8 jun</span></div>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="task-list">
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Selección de cuentos</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner">John</span></div>
-        </div>
-      </div>
-
-      <div class="antologia" id="a-creepy">
-        <div class="antologia-header" onclick="toggle('a-creepy')">
-          <div class="antologia-title"><span class="antologia-emoji">🎈</span> Creepy Kids <span class="antologia-badge badge-activa">Activa</span></div>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="task-list">
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Recepción de cuentos</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner">John</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Selección de cuentos</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner">John</span></div>
-        </div>
-      </div>
-
-      <div class="general-block">
-        <div class="general-label">📦 General Luna Roja</div>
-        <div class="task-list" style="display:block; padding:0;">
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Revisar / Enviar presupuestos</span><div class="task-flags"></div><span class="task-owner">John</span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Confirmar pedidos</span><div class="task-flags"></div><span class="task-owner">Nacho, John</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- METEORITO -->
-    <div class="sello-block sello-meteorito">
-      <div class="sello-header">
-        <div class="sello-dot"></div>
-        <span class="sello-name">Meteorito</span>
-      </div>
-
-      <div class="antologia" id="a-animalitos">
-        <div class="antologia-header" onclick="toggle('a-animalitos')">
-          <div class="antologia-title"><span class="antologia-emoji">🦒</span> Cuentos de animalitos <span class="antologia-badge badge-activa">Activa</span></div>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="task-list">
-          <div class="task-item"><div class="task-cb checked" onclick="toggleTask(this)"></div><span class="task-text done-text">Correo: Últimos días para confirmar participación</span><div class="task-flags"></div><span class="task-owner"></span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Iniciar correcciones</span><div class="task-flags"></div><span class="task-owner"></span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Crear un prompt para generación de imágenes</span><div class="task-flags"></div><span class="task-owner"></span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Almacenar imágenes de cada cuento</span><div class="task-flags"></div><span class="task-owner"></span></div>
-          <div class="task-item"><div class="task-cb" onclick="toggleTask(this)"></div><span class="task-text">Anticipar acciones para próxima antología</span><div class="task-flags"><span class="flag">🚩</span></div><span class="task-owner"></span></div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- DERECHA: NOTICIAS + LINKS -->
   <div class="right">
-
-    <!-- STATS RÁPIDOS -->
     <div class="news-card">
       <div class="news-card-header">
         <span class="news-card-title">📡 Noticias del equipo</span>
-        <span style="font-size:0.7rem;color:var(--muted);" id="newsDate"></span>
+        <span style="font-size:0.7rem;color:var(--muted);" id="lastUpdate"></span>
       </div>
-      <div class="news-body" id="news1" contenteditable="false">⚠️ Les recuerdo la importancia de utilizar ClickUp para revisar las tareas pendientes de cada antología y marcar como completadas aquellas que vayan finalizando.
-
-También recuerden hacer uso de Oráculo 🔮 para guiarlos en aquellos procedimientos que todavía no tengan del todo claros. En caso de que no logren resolver alguna tarea con Oráculo, pueden avisarme.</div>
-      <div class="edit-hint">Hacé clic en el texto para editar. Los cambios se guardan con el botón 💾</div>
+      <div id="news-container">
+        <div class="news-loading">
+          <div class="news-skel"></div><div class="news-skel short"></div>
+          <div class="news-skel"></div><div class="news-skel"></div>
+          <div class="news-skel short"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="news-card" style="border-color: rgba(196,92,58,0.4);">
-      <div class="news-card-header" style="border-color: rgba(196,92,58,0.3);">
+    <div class="news-card" id="important-card" style="display:none; border-color:rgba(196,92,58,0.4);">
+      <div class="news-card-header" style="border-color:rgba(196,92,58,0.3);">
         <span class="news-card-title" style="color:#c45c3a;">🔔 Noticia importante</span>
       </div>
-      <div class="news-body" id="news2" contenteditable="false">Fer y Abel van a necesitar asistencia durante las próximas tres semanas, comenzando desde hoy.
-
-La idea es realizar una hora y media adicional por día para colaborar con la recepción de cuentos de una antología de Rubin actualmente en curso. El procedimiento consiste en: recepcionar cuentos, registrar los envíos en la planilla, convertir PDF a DOC, insertar nombre del autor/seudónimo y subir a Drive.
-
-Este trabajo se paga por separado y no debe interferir con las horas asignadas a sus sellos. Quien pueda afrontar la tarea, por favor avisarme para coordinar con Fer.</div>
-      <div class="edit-hint">Hacé clic en el texto para editar. Los cambios se guardan con el botón 💾</div>
+      <div id="important-container"></div>
     </div>
 
-    <!-- LINKS RÁPIDOS -->
     <div class="news-card">
-      <div class="news-card-header">
-        <span class="news-card-title">🔗 Accesos rápidos</span>
-      </div>
+      <div class="news-card-header"><span class="news-card-title">🔗 Accesos rápidos</span></div>
       <div class="links-grid">
-        <a class="quick-link" href="https://app.clickup.com" target="_blank"><span class="link-icon">📋</span> ClickUp</a>
-        <a class="quick-link" href="https://www.notion.so" target="_blank"><span class="link-icon">📚</span> Notion Wiki</a>
-        <a class="quick-link" href="https://drive.google.com" target="_blank"><span class="link-icon">📁</span> Google Drive</a>
-        <a class="quick-link" href="https://app.brevo.com" target="_blank"><span class="link-icon">📧</span> Brevo</a>
-        <a class="quick-link" href="https://chatgpt.com" target="_blank"><span class="link-icon">🤖</span> ChatGPT</a>
-        <a class="quick-link" href="https://rubineditorial.com" target="_blank"><span class="link-icon">🌐</span> Web</a>
+        <a class="quick-link" href="https://app.clickup.com" target="_blank">📋 ClickUp</a>
+        <a class="quick-link" href="https://www.notion.so/373cb3a15b6b8144a141cef3e24febc4" target="_blank">📡 Noticias</a>
+        <a class="quick-link" href="https://drive.google.com" target="_blank">📁 Google Drive</a>
+        <a class="quick-link" href="https://app.brevo.com" target="_blank">📧 Brevo</a>
+        <a class="quick-link" href="https://chatgpt.com" target="_blank">🤖 ChatGPT</a>
+        <a class="quick-link" href="https://rubineditorial.com" target="_blank">🌐 Web</a>
+        <a class="quick-link" href="https://www.notion.so/364cb3a15b6b817c8c0be14e2d824d20" target="_blank">📚 Wiki</a>
+        <a class="quick-link" href="https://docs.google.com/spreadsheets/d/1YAc5Xm5vmWjQXiAejbtWnDNOiFX6yyfz2iVxo626BhM" target="_blank">📊 Planilla base</a>
       </div>
     </div>
-
   </div>
 </div>
 
-<div class="edit-overlay" id="editOverlay">
-  ✏️ Modo edición activo — editá las noticias directamente
-</div>
-
 <script>
-  // DATE
-  const now = new Date();
-  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
-  document.getElementById('currentDate').textContent = now.toLocaleDateString('es-AR', opts);
-  document.getElementById('newsDate').textContent = now.toLocaleDateString('es-AR', { day:'numeric', month:'short', year:'numeric' });
+const NOTION_TOKEN = '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';
+const PAGE_ID = '373cb3a15b6b8144a141cef3e24febc4';
+const PROXY = 'https://api.allorigins.win/get?url=';
 
-  // TOGGLE ANTOLOGÍA
-  function toggle(id) {
-    const el = document.getElementById(id);
-    el.classList.toggle('open');
-    updateStats();
+// DATE
+const now = new Date();
+document.getElementById('currentDate').textContent = now.toLocaleDateString('es-AR', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+document.getElementById('lastUpdate').textContent = 'Actualizado ' + now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
+
+function setStatus(type, msg) {
+  const dot = document.getElementById('statusDot');
+  const label = document.getElementById('statusLabel');
+  dot.className = 'status-dot ' + type;
+  label.textContent = msg;
+}
+
+// ANTOLOGÍAS — datos hardcoded pero fáciles de editar
+const SELLOS = [
+  {
+    id: 'nebula', nombre: 'Nébula', clase: 'sello-nebula',
+    antologias: [
+      { id: 'ano3000', emoji: '⚙️', nombre: 'Año 3000', badge: 'activa', badgeText: 'Activa',
+        tareas: [
+          { texto: 'Iniciar correcciones', owner: '', flags: '', done: true },
+          { texto: 'Crear formulario de selección de nombre', owner: 'Vic', flags: '🚩', done: false },
+        ]
+      },
+      { id: 'distopia', emoji: '☢️', nombre: 'Distopía II', badge: 'prox', badgeText: 'Próx. publicación', autoOpen: true,
+        tareas: [
+          { texto: 'Corrección: Aplicar revisiones', owner: 'Nacho', flags: '🚩🚩', done: false },
+          { texto: 'Maquetación: Generar primera versión', owner: 'Nacho', flags: '🚩🚩', done: false },
+          { texto: 'Segunda instancia de revisión', owner: 'Nacho', flags: '🚩🚩', done: false },
+          { texto: 'Adaptar portada final', owner: 'Nacho', flags: '🚩', done: false },
+          { texto: 'Registrar ISBN', owner: 'Nacho', flags: '🚩', done: false },
+          { texto: 'Aplicar correcciones segunda instancia', owner: 'Nacho', flags: '', done: false },
+          { texto: 'Adaptar formatos para plataformas', owner: 'Nacho', flags: '', done: false },
+          { texto: 'Subir a KDP', owner: 'Nacho', flags: '', done: false },
+          { texto: 'Subir a Draft2Digital', owner: 'Nacho', flags: '', done: false },
+          { texto: 'Subir a BMG', owner: 'Nacho', flags: '', done: false },
+          { texto: 'Solicitar alta de título en BMG', owner: 'Nacho', flags: '', done: false },
+          { texto: 'Programar correo de lanzamiento', owner: 'Nacho', flags: '', done: false },
+          { texto: 'Programar correo archivos finales', owner: 'Nacho', flags: '', done: false },
+          { texto: 'Programar correo adquisición de ejemplares', owner: 'Nacho', flags: '', done: false },
+        ]
+      },
+      { id: 'microcuentos', emoji: '📒', nombre: 'Microcuentos', badge: 'activa', badgeText: 'Activa',
+        tareas: [
+          { texto: 'Iniciar correcciones', owner: '', flags: '', done: true },
+          { texto: 'Revisar formulario de sugerencia de nombres', owner: 'Vic', flags: '🚩', done: false },
+          { texto: 'Crear formulario de selección de nombre', owner: 'Vic', flags: '🚩', done: false },
+        ]
+      },
+      { id: 'fantasia', emoji: '🗝️', nombre: 'Fantasía Urbana', badge: 'activa', badgeText: 'Activa',
+        tareas: [
+          { texto: 'Email: Selección (los que faltan)', owner: 'Vic', flags: '🚩🚩', done: false },
+        ]
+      },
+    ],
+    general: [
+      { texto: 'Revisar / Enviar presupuestos ARG y Mundo', owner: 'Vic', flags: '🚩', done: false },
+      { texto: 'Confirmar pedidos', owner: 'Nacho, Vic', flags: '', done: false },
+    ]
+  },
+  {
+    id: 'luna', nombre: 'Luna Roja', clase: 'sello-luna',
+    antologias: [
+      { id: 'criaturas', emoji: '🧟', nombre: 'Criaturas de la noche', badge: 'pub', badgeText: 'Publicada ✅',
+        tareas: [
+          { texto: 'Pedir ejemplares + Bitácora', owner: 'Nacho', flags: '🚩', done: false },
+          { texto: 'Emitir presupuestos', owner: 'John', flags: '🚩', done: false },
+        ]
+      },
+      { id: 'terror', emoji: '🎃', nombre: 'Terror y misterio', badge: 'activa', badgeText: 'Activa', autoOpen: true,
+        tareas: [
+          { texto: 'Definir prólogo ¿Está hecho?', owner: '', flags: '🚩', done: false },
+          { texto: 'Revisar la lista uno a uno', owner: 'John, Nacho', flags: '🚩🚩', done: false },
+          { texto: 'Correo de lista cerrada', owner: 'John, Nacho', flags: '🚩🚩', done: false },
+          { texto: 'Generar y enviar formulario de sugerencia de nombre', owner: '', flags: '🚩', done: false },
+          { texto: 'Separar cuentos para iniciar correcciones', owner: 'John', flags: '🚩🚩', done: false },
+        ]
+      },
+      { id: 'micterror', emoji: '🧫', nombre: 'Microcuento Terror', badge: 'cierra', badgeText: 'Cierra 8 jun',
+        tareas: [
+          { texto: 'Selección de cuentos', owner: 'John', flags: '🚩', done: false },
+        ]
+      },
+      { id: 'creepy', emoji: '🎈', nombre: 'Creepy Kids', badge: 'activa', badgeText: 'Activa',
+        tareas: [
+          { texto: 'Recepción de cuentos', owner: 'John', flags: '🚩', done: false },
+          { texto: 'Selección de cuentos', owner: 'John', flags: '🚩', done: false },
+        ]
+      },
+    ],
+    general: [
+      { texto: 'Revisar / Enviar presupuestos', owner: 'John', flags: '', done: false },
+      { texto: 'Confirmar pedidos', owner: 'Nacho, John', flags: '', done: false },
+    ]
+  },
+  {
+    id: 'meteorito', nombre: 'Meteorito', clase: 'sello-meteorito',
+    antologias: [
+      { id: 'animalitos', emoji: '🦒', nombre: 'Cuentos de animalitos', badge: 'activa', badgeText: 'Activa',
+        tareas: [
+          { texto: 'Correo: Últimos días para confirmar participación', owner: '', flags: '', done: true },
+          { texto: 'Iniciar correcciones', owner: '', flags: '', done: false },
+          { texto: 'Crear un prompt para generación de imágenes', owner: '', flags: '', done: false },
+          { texto: 'Almacenar imágenes de cada cuento', owner: '', flags: '', done: false },
+          { texto: 'Anticipar acciones para próxima antología', owner: '', flags: '🚩', done: false },
+        ]
+      },
+    ],
+    general: []
   }
+];
 
-  // TOGGLE TASK
-  function toggleTask(cb) {
-    cb.classList.toggle('checked');
-    const text = cb.nextElementSibling;
-    text.classList.toggle('done-text');
-    saveTaskStates();
-    updateStats();
-  }
+function buildAntologias() {
+  const container = document.getElementById('antologias-container');
+  const saved = JSON.parse(localStorage.getItem('rubin_tasks') || '{}');
+  let html = '';
+  let totalAnt = 0, totalPend = 0, totalDone = 0;
 
-  // EDIT MODE
-  let editMode = false;
-  function toggleEdit() {
-    editMode = !editMode;
-    const btn = document.getElementById('btnEdit');
-    const saveBtn = document.getElementById('btnSave');
-    const overlay = document.getElementById('editOverlay');
-    const news = document.querySelectorAll('.news-body');
-    const hints = document.querySelectorAll('.edit-hint');
+  SELLOS.forEach(sello => {
+    html += `<div class="sello-block ${sello.clase}">`;
+    html += `<div class="sello-header"><div class="sello-dot"></div><span class="sello-name">${sello.nombre}</span></div>`;
 
-    if (editMode) {
-      btn.classList.add('active');
-      btn.textContent = '✏️ Editando';
-      saveBtn.style.display = 'block';
-      overlay.classList.add('visible');
-      news.forEach(n => { n.contentEditable = 'true'; n.parentElement.classList.add('editing'); });
-      hints.forEach(h => h.style.display = 'block');
-    } else {
-      btn.classList.remove('active');
-      btn.textContent = '✏️ Editar';
-      saveBtn.style.display = 'none';
-      overlay.classList.remove('visible');
-      news.forEach(n => { n.contentEditable = 'false'; n.parentElement.classList.remove('editing'); });
-      hints.forEach(h => h.style.display = 'none');
-    }
-  }
-
-  // SAVE TO LOCALSTORAGE
-  function saveAll() {
-    const data = {
-      news1: document.getElementById('news1').innerText,
-      news2: document.getElementById('news2').innerText,
-    };
-    localStorage.setItem('rubin_news', JSON.stringify(data));
-    saveTaskStates();
-    toggleEdit();
-    showToast('✅ Guardado correctamente');
-  }
-
-  function saveTaskStates() {
-    const tasks = document.querySelectorAll('.task-cb');
-    const states = [];
-    tasks.forEach((t, i) => states.push(t.classList.contains('checked')));
-    localStorage.setItem('rubin_tasks', JSON.stringify(states));
-    updateStats();
-  }
-
-  // LOAD FROM LOCALSTORAGE
-  function loadSaved() {
-    const news = localStorage.getItem('rubin_news');
-    if (news) {
-      const d = JSON.parse(news);
-      if (d.news1) document.getElementById('news1').innerText = d.news1;
-      if (d.news2) document.getElementById('news2').innerText = d.news2;
-    }
-    const tasks = localStorage.getItem('rubin_tasks');
-    if (tasks) {
-      const states = JSON.parse(tasks);
-      const cbs = document.querySelectorAll('.task-cb');
-      states.forEach((checked, i) => {
-        if (cbs[i]) {
-          if (checked) {
-            cbs[i].classList.add('checked');
-            cbs[i].nextElementSibling.classList.add('done-text');
-          } else {
-            cbs[i].classList.remove('checked');
-            cbs[i].nextElementSibling.classList.remove('done-text');
-          }
-        }
+    sello.antologias.forEach(ant => {
+      totalAnt++;
+      const isOpen = ant.autoOpen ? 'open' : '';
+      html += `<div class="antologia ${isOpen}" id="ant-${ant.id}">`;
+      html += `<div class="antologia-header" onclick="toggleAnt('ant-${ant.id}')">`;
+      html += `<div class="antologia-title"><span>${ant.emoji}</span> ${ant.nombre} <span class="antologia-badge badge-${ant.badge}">${ant.badgeText}</span></div>`;
+      html += `<span class="chevron">▼</span></div>`;
+      html += `<div class="task-list">`;
+      ant.tareas.forEach((t, ti) => {
+        const key = `${ant.id}_${ti}`;
+        const isDone = saved.hasOwnProperty(key) ? saved[key] : t.done;
+        isDone ? totalDone++ : totalPend++;
+        html += `<div class="task-item">
+          <span class="task-bullet">${isDone ? '✓' : '·'}</span>
+          <span class="task-text ${isDone ? 'done' : ''}">${t.texto}</span>
+          ${t.flags ? `<span class="task-flags" style="font-size:0.7rem;">${t.flags}</span>` : ''}
+          ${t.owner ? `<span class="task-owner">${t.owner}</span>` : ''}
+        </div>`;
       });
-    }
-  }
-
-  // STATS
-  function updateStats() {
-    const all = document.querySelectorAll('.task-cb');
-    const done = document.querySelectorAll('.task-cb.checked');
-    const antologias = document.querySelectorAll('.antologia').length;
-    document.getElementById('statTotal').textContent = antologias;
-    document.getElementById('statPending').textContent = all.length - done.length;
-    document.getElementById('statDone').textContent = done.length;
-  }
-
-  // EXPORT HTML
-  function exportHTML() {
-    const clone = document.documentElement.cloneNode(true);
-    // Save current task states into the HTML
-    const tasks = document.querySelectorAll('.task-cb');
-    const cloneTasks = clone.querySelectorAll('.task-cb');
-    tasks.forEach((t, i) => {
-      if (t.classList.contains('checked')) {
-        cloneTasks[i].classList.add('checked');
-        cloneTasks[i].nextElementSibling.classList.add('done-text');
-      }
+      html += `</div></div>`;
     });
-    // Save news
-    clone.getElementById('news1').innerText = document.getElementById('news1').innerText;
-    clone.getElementById('news2').innerText = document.getElementById('news2').innerText;
 
-    const html = '<!DOCTYPE html>\n' + clone.outerHTML;
-    const blob = new Blob([html], { type: 'text/html' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'rubin-inicio.html';
-    a.click();
-    showToast('⬇️ Archivo exportado');
-  }
+    if (sello.general && sello.general.length) {
+      html += `<div class="general-block"><div class="general-label">📦 General ${sello.nombre}</div>`;
+      sello.general.forEach(t => {
+        totalPend++;
+        html += `<div class="task-item">
+          <span class="task-bullet" style="color:var(--muted)">·</span>
+          <span class="task-text">${t.texto}</span>
+          ${t.flags ? `<span class="task-flags" style="font-size:0.7rem;">${t.flags}</span>` : ''}
+          ${t.owner ? `<span class="task-owner">${t.owner}</span>` : ''}
+        </div>`;
+      });
+      html += `</div>`;
+    }
 
-  // TOAST
-  function showToast(msg) {
-    const t = document.createElement('div');
-    t.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#1e1e1e;border:1px solid var(--accent);color:var(--accent);padding:0.6rem 1.25rem;border-radius:8px;font-size:0.82rem;z-index:500;animation:fadeIn 0.2s ease;';
-    t.textContent = msg;
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 2500);
-  }
-
-  // INIT
-  loadSaved();
-  updateStats();
-
-  // Auto-open antologías con tareas urgentes
-  ['a-distopia', 'a-terror'].forEach(id => {
-    document.getElementById(id).classList.add('open');
+    html += `</div>`;
   });
-  updateStats();
+
+  container.innerHTML = html;
+  document.getElementById('statAnt').textContent = totalAnt;
+  document.getElementById('statPend').textContent = totalPend;
+  document.getElementById('statDone').textContent = totalDone;
+}
+
+function toggleAnt(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// FETCH NOTION
+async function fetchNotion() {
+  const url = `https://api.notion.com/v1/blocks/${PAGE_ID}/children?page_size=100`;
+  const encoded = encodeURIComponent(url);
+  
+  try {
+    const resp = await fetch(`${PROXY}${encoded}`, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    });
+    const data = await resp.json();
+    const blocks = JSON.parse(data.contents);
+    renderNews(blocks.results);
+    setStatus('live', 'Sincronizado con Notion');
+  } catch(e) {
+    setStatus('error', 'Sin conexión a Notion — mostrando última versión');
+    renderNewsOffline();
+  }
+}
+
+function getBlockText(block) {
+  const type = block.type;
+  if (!block[type]) return '';
+  const rich = block[type].rich_text || [];
+  return rich.map(r => r.plain_text).join('');
+}
+
+function renderNews(blocks) {
+  let news1 = '', news2 = '', inImportant = false, inNews = false;
+
+  blocks.forEach(b => {
+    const text = getBlockText(b);
+    if (b.type === 'heading_2') {
+      if (text.includes('Noticia importante')) { inImportant = true; inNews = false; }
+      else if (text.includes('Noticias')) { inNews = true; inImportant = false; }
+      else { inNews = false; inImportant = false; }
+      return;
+    }
+    if (b.type === 'divider') { return; }
+    if (b.type === 'heading_3' || b.type === 'heading_1') { return; }
+    if (!text) return;
+
+    const line = (b.type === 'bulleted_list_item' ? '• ' : '') + text;
+    if (inNews) news1 += line + '\n';
+    else if (inImportant) news2 += line + '\n';
+  });
+
+  document.getElementById('news-container').innerHTML = `<div class="news-body">${news1.trim()}</div>`;
+
+  if (news2.trim()) {
+    document.getElementById('important-card').style.display = 'block';
+    document.getElementById('important-container').innerHTML = `<div class="news-body">${news2.trim()}</div>`;
+  }
+}
+
+function renderNewsOffline() {
+  document.getElementById('news-container').innerHTML = `<div class="news-body" style="color:var(--muted);font-style:italic;">No se pudo conectar con Notion. Revisá tu conexión a internet.</div>`;
+}
+
+// INIT
+buildAntologias();
+fetchNotion();
 </script>
 </body>
 </html>
