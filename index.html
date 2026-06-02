@@ -15,123 +15,116 @@
     --text: #f0ede8;
     --muted: #888580;
     --accent: #e8c97a;
-    --accent2: #c45c3a;
-    --nebula: #7b6fd4;
     --luna: #c45c3a;
+    --nebula: #7b6fd4;
     --meteorito: #4a9e6b;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
   body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
+    content: ''; position: fixed; inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.4;
+    pointer-events: none; z-index: 1000; opacity: 0.4;
   }
   .header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 1.25rem 2.5rem;
     border-bottom: 1px solid var(--border);
-    position: sticky; top: 0;
     background: rgba(14,14,14,0.92);
     backdrop-filter: blur(12px);
-    z-index: 100;
+    position: sticky; top: 0; z-index: 100;
   }
-  .header-left { display: flex; align-items: baseline; gap: 1rem; }
   .logo { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
-  .date-pill { font-size: 0.75rem; color: var(--muted); }
-  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); display: inline-block; margin-right: 6px; transition: background 0.3s; }
+  .date-pill { font-size: 0.75rem; color: var(--muted); margin-left: 1rem; }
+  .status { display: flex; align-items: center; gap: 0.5rem; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); transition: background 0.3s; }
   .status-dot.live { background: #4a9e6b; box-shadow: 0 0 6px rgba(74,158,107,0.5); }
-  .status-dot.error { background: var(--accent2); }
+  .status-dot.error { background: var(--luna); }
   .status-label { font-size: 0.72rem; color: var(--muted); }
 
-  .main { display: grid; grid-template-columns: 1fr 360px; gap: 0; min-height: calc(100vh - 60px); }
+  /* LAYOUT */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 1fr 320px;
+    gap: 1.5rem;
+    padding: 2rem 2.5rem;
+    align-items: start;
+  }
 
-  /* LEFT */
-  .left { padding: 2rem 2.5rem; border-right: 1px solid var(--border); }
-  .section-title { font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem; }
+  /* COLUMNA IZQUIERDA: noticias apiladas */
+  .col-news { display: flex; flex-direction: column; gap: 1.5rem; }
 
-  /* LOADING */
-  .loading-state { display: flex; flex-direction: column; gap: 0.75rem; }
-  .skeleton { height: 48px; background: var(--surface); border-radius: 8px; animation: pulse 1.5s ease infinite; }
-  .skeleton.tall { height: 120px; }
-  @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    animation: fadeIn 0.4s ease both;
+  }
+  .card:nth-child(2) { animation-delay: 0.07s; }
+  .card:nth-child(3) { animation-delay: 0.14s; }
+  .card-header {
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+  .card-body { padding: 1.25rem; }
+  .important-card { border-color: rgba(196,92,58,0.4); }
+  .important-card .card-header { border-color: rgba(196,92,58,0.25); }
+  .important-title { color: #c45c3a !important; }
 
-  /* SELLO */
-  .sello-block { margin-bottom: 2.5rem; animation: fadeIn 0.4s ease both; }
-  .sello-block:nth-child(2) { animation-delay: 0.05s; }
-  .sello-block:nth-child(3) { animation-delay: 0.1s; }
-  .sello-block:nth-child(4) { animation-delay: 0.15s; }
-  .sello-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
-  .sello-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .sello-name { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
-  .sello-nebula .sello-dot { background: var(--nebula); }
-  .sello-nebula .sello-name { color: var(--nebula); }
-  .sello-luna .sello-dot { background: var(--luna); }
-  .sello-luna .sello-name { color: var(--luna); }
-  .sello-meteorito .sello-dot { background: var(--meteorito); }
-  .sello-meteorito .sello-name { color: var(--meteorito); }
+  /* TEXTO NOTICIAS */
+  .news-text { font-size: 0.84rem; line-height: 1.85; color: #c8c5bf; white-space: pre-wrap; }
 
-  /* ANTOLOGÍA */
-  .antologia { margin-bottom: 0.75rem; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: border-color 0.2s; }
+  /* ANTOLOGÍAS */
+  .sello-block { margin-bottom: 2rem; }
+  .sello-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.85rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); }
+  .sello-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .sello-name { font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  .s-nebula .sello-dot { background: var(--nebula); } .s-nebula .sello-name { color: var(--nebula); }
+  .s-luna .sello-dot { background: var(--luna); } .s-luna .sello-name { color: var(--luna); }
+  .s-meteorito .sello-dot { background: var(--meteorito); } .s-meteorito .sello-name { color: var(--meteorito); }
+
+  .antologia { margin-bottom: 0.6rem; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; transition: border-color 0.2s; }
   .antologia:hover { border-color: var(--border2); }
-  .antologia-header { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 1rem; cursor: pointer; background: var(--surface); user-select: none; }
-  .antologia-title { display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; font-weight: 500; }
-  .antologia-badge { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 4px; letter-spacing: 0.04em; font-weight: 500; }
-  .badge-prox { background: rgba(196,92,58,0.2); color: #e07a5f; }
-  .badge-activa { background: rgba(123,111,212,0.2); color: #a89fe8; }
-  .badge-cierra { background: rgba(232,201,122,0.2); color: var(--accent); }
-  .badge-pub { background: rgba(74,158,107,0.2); color: #6ecfa0; }
-  .chevron { font-size: 0.7rem; color: var(--muted); transition: transform 0.2s; }
+  .ant-header { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.9rem; cursor: pointer; background: var(--surface); user-select: none; }
+  .ant-title { font-size: 0.85rem; font-weight: 500; }
+  .chevron { font-size: 0.65rem; color: var(--muted); transition: transform 0.2s; }
   .open .chevron { transform: rotate(180deg); }
-  .task-list { display: none; padding: 0.5rem 0; background: var(--surface2); }
+  .task-list { display: none; padding: 0.4rem 0; background: var(--surface2); }
   .open .task-list { display: block; }
+  .task-item { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.35rem 0.9rem; font-size: 0.8rem; line-height: 1.5; color: #c0bdb8; }
+  .task-bullet { color: var(--muted); flex-shrink: 0; }
 
-  .task-item { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.45rem 1rem; font-size: 0.82rem; line-height: 1.5; }
-  .task-bullet { color: var(--muted); flex-shrink: 0; margin-top: 1px; }
-  .task-text { flex: 1; color: #d0cdc8; }
-  .task-text.done { text-decoration: line-through; color: var(--muted); }
-  .task-owner { font-size: 0.72rem; color: var(--muted); font-style: italic; flex-shrink: 0; }
-  .task-flags { flex-shrink: 0; }
-
-  .general-block { margin-top: 0.5rem; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
-  .general-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
-
-  /* STATS */
-  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1.75rem; padding-bottom: 1.75rem; border-bottom: 1px solid var(--border); }
-  .stat-item { text-align: center; padding: 0.75rem 0.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface2); }
-  .stat-num { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--accent); line-height: 1; }
-  .stat-label { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; margin-top: 4px; }
-
-  /* RIGHT */
-  .right { padding: 2rem 1.75rem; display: flex; flex-direction: column; gap: 1.5rem; overflow-y: auto; }
-  .news-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; animation: fadeIn 0.4s ease both; animation-delay: 0.2s; }
-  .news-card-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-  .news-card-title { font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
-  .news-body { padding: 1rem; font-size: 0.83rem; line-height: 1.8; color: #c8c5bf; white-space: pre-wrap; }
-  .news-loading { padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
-  .news-skel { height: 14px; background: var(--surface2); border-radius: 4px; animation: pulse 1.5s ease infinite; }
-  .news-skel.short { width: 60%; }
-
-  .links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; padding: 1rem; }
-  .quick-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.75rem; border-radius: 7px; border: 1px solid var(--border); background: var(--surface2); text-decoration: none; color: var(--text); font-size: 0.78rem; transition: all 0.15s; }
+  /* LINKS */
+  .links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .quick-link {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 0.75rem; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface2);
+    text-decoration: none; color: var(--text); font-size: 0.8rem;
+    transition: all 0.15s;
+  }
   .quick-link:hover { border-color: var(--accent); color: var(--accent); background: rgba(232,201,122,0.06); }
 
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+  /* SKELETON */
+  .skel { height: 13px; background: var(--surface2); border-radius: 4px; margin-bottom: 0.55rem; animation: pulse 1.5s ease infinite; }
+  .skel.short { width: 55%; } .skel.med { width: 75%; }
+  @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:0.9} }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 </style>
 </head>
 <body>
 
 <header class="header">
-  <div class="header-left">
+  <div style="display:flex;align-items:baseline;">
     <span class="logo">Rubin Editorial</span>
     <span class="date-pill" id="currentDate"></span>
   </div>
-  <div style="display:flex;align-items:center;gap:0.5rem;">
+  <div class="status">
     <span class="status-dot" id="statusDot"></span>
     <span class="status-label" id="statusLabel">Conectando con Notion...</span>
   </div>
@@ -139,52 +132,38 @@
 
 <div class="main">
 
-  <div class="left">
-    <div class="section-title">Estado de antologías</div>
-
-    <div class="stats-row">
-      <div class="stat-item"><div class="stat-num" id="statAnt">—</div><div class="stat-label">Antologías</div></div>
-      <div class="stat-item"><div class="stat-num" id="statPend">—</div><div class="stat-label">Tareas pend.</div></div>
-      <div class="stat-item"><div class="stat-num" id="statDone">—</div><div class="stat-label">Completadas</div></div>
+  <!-- COLUMNA 1: NOTICIAS -->
+  <div class="col-news">
+    <div class="card">
+      <div class="card-header"><span class="card-title">📡 Noticias del equipo</span></div>
+      <div class="card-body" id="body-news">
+        <div class="skel"></div><div class="skel med"></div><div class="skel"></div><div class="skel short"></div>
+      </div>
     </div>
-
-    <div id="antologias-container">
-      <div class="loading-state">
-        <div class="skeleton"></div>
-        <div class="skeleton tall"></div>
-        <div class="skeleton"></div>
-        <div class="skeleton tall"></div>
+    <div class="card important-card">
+      <div class="card-header"><span class="card-title important-title">🔔 Noticia importante</span></div>
+      <div class="card-body" id="body-important">
+        <div class="skel"></div><div class="skel med"></div><div class="skel"></div><div class="skel short"></div><div class="skel med"></div>
       </div>
     </div>
   </div>
 
-  <div class="right">
-    <div class="news-card">
-      <div class="news-card-header">
-        <span class="news-card-title">📡 Noticias del equipo</span>
-        <span style="font-size:0.7rem;color:var(--muted);" id="lastUpdate"></span>
-      </div>
-      <div id="news-container">
-        <div class="news-loading">
-          <div class="news-skel"></div><div class="news-skel short"></div>
-          <div class="news-skel"></div><div class="news-skel"></div>
-          <div class="news-skel short"></div>
-        </div>
-      </div>
+  <!-- COLUMNA 2: ANTOLOGÍAS -->
+  <div class="card" style="padding:1.25rem;">
+    <div style="font-family:'Syne',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;">📋 Estado de antologías</div>
+    <div id="body-antologias">
+      <div class="skel"></div><div class="skel med"></div><div class="skel"></div>
+      <div class="skel short"></div><div class="skel"></div><div class="skel med"></div>
     </div>
+  </div>
 
-    <div class="news-card" id="important-card" style="display:none; border-color:rgba(196,92,58,0.4);">
-      <div class="news-card-header" style="border-color:rgba(196,92,58,0.3);">
-        <span class="news-card-title" style="color:#c45c3a;">🔔 Noticia importante</span>
-      </div>
-      <div id="important-container"></div>
-    </div>
-
-    <div class="news-card">
-      <div class="news-card-header"><span class="news-card-title">🔗 Accesos rápidos</span></div>
+  <!-- COLUMNA 3: ACCESOS RÁPIDOS -->
+  <div class="card">
+    <div class="card-header"><span class="card-title">🔗 Accesos rápidos</span></div>
+    <div class="card-body">
       <div class="links-grid">
         <a class="quick-link" href="https://app.clickup.com" target="_blank">📋 ClickUp</a>
-        <a class="quick-link" href="https://www.notion.so/373cb3a15b6b8144a141cef3e24febc4" target="_blank">📡 Noticias</a>
+        <a class="quick-link" href="https://www.notion.so/373cb3a15b6b81a098cada7f12ff5b79" target="_blank">📡 Noticias</a>
         <a class="quick-link" href="https://drive.google.com" target="_blank">📁 Google Drive</a>
         <a class="quick-link" href="https://app.brevo.com" target="_blank">📧 Brevo</a>
         <a class="quick-link" href="https://chatgpt.com" target="_blank">🤖 ChatGPT</a>
@@ -194,243 +173,166 @@
       </div>
     </div>
   </div>
+
 </div>
 
 <script>
-const NOTION_TOKEN = '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';
-const PAGE_ID = '373cb3a15b6b8144a141cef3e24febc4';
-const PROXY = 'https://api.allorigins.win/get?url=';
+const WORKER_URL = 'https://rubin-notion.nebularubin.workers.dev/';
 
-// DATE
+// Fecha
 const now = new Date();
 document.getElementById('currentDate').textContent = now.toLocaleDateString('es-AR', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-document.getElementById('lastUpdate').textContent = 'Actualizado ' + now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
 
 function setStatus(type, msg) {
-  const dot = document.getElementById('statusDot');
-  const label = document.getElementById('statusLabel');
-  dot.className = 'status-dot ' + type;
-  label.textContent = msg;
+  document.getElementById('statusDot').className = 'status-dot ' + type;
+  document.getElementById('statusLabel').textContent = msg;
 }
 
-// ANTOLOGÍAS — datos hardcoded pero fáciles de editar
-const SELLOS = [
-  {
-    id: 'nebula', nombre: 'Nébula', clase: 'sello-nebula',
-    antologias: [
-      { id: 'ano3000', emoji: '⚙️', nombre: 'Año 3000', badge: 'activa', badgeText: 'Activa',
-        tareas: [
-          { texto: 'Iniciar correcciones', owner: '', flags: '', done: true },
-          { texto: 'Crear formulario de selección de nombre', owner: 'Vic', flags: '🚩', done: false },
-        ]
-      },
-      { id: 'distopia', emoji: '☢️', nombre: 'Distopía II', badge: 'prox', badgeText: 'Próx. publicación', autoOpen: true,
-        tareas: [
-          { texto: 'Corrección: Aplicar revisiones', owner: 'Nacho', flags: '🚩🚩', done: false },
-          { texto: 'Maquetación: Generar primera versión', owner: 'Nacho', flags: '🚩🚩', done: false },
-          { texto: 'Segunda instancia de revisión', owner: 'Nacho', flags: '🚩🚩', done: false },
-          { texto: 'Adaptar portada final', owner: 'Nacho', flags: '🚩', done: false },
-          { texto: 'Registrar ISBN', owner: 'Nacho', flags: '🚩', done: false },
-          { texto: 'Aplicar correcciones segunda instancia', owner: 'Nacho', flags: '', done: false },
-          { texto: 'Adaptar formatos para plataformas', owner: 'Nacho', flags: '', done: false },
-          { texto: 'Subir a KDP', owner: 'Nacho', flags: '', done: false },
-          { texto: 'Subir a Draft2Digital', owner: 'Nacho', flags: '', done: false },
-          { texto: 'Subir a BMG', owner: 'Nacho', flags: '', done: false },
-          { texto: 'Solicitar alta de título en BMG', owner: 'Nacho', flags: '', done: false },
-          { texto: 'Programar correo de lanzamiento', owner: 'Nacho', flags: '', done: false },
-          { texto: 'Programar correo archivos finales', owner: 'Nacho', flags: '', done: false },
-          { texto: 'Programar correo adquisición de ejemplares', owner: 'Nacho', flags: '', done: false },
-        ]
-      },
-      { id: 'microcuentos', emoji: '📒', nombre: 'Microcuentos', badge: 'activa', badgeText: 'Activa',
-        tareas: [
-          { texto: 'Iniciar correcciones', owner: '', flags: '', done: true },
-          { texto: 'Revisar formulario de sugerencia de nombres', owner: 'Vic', flags: '🚩', done: false },
-          { texto: 'Crear formulario de selección de nombre', owner: 'Vic', flags: '🚩', done: false },
-        ]
-      },
-      { id: 'fantasia', emoji: '🗝️', nombre: 'Fantasía Urbana', badge: 'activa', badgeText: 'Activa',
-        tareas: [
-          { texto: 'Email: Selección (los que faltan)', owner: 'Vic', flags: '🚩🚩', done: false },
-        ]
-      },
-    ],
-    general: [
-      { texto: 'Revisar / Enviar presupuestos ARG y Mundo', owner: 'Vic', flags: '🚩', done: false },
-      { texto: 'Confirmar pedidos', owner: 'Nacho, Vic', flags: '', done: false },
-    ]
-  },
-  {
-    id: 'luna', nombre: 'Luna Roja', clase: 'sello-luna',
-    antologias: [
-      { id: 'criaturas', emoji: '🧟', nombre: 'Criaturas de la noche', badge: 'pub', badgeText: 'Publicada ✅',
-        tareas: [
-          { texto: 'Pedir ejemplares + Bitácora', owner: 'Nacho', flags: '🚩', done: false },
-          { texto: 'Emitir presupuestos', owner: 'John', flags: '🚩', done: false },
-        ]
-      },
-      { id: 'terror', emoji: '🎃', nombre: 'Terror y misterio', badge: 'activa', badgeText: 'Activa', autoOpen: true,
-        tareas: [
-          { texto: 'Definir prólogo ¿Está hecho?', owner: '', flags: '🚩', done: false },
-          { texto: 'Revisar la lista uno a uno', owner: 'John, Nacho', flags: '🚩🚩', done: false },
-          { texto: 'Correo de lista cerrada', owner: 'John, Nacho', flags: '🚩🚩', done: false },
-          { texto: 'Generar y enviar formulario de sugerencia de nombre', owner: '', flags: '🚩', done: false },
-          { texto: 'Separar cuentos para iniciar correcciones', owner: 'John', flags: '🚩🚩', done: false },
-        ]
-      },
-      { id: 'micterror', emoji: '🧫', nombre: 'Microcuento Terror', badge: 'cierra', badgeText: 'Cierra 8 jun',
-        tareas: [
-          { texto: 'Selección de cuentos', owner: 'John', flags: '🚩', done: false },
-        ]
-      },
-      { id: 'creepy', emoji: '🎈', nombre: 'Creepy Kids', badge: 'activa', badgeText: 'Activa',
-        tareas: [
-          { texto: 'Recepción de cuentos', owner: 'John', flags: '🚩', done: false },
-          { texto: 'Selección de cuentos', owner: 'John', flags: '🚩', done: false },
-        ]
-      },
-    ],
-    general: [
-      { texto: 'Revisar / Enviar presupuestos', owner: 'John', flags: '', done: false },
-      { texto: 'Confirmar pedidos', owner: 'Nacho, John', flags: '', done: false },
-    ]
-  },
-  {
-    id: 'meteorito', nombre: 'Meteorito', clase: 'sello-meteorito',
-    antologias: [
-      { id: 'animalitos', emoji: '🦒', nombre: 'Cuentos de animalitos', badge: 'activa', badgeText: 'Activa',
-        tareas: [
-          { texto: 'Correo: Últimos días para confirmar participación', owner: '', flags: '', done: true },
-          { texto: 'Iniciar correcciones', owner: '', flags: '', done: false },
-          { texto: 'Crear un prompt para generación de imágenes', owner: '', flags: '', done: false },
-          { texto: 'Almacenar imágenes de cada cuento', owner: '', flags: '', done: false },
-          { texto: 'Anticipar acciones para próxima antología', owner: '', flags: '🚩', done: false },
-        ]
-      },
-    ],
-    general: []
-  }
-];
+function getRichText(block) {
+  const type = block.type;
+  if (!block[type]) return '';
+  return (block[type].rich_text || []).map(r => r.plain_text).join('');
+}
 
-function buildAntologias() {
-  const container = document.getElementById('antologias-container');
-  const saved = JSON.parse(localStorage.getItem('rubin_tasks') || '{}');
-  let html = '';
-  let totalAnt = 0, totalPend = 0, totalDone = 0;
-
-  SELLOS.forEach(sello => {
-    html += `<div class="sello-block ${sello.clase}">`;
-    html += `<div class="sello-header"><div class="sello-dot"></div><span class="sello-name">${sello.nombre}</span></div>`;
-
-    sello.antologias.forEach(ant => {
-      totalAnt++;
-      const isOpen = ant.autoOpen ? 'open' : '';
-      html += `<div class="antologia ${isOpen}" id="ant-${ant.id}">`;
-      html += `<div class="antologia-header" onclick="toggleAnt('ant-${ant.id}')">`;
-      html += `<div class="antologia-title"><span>${ant.emoji}</span> ${ant.nombre} <span class="antologia-badge badge-${ant.badge}">${ant.badgeText}</span></div>`;
-      html += `<span class="chevron">▼</span></div>`;
-      html += `<div class="task-list">`;
-      ant.tareas.forEach((t, ti) => {
-        const key = `${ant.id}_${ti}`;
-        const isDone = saved.hasOwnProperty(key) ? saved[key] : t.done;
-        isDone ? totalDone++ : totalPend++;
-        html += `<div class="task-item">
-          <span class="task-bullet">${isDone ? '✓' : '·'}</span>
-          <span class="task-text ${isDone ? 'done' : ''}">${t.texto}</span>
-          ${t.flags ? `<span class="task-flags" style="font-size:0.7rem;">${t.flags}</span>` : ''}
-          ${t.owner ? `<span class="task-owner">${t.owner}</span>` : ''}
-        </div>`;
-      });
-      html += `</div></div>`;
-    });
-
-    if (sello.general && sello.general.length) {
-      html += `<div class="general-block"><div class="general-label">📦 General ${sello.nombre}</div>`;
-      sello.general.forEach(t => {
-        totalPend++;
-        html += `<div class="task-item">
-          <span class="task-bullet" style="color:var(--muted)">·</span>
-          <span class="task-text">${t.texto}</span>
-          ${t.flags ? `<span class="task-flags" style="font-size:0.7rem;">${t.flags}</span>` : ''}
-          ${t.owner ? `<span class="task-owner">${t.owner}</span>` : ''}
-        </div>`;
-      });
-      html += `</div>`;
+function renderNews(blocks) {
+  // Detectar índices de cada sección H2
+  let sections = {};
+  blocks.forEach((b, i) => {
+    if (b.type === 'heading_2') {
+      const t = getRichText(b);
+      if (t.includes('Noticias del equipo')) sections.news = i;
+      else if (t.includes('Noticia importante')) sections.important = i;
+      else if (t.includes('Estado de antolog')) sections.antologias = i;
     }
-
-    html += `</div>`;
   });
 
-  container.innerHTML = html;
-  document.getElementById('statAnt').textContent = totalAnt;
-  document.getElementById('statPend').textContent = totalPend;
-  document.getElementById('statDone').textContent = totalDone;
+  // Extraer texto de cada sección hasta la siguiente H2 o divider
+  function extractSection(startIdx) {
+    if (startIdx === undefined) return null;
+    let lines = [];
+    for (let i = startIdx + 1; i < blocks.length; i++) {
+      const b = blocks[i];
+      if (b.type === 'heading_2' || b.type === 'divider') break;
+      const text = getRichText(b);
+      if (!text) continue;
+      if (b.type === 'bulleted_list_item') lines.push('• ' + text);
+      else lines.push(text);
+    }
+    return lines.join('\n');
+  }
+
+  // NOTICIAS
+  const newsText = extractSection(sections.news);
+  document.getElementById('body-news').innerHTML = newsText
+    ? `<div class="news-text">${newsText}</div>`
+    : `<div class="news-text" style="color:var(--muted);font-style:italic;">Sin noticias.</div>`;
+
+  // NOTICIA IMPORTANTE
+  const importantText = extractSection(sections.important);
+  document.getElementById('body-important').innerHTML = importantText
+    ? `<div class="news-text">${importantText}</div>`
+    : `<div class="news-text" style="color:var(--muted);font-style:italic;">Sin novedades.</div>`;
+
+  // ANTOLOGÍAS — parsear H3 como sellos, negrita como antologías, bullets como tareas
+  if (sections.antologias === undefined) {
+    document.getElementById('body-antologias').innerHTML = `<div style="color:var(--muted);font-size:0.82rem;font-style:italic;">No se encontró la sección Estado de antologías en Notion.</div>`;
+    return;
+  }
+
+  let html = '';
+  let currentSello = null;
+  let currentAnt = null;
+  let antId = 0;
+  let tasks = [];
+
+  function closeTasks() {
+    if (tasks.length && currentAnt !== null) {
+      html += `<div class="task-list">`;
+      tasks.forEach(t => {
+        html += `<div class="task-item"><span class="task-bullet">·</span><span>${t}</span></div>`;
+      });
+      html += `</div></div>`;
+      tasks = [];
+    } else if (currentAnt !== null) {
+      html += `</div>`;
+    }
+    currentAnt = null;
+  }
+
+  const SELLOS = {
+    'Nébula': 's-nebula',
+    'Luna Roja': 's-luna',
+    'Meteorito': 's-meteorito'
+  };
+
+  for (let i = sections.antologias + 1; i < blocks.length; i++) {
+    const b = blocks[i];
+    if (b.type === 'heading_2') break;
+
+    const text = getRichText(b);
+    if (!text) continue;
+
+    if (b.type === 'heading_3') {
+      // Cerrar antología anterior
+      closeTasks();
+      // Cerrar sello anterior
+      if (currentSello) html += `</div>`;
+
+      const clazz = SELLOS[text] || 's-nebula';
+      html += `<div class="sello-block ${clazz}">`;
+      html += `<div class="sello-header"><div class="sello-dot"></div><span class="sello-name">${text}</span></div>`;
+      currentSello = text;
+      currentAnt = null;
+
+    } else if (b.type === 'paragraph') {
+      // Detectar si es negrita (título de antología) o texto normal
+      const type = b.type;
+      const richText = b[type]?.rich_text || [];
+      const isBold = richText.length > 0 && richText[0].annotations?.bold;
+
+      if (isBold) {
+        closeTasks();
+        antId++;
+        html += `<div class="antologia" id="ant-${antId}">`;
+        html += `<div class="ant-header" onclick="toggleAnt('ant-${antId}')">`;
+        html += `<span class="ant-title">${text}</span>`;
+        html += `<span class="chevron">▼</span></div>`;
+        currentAnt = antId;
+      } else {
+        if (currentAnt !== null) tasks.push(text);
+      }
+
+    } else if (b.type === 'bulleted_list_item') {
+      if (currentAnt !== null) tasks.push('• ' + text);
+    }
+  }
+
+  closeTasks();
+  if (currentSello) html += `</div>`;
+
+  document.getElementById('body-antologias').innerHTML = html || `<div style="color:var(--muted);font-size:0.82rem;">Sin datos.</div>`;
 }
 
 function toggleAnt(id) {
   document.getElementById(id).classList.toggle('open');
 }
 
-// FETCH NOTION
 async function fetchNotion() {
-  const url = `https://api.notion.com/v1/blocks/${PAGE_ID}/children?page_size=100`;
-  const encoded = encodeURIComponent(url);
-  
   try {
-    const resp = await fetch(`${PROXY}${encoded}`, {
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    });
+    const resp = await fetch(WORKER_URL);
+    if (!resp.ok) throw new Error('Error ' + resp.status);
     const data = await resp.json();
-    const blocks = JSON.parse(data.contents);
-    renderNews(blocks.results);
-    setStatus('live', 'Sincronizado con Notion');
+    renderNews(data.results);
+    setStatus('live', 'Sincronizado · ' + now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'}));
   } catch(e) {
-    setStatus('error', 'Sin conexión a Notion — mostrando última versión');
-    renderNewsOffline();
+    setStatus('error', 'Sin conexión a Notion');
+    ['body-news','body-important','body-antologias'].forEach(id => {
+      document.getElementById(id).innerHTML = `<div style="color:var(--muted);font-size:0.82rem;font-style:italic;">No se pudo conectar con Notion.</div>`;
+    });
+    console.error(e);
   }
 }
 
-function getBlockText(block) {
-  const type = block.type;
-  if (!block[type]) return '';
-  const rich = block[type].rich_text || [];
-  return rich.map(r => r.plain_text).join('');
-}
-
-function renderNews(blocks) {
-  let news1 = '', news2 = '', inImportant = false, inNews = false;
-
-  blocks.forEach(b => {
-    const text = getBlockText(b);
-    if (b.type === 'heading_2') {
-      if (text.includes('Noticia importante')) { inImportant = true; inNews = false; }
-      else if (text.includes('Noticias')) { inNews = true; inImportant = false; }
-      else { inNews = false; inImportant = false; }
-      return;
-    }
-    if (b.type === 'divider') { return; }
-    if (b.type === 'heading_3' || b.type === 'heading_1') { return; }
-    if (!text) return;
-
-    const line = (b.type === 'bulleted_list_item' ? '• ' : '') + text;
-    if (inNews) news1 += line + '\n';
-    else if (inImportant) news2 += line + '\n';
-  });
-
-  document.getElementById('news-container').innerHTML = `<div class="news-body">${news1.trim()}</div>`;
-
-  if (news2.trim()) {
-    document.getElementById('important-card').style.display = 'block';
-    document.getElementById('important-container').innerHTML = `<div class="news-body">${news2.trim()}</div>`;
-  }
-}
-
-function renderNewsOffline() {
-  document.getElementById('news-container').innerHTML = `<div class="news-body" style="color:var(--muted);font-style:italic;">No se pudo conectar con Notion. Revisá tu conexión a internet.</div>`;
-}
-
-// INIT
-buildAntologias();
 fetchNotion();
 </script>
 </body>
