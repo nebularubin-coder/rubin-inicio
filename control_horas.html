@@ -699,7 +699,6 @@ $("btn-pause").addEventListener("click", async () => {
 $("btn-resume").addEventListener("click", async () => {
   if(await insertarEvento("resume")) await refrescarEstadoTimer();
 });
-$("btn-stop").addEventListener("click", abrirModalTareas);
 let momentoDetener = null;
 
 $("btn-stop").addEventListener("click", congelarYAbrirModal);
