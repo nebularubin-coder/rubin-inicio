@@ -178,6 +178,17 @@
   }
   .who .nombre{font-family:'Fraunces',serif;font-size:20px;font-weight:600;}
   .who .sello{font-size:12px;color:var(--paper-dim);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;}
+  .resumen-hoy{
+    margin-top:10px;
+    font-family:'Space Mono',monospace;
+    font-size:13px;
+    color:var(--gold);
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:5px 14px;
+    display:inline-block;
+  }
 
   .controls{display:flex;gap:12px;width:100%;max-width:340px;}
   .btn-control{
@@ -339,6 +350,7 @@
   <div class="who">
     <div class="nombre" id="timer-nombre">—</div>
     <div class="sello" id="timer-sello">—</div>
+    <div class="resumen-hoy" id="resumen-hoy">Hoy trabajaste: 0h 00m</div>
   </div>
 
   <div class="stamp-wrap">
@@ -375,7 +387,7 @@
   <div class="modal-card">
     <h2>Antes de detener…</h2>
     <p class="sub">Enumerá las tareas que realizaste en esta jornada. Es obligatorio para poder cerrar el registro.</p>
-    <textarea id="modal-tareas-texto" rows="6" placeholder="Ej:&#10;- Respondí correos de convocatoria Meteorito&#10;- Armé presupuesto para imprenta&#10;- Revisé maqueta capítulo 3"></textarea>
+    <textarea id="modal-tareas-texto" rows="6" placeholder="Ej:&#10;Respondí correos de convocatoria&#10;Armé y envié presupuestos de libros&#10;Revisé maqueta&#10;Programé lanzamiento de convocatoria"></textarea>
     <div class="error-msg hidden" id="modal-tareas-error">Tenés que enumerar al menos una tarea antes de detener.</div>
     <div class="modal-actions">
       <button class="btn-control btn-pause" id="modal-cancelar">Cancelar</button>
@@ -501,9 +513,39 @@ function calcularEstadoActual(eventos){
   }
 }
 
-async function insertarEvento(tipo, detalle){
+/* Suma el tiempo activo (descontando pausas) a lo largo de una lista de
+   eventos cualquiera, incluyendo un tramo final sin cerrar (en curso). */
+function sumarActivoTotal(eventos){
+  let total = 0;
+  let corriendoDesde = null;
+  for(const ev of eventos){
+    const t = new Date(ev.creado_en).getTime();
+    if(ev.tipo === "start" || ev.tipo === "resume"){
+      corriendoDesde = t;
+    } else if(ev.tipo === "pause" || ev.tipo === "stop"){
+      if(corriendoDesde !== null){
+        total += (t - corriendoDesde)/1000;
+        corriendoDesde = null;
+      }
+    }
+  }
+  if(corriendoDesde !== null){
+    total += (Date.now() - corriendoDesde)/1000;
+  }
+  return total;
+}
+
+function calcularTotalHoy(eventos){
+  const inicioHoy = new Date();
+  inicioHoy.setHours(0,0,0,0);
+  const eventosHoy = eventos.filter(ev => new Date(ev.creado_en) >= inicioHoy);
+  return sumarActivoTotal(eventosHoy);
+}
+
+async function insertarEvento(tipo, detalle, momentoExacto){
   const payload = { user_id: currentUser.id, tipo };
   if(detalle) payload.detalle = detalle;
+  if(momentoExacto) payload.creado_en = momentoExacto.toISOString();
   const { error } = await sb.from("timer_eventos").insert(payload);
   if(error){
     alert("No se pudo registrar el evento: " + error.message);
@@ -511,6 +553,8 @@ async function insertarEvento(tipo, detalle){
   }
   return true;
 }
+
+let todosEventosCache = [];
 
 async function refrescarEstadoTimer(){
   const { data, error } = await sb
@@ -524,7 +568,8 @@ async function refrescarEstadoTimer(){
     return;
   }
 
-  const estado = calcularEstadoActual(data || []);
+  todosEventosCache = data || [];
+  const estado = calcularEstadoActual(todosEventosCache);
   aplicarEstadoTimer(estado);
 }
 
@@ -556,6 +601,9 @@ function aplicarEstadoTimer(estado){
     } else {
       $("ring-fg").classList.remove("alert");
     }
+
+    const totalHoy = calcularTotalHoy(todosEventosCache);
+    $("resumen-hoy").textContent = `Hoy trabajaste: ${fmtHM(totalHoy)}`;
   };
 
   pintar();
@@ -652,9 +700,14 @@ $("btn-resume").addEventListener("click", async () => {
   if(await insertarEvento("resume")) await refrescarEstadoTimer();
 });
 $("btn-stop").addEventListener("click", abrirModalTareas);
-$("btn-stop-2").addEventListener("click", abrirModalTareas);
+let momentoDetener = null;
 
-function abrirModalTareas(){
+$("btn-stop").addEventListener("click", congelarYAbrirModal);
+$("btn-stop-2").addEventListener("click", congelarYAbrirModal);
+
+function congelarYAbrirModal(){
+  momentoDetener = new Date();
+  if(tickInterval){ clearInterval(tickInterval); tickInterval = null; }
   $("modal-tareas-texto").value = "";
   hide($("modal-tareas-error"));
   show($("modal-tareas"));
@@ -665,8 +718,10 @@ $("modal-tareas-texto").addEventListener("input", () => {
   hide($("modal-tareas-error"));
 });
 
-$("modal-cancelar").addEventListener("click", () => {
+$("modal-cancelar").addEventListener("click", async () => {
   hide($("modal-tareas"));
+  momentoDetener = null;
+  await refrescarEstadoTimer(); // no se guardó nada: retoma el conteo real desde donde iba
 });
 
 $("modal-confirmar").addEventListener("click", async () => {
@@ -679,10 +734,11 @@ $("modal-confirmar").addEventListener("click", async () => {
   $("modal-confirmar").disabled = true;
   $("modal-confirmar").textContent = "Guardando…";
 
-  const ok = await insertarEvento("stop", texto);
+  const ok = await insertarEvento("stop", texto, momentoDetener);
 
   $("modal-confirmar").disabled = false;
   $("modal-confirmar").textContent = "Confirmar y detener";
+  momentoDetener = null;
 
   if(ok){
     hide($("modal-tareas"));
