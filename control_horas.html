@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Control de Horas — Rubin Editorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<style>
+  :root{
+    --ink:#121A24;
+    --surface:#1B2530;
+    --surface-2:#232F3D;
+    --paper:#EDE6D6;
+    --paper-dim:#A9AEB6;
+    --gold:#C7A24A;
+    --gold-dim:#8C7438;
+    --stamp:#A3402C;
+    --ok:#5C8568;
+    --line:#2E3A48;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .topbar{
+    width:100%;
+    padding:18px 24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid var(--line);
+    box-sizing:border-box;
+  }
+  .brand{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:18px;
+    letter-spacing:0.02em;
+    color:var(--paper);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .brand .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--gold);
+  }
+  .topbar-right{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--paper-dim);}
+  .btn-link{
+    background:none;border:none;color:var(--paper-dim);
+    font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;
+    text-decoration:underline;text-underline-offset:2px;
+  }
+  .btn-link:hover{color:var(--paper);}
+
+  .container{
+    width:100%;
+    max-width:520px;
+    padding:48px 24px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .container.wide{max-width:920px;}
+
+  /* ---------- LOGIN ---------- */
+  .login-card{
+    width:100%;
+    max-width:380px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:36px 32px;
+    margin-top:8vh;
+  }
+  .login-card h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:24px;
+    margin:0 0 6px;
+  }
+  .login-card p.sub{
+    color:var(--paper-dim);
+    font-size:13px;
+    margin:0 0 28px;
+  }
+  label{
+    display:block;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--paper-dim);
+    margin-bottom:6px;
+  }
+  input[type=email],input[type=password],input[type=date]{
+    width:100%;
+    background:var(--ink);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:11px 12px;
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    margin-bottom:18px;
+  }
+  input:focus{outline:2px solid var(--gold-dim);outline-offset:1px;}
+  .btn-primary{
+    width:100%;
+    background:var(--gold);
+    color:#1A1404;
+    border:none;
+    border-radius:8px;
+    padding:12px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    transition:filter .15s ease;
+  }
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+  .error-msg{
+    color:#E7917E;
+    font-size:13px;
+    margin:-6px 0 16px;
+  }
+
+  /* ---------- TIMER ---------- */
+  .stamp-wrap{
+    position:relative;
+    width:280px;height:280px;
+    display:flex;align-items:center;justify-content:center;
+    margin:18px 0 8px;
+  }
+  .stamp-wrap svg{position:absolute;top:0;left:0;transform:rotate(-90deg);}
+  .stamp-ring-bg{fill:none;stroke:var(--surface-2);stroke-width:6;}
+  .stamp-ring-fg{
+    fill:none;stroke:var(--gold);stroke-width:6;stroke-linecap:round;
+    transition:stroke-dashoffset 1s linear, stroke .3s ease;
+  }
+  .stamp-ring-fg.alert{stroke:var(--stamp);}
+  .stamp-inner{
+    display:flex;flex-direction:column;align-items:center;
+    z-index:1;
+  }
+  .stamp-time{
+    font-family:'Space Mono',monospace;
+    font-size:40px;
+    font-weight:700;
+    letter-spacing:0.02em;
+    font-variant-numeric:tabular-nums;
+  }
+  .stamp-status{
+    margin-top:6px;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    color:var(--paper-dim);
+  }
+  .stamp-status.running{color:var(--ok);}
+  .stamp-status.paused{color:var(--gold);}
+
+  .who{
+    text-align:center;
+    margin-bottom:28px;
+  }
+  .who .nombre{font-family:'Fraunces',serif;font-size:20px;font-weight:600;}
+  .who .sello{font-size:12px;color:var(--paper-dim);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;}
+
+  .controls{display:flex;gap:12px;width:100%;max-width:340px;}
+  .btn-control{
+    flex:1;
+    padding:14px;
+    border-radius:8px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:filter .15s ease, transform .1s ease;
+  }
+  .btn-control:active{transform:scale(0.98);}
+  .btn-start{background:var(--ok);color:#0E1A12;}
+  .btn-pause{background:var(--surface-2);color:var(--paper);border-color:var(--line);}
+  .btn-stop{background:var(--stamp);color:#2A0E08;}
+  .btn-control:hover{filter:brightness(1.1);}
+
+  .alarm-banner{
+    margin-top:20px;
+    background:rgba(163,64,44,0.16);
+    border:1px solid var(--stamp);
+    color:#F0BBA8;
+    padding:12px 16px;
+    border-radius:8px;
+    font-size:13px;
+    text-align:center;
+    max-width:340px;
+  }
+
+  /* ---------- ADMIN ---------- */
+  .admin-header{
+    display:flex;justify-content:space-between;align-items:baseline;
+    width:100%;margin-bottom:24px;flex-wrap:wrap;gap:12px;
+  }
+  .admin-header h1{font-family:'Fraunces',serif;font-size:26px;margin:0;}
+  .filters{
+    display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;width:100%;
+  }
+  .filter-btn{
+    background:var(--surface);
+    border:1px solid var(--line);
+    color:var(--paper-dim);
+    padding:8px 14px;
+    border-radius:20px;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .filter-btn.active{
+    background:var(--gold);
+    color:#1A1404;
+    border-color:var(--gold);
+    font-weight:600;
+  }
+  .filter-dates{display:flex;gap:8px;align-items:center;}
+  .filter-dates input{margin-bottom:0;width:140px;}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{
+    text-align:left;
+    color:var(--paper-dim);
+    text-transform:uppercase;
+    font-size:11px;
+    letter-spacing:0.06em;
+    padding:0 10px 10px;
+    border-bottom:1px solid var(--line);
+  }
+  tbody td{padding:10px;border-bottom:1px solid var(--line);}
+  tbody tr:hover{background:var(--surface);}
+  .hrs{font-family:'Space Mono',monospace;}
+  .empty-state{
+    text-align:center;color:var(--paper-dim);padding:60px 0;font-size:14px;
+  }
+  .summary-row{
+    display:flex;gap:18px;flex-wrap:wrap;margin-bottom:22px;
+  }
+  .summary-card{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:10px;padding:14px 18px;min-width:140px;
+  }
+  .summary-card .label{font-size:11px;color:var(--paper-dim);text-transform:uppercase;letter-spacing:0.06em;}
+  .summary-card .value{font-family:'Space Mono',monospace;font-size:20px;margin-top:4px;}
+
+  .hidden{display:none !important;}
+  .loading-text{color:var(--paper-dim);font-size:13px;text-align:center;padding:40px 0;}
+</style>
+</head>
+<body>
+
+<div class="topbar hidden" id="topbar">
+  <div class="brand"><span class="dot"></span> Control de Horas · Rubin Editorial</div>
+  <div class="topbar-right">
+    <span id="topbar-nombre"></span>
+    <button class="btn-link" id="btn-logout">Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="container" id="view-login">
+  <div class="login-card">
+    <h1>Control de Horas</h1>
+    <p class="sub">Ingresá con tu correo y contraseña asignados.</p>
+    <div id="login-error" class="error-msg hidden"></div>
+    <label for="login-email">Correo</label>
+    <input type="email" id="login-email" autocomplete="username" />
+    <label for="login-pass">Contraseña</label>
+    <input type="password" id="login-pass" autocomplete="current-password" />
+    <button class="btn-primary" id="btn-login">Ingresar</button>
+  </div>
+</div>
+
+<!-- TIMER -->
+<div class="container hidden" id="view-timer">
+  <div class="who">
+    <div class="nombre" id="timer-nombre">—</div>
+    <div class="sello" id="timer-sello">—</div>
+  </div>
+
+  <div class="stamp-wrap">
+    <svg width="280" height="280" viewBox="0 0 280 280">
+      <circle class="stamp-ring-bg" cx="140" cy="140" r="124"></circle>
+      <circle class="stamp-ring-fg" id="ring-fg" cx="140" cy="140" r="124"
+        stroke-dasharray="779" stroke-dashoffset="779"></circle>
+    </svg>
+    <div class="stamp-inner">
+      <div class="stamp-time" id="stamp-time">00:00:00</div>
+      <div class="stamp-status" id="stamp-status">Detenido</div>
+    </div>
+  </div>
+
+  <div class="controls" id="controls-idle">
+    <button class="btn-control btn-start" id="btn-start">Iniciar jornada</button>
+  </div>
+  <div class="controls hidden" id="controls-running">
+    <button class="btn-control btn-pause" id="btn-pause">Pausar</button>
+    <button class="btn-control btn-stop" id="btn-stop">Detener</button>
+  </div>
+  <div class="controls hidden" id="controls-paused">
+    <button class="btn-control btn-start" id="btn-resume">Reanudar</button>
+    <button class="btn-control btn-stop" id="btn-stop-2">Detener</button>
+  </div>
+
+  <div class="alarm-banner hidden" id="alarm-banner">
+    Llegaste a 3:30 hs de trabajo activo en esta jornada.
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="container wide hidden" id="view-admin">
+  <div class="admin-header">
+    <h1>Panel de horas</h1>
+    <button class="filter-btn" id="btn-pdf" style="border-color:var(--gold);color:var(--gold);font-weight:600;">⬇ Descargar PDF</button>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" data-range="hoy">Hoy</button>
+    <button class="filter-btn" data-range="semana">Esta semana</button>
+    <button class="filter-btn" data-range="mes">Este mes</button>
+    <div class="filter-dates">
+      <input type="date" id="filter-desde" />
+      <span style="color:var(--paper-dim);font-size:13px;">a</span>
+      <input type="date" id="filter-hasta" />
+      <button class="filter-btn" id="filter-custom">Aplicar</button>
+    </div>
+    <select id="filter-usuario" class="filter-btn" style="cursor:pointer;">
+      <option value="todos">Todos los responsables</option>
+    </select>
+  </div>
+
+  <div class="summary-row" id="summary-row"></div>
+
+  <div id="admin-table-wrap">
+    <div class="loading-text">Cargando registros…</div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIGURACIÓN — completar antes de publicar
+   ============================================================ */
+const SUPABASE_URL = "https://wpidayovldtnpkininvz.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndwaWRheW92bGR0bnBraW5pbnZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MzAxMjUsImV4cCI6MjA5ODMwNjEyNX0.qibS79kRazKcQw8YsXNtGxTsyhyDy_N_PXSn6Gu8Q-c";
+const META_ALARMA_SEGUNDOS = 3.5 * 60 * 60; // 3:30 hs
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ---------- helpers ---------- */
+const $ = (id) => document.getElementById(id);
+const show = (el) => el.classList.remove("hidden");
+const hide = (el) => el.classList.add("hidden");
+
+function fmtHMS(totalSeconds){
+  totalSeconds = Math.max(0, Math.floor(totalSeconds));
+  const h = String(Math.floor(totalSeconds/3600)).padStart(2,"0");
+  const m = String(Math.floor((totalSeconds%3600)/60)).padStart(2,"0");
+  const s = String(totalSeconds%60).padStart(2,"0");
+  return `${h}:${m}:${s}`;
+}
+function fmtHM(totalSeconds){
+  totalSeconds = Math.max(0, Math.floor(totalSeconds));
+  const h = Math.floor(totalSeconds/3600);
+  const m = Math.floor((totalSeconds%3600)/60);
+  return `${h}h ${String(m).padStart(2,"0")}m`;
+}
+
+/* Suena un beep simple sin necesitar ningún archivo de audio */
+function beep(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = "sine";
+    o.frequency.value = 880;
+    g.gain.value = 0.15;
+    o.connect(g); g.connect(ctx.destination);
+    o.start();
+    setTimeout(()=>{ o.stop(); ctx.close(); }, 600);
+  }catch(e){ /* silencioso si el navegador bloquea audio sin interacción previa */ }
+}
+
+/* ============================================================
+   ESTADO GLOBAL DE SESIÓN
+   ============================================================ */
+let currentUser = null;
+let currentPerfil = null;
+let tickInterval = null;
+let alarmDisparada = false;
+
+/* Reconstruye, a partir de los eventos del usuario, el estado de la
+   "jornada" actual (todo lo ocurrido desde el último 'stop' hasta ahora). */
+function calcularEstadoActual(eventos){
+  // eventos ya vienen ordenados ascendente por creado_en
+  let ultimoStopIdx = -1;
+  for(let i=eventos.length-1;i>=0;i--){
+    if(eventos[i].tipo === "stop"){ ultimoStopIdx = i; break; }
+  }
+  const sesion = eventos.slice(ultimoStopIdx+1); // eventos de la jornada en curso
+
+  if(sesion.length === 0){
+    return { status: "idle", acumulado: 0, desde: null };
+  }
+
+  let acumulado = 0;
+  let corriendoDesde = null;
+
+  for(const ev of sesion){
+    const t = new Date(ev.creado_en).getTime();
+    if(ev.tipo === "start" || ev.tipo === "resume"){
+      corriendoDesde = t;
+    } else if(ev.tipo === "pause"){
+      if(corriendoDesde !== null){
+        acumulado += (t - corriendoDesde)/1000;
+        corriendoDesde = null;
+      }
+    }
+  }
+
+  if(corriendoDesde !== null){
+    return { status: "running", acumulado, desde: corriendoDesde };
+  } else {
+    return { status: "paused", acumulado, desde: null };
+  }
+}
+
+async function insertarEvento(tipo){
+  const { error } = await sb.from("timer_eventos").insert({
+    user_id: currentUser.id,
+    tipo
+  });
+  if(error){
+    alert("No se pudo registrar el evento: " + error.message);
+    return false;
+  }
+  return true;
+}
+
+async function refrescarEstadoTimer(){
+  const { data, error } = await sb
+    .from("timer_eventos")
+    .select("tipo, creado_en")
+    .eq("user_id", currentUser.id)
+    .order("creado_en", { ascending: true });
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
+  const estado = calcularEstadoActual(data || []);
+  aplicarEstadoTimer(estado);
+}
+
+function aplicarEstadoTimer(estado){
+  if(tickInterval){ clearInterval(tickInterval); tickInterval = null; }
+
+  if(estado.status !== "running"){
+    alarmDisparada = estado.acumulado >= META_ALARMA_SEGUNDOS;
+  }
+
+  const pintar = () => {
+    let segundos = estado.acumulado;
+    if(estado.status === "running" && estado.desde){
+      segundos += (Date.now() - estado.desde)/1000;
+    }
+    $("stamp-time").textContent = fmtHMS(segundos);
+
+    const pct = Math.min(1, segundos / META_ALARMA_SEGUNDOS);
+    const circ = 779; // 2 * PI * 124, redondeado
+    $("ring-fg").setAttribute("stroke-dashoffset", String(circ * (1-pct)));
+
+    if(segundos >= META_ALARMA_SEGUNDOS){
+      $("ring-fg").classList.add("alert");
+      if(!alarmDisparada){
+        alarmDisparada = true;
+        beep();
+        show($("alarm-banner"));
+      }
+    } else {
+      $("ring-fg").classList.remove("alert");
+    }
+  };
+
+  pintar();
+
+  hide($("controls-idle")); hide($("controls-running")); hide($("controls-paused"));
+
+  if(estado.status === "idle"){
+    show($("controls-idle"));
+    $("stamp-status").textContent = "Detenido";
+    $("stamp-status").className = "stamp-status";
+    hide($("alarm-banner"));
+  } else if(estado.status === "running"){
+    show($("controls-running"));
+    $("stamp-status").textContent = "En curso";
+    $("stamp-status").className = "stamp-status running";
+    tickInterval = setInterval(pintar, 1000);
+  } else if(estado.status === "paused"){
+    show($("controls-paused"));
+    $("stamp-status").textContent = "Pausado";
+    $("stamp-status").className = "stamp-status paused";
+  }
+}
+
+/* ============================================================
+   LOGIN / LOGOUT
+   ============================================================ */
+$("btn-login").addEventListener("click", async () => {
+  const email = $("login-email").value.trim();
+  const password = $("login-pass").value;
+  hide($("login-error"));
+  $("btn-login").disabled = true;
+  $("btn-login").textContent = "Ingresando…";
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+  $("btn-login").disabled = false;
+  $("btn-login").textContent = "Ingresar";
+
+  if(error){
+    $("login-error").textContent = "Correo o contraseña incorrectos.";
+    show($("login-error"));
+    return;
+  }
+  await despuesDeLogin(data.user);
+});
+
+$("btn-logout").addEventListener("click", async () => {
+  await sb.auth.signOut();
+  location.reload();
+});
+
+async function despuesDeLogin(user){
+  currentUser = user;
+
+  const { data: perfil, error } = await sb
+    .from("timer_perfiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if(error || !perfil){
+    $("login-error").textContent = "Tu usuario no tiene un perfil asignado. Avisale al admin.";
+    show($("login-error"));
+    await sb.auth.signOut();
+    return;
+  }
+
+  currentPerfil = perfil;
+  hide($("view-login"));
+  show($("topbar"));
+  $("topbar-nombre").textContent = `${perfil.nombre} · ${perfil.sello}`;
+
+  if(perfil.is_admin){
+    show($("view-admin"));
+    iniciarPanelAdmin();
+  } else {
+    show($("view-timer"));
+    $("timer-nombre").textContent = perfil.nombre;
+    $("timer-sello").textContent = perfil.sello;
+    await refrescarEstadoTimer();
+  }
+}
+
+/* ============================================================
+   BOTONES DEL TIMER
+   ============================================================ */
+$("btn-start").addEventListener("click", async () => {
+  if(await insertarEvento("start")) await refrescarEstadoTimer();
+});
+$("btn-pause").addEventListener("click", async () => {
+  if(await insertarEvento("pause")) await refrescarEstadoTimer();
+});
+$("btn-resume").addEventListener("click", async () => {
+  if(await insertarEvento("resume")) await refrescarEstadoTimer();
+});
+$("btn-stop").addEventListener("click", async () => {
+  if(await insertarEvento("stop")) await refrescarEstadoTimer();
+});
+$("btn-stop-2").addEventListener("click", async () => {
+  if(await insertarEvento("stop")) await refrescarEstadoTimer();
+});
+
+/* ============================================================
+   PANEL ADMIN
+   ============================================================ */
+let rangoActivo = "hoy";
+let sesionesRango = []; // sesiones del rango de fechas actual, sin filtrar por usuario
+let perfilesCache = {};
+
+function calcularRango(tipo){
+  const hoy = new Date();
+  const inicio = new Date(hoy);
+  const fin = new Date(hoy);
+  fin.setHours(23,59,59,999);
+
+  if(tipo === "hoy"){
+    inicio.setHours(0,0,0,0);
+  } else if(tipo === "semana"){
+    const diaSemana = (inicio.getDay()+6)%7; // lunes=0
+    inicio.setDate(inicio.getDate()-diaSemana);
+    inicio.setHours(0,0,0,0);
+  } else if(tipo === "mes"){
+    inicio.setDate(1);
+    inicio.setHours(0,0,0,0);
+  }
+  return { desde: inicio, hasta: fin };
+}
+
+document.querySelectorAll(".filter-btn[data-range]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn[data-range]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    rangoActivo = btn.dataset.range;
+    const { desde, hasta } = calcularRango(rangoActivo);
+    cargarYRenderizarAdmin(desde, hasta);
+  });
+});
+
+$("filter-custom").addEventListener("click", () => {
+  const desdeVal = $("filter-desde").value;
+  const hastaVal = $("filter-hasta").value;
+  if(!desdeVal || !hastaVal) return;
+  document.querySelectorAll(".filter-btn[data-range]").forEach(b=>b.classList.remove("active"));
+  const desde = new Date(desdeVal + "T00:00:00");
+  const hasta = new Date(hastaVal + "T23:59:59");
+  cargarYRenderizarAdmin(desde, hasta);
+});
+
+$("filter-usuario").addEventListener("change", () => {
+  renderAdminConFiltros();
+});
+
+$("btn-pdf").addEventListener("click", generarPDF);
+
+function generarPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const usuarioFiltro = $("filter-usuario").value;
+  const sesiones = usuarioFiltro === "todos"
+    ? sesionesRango
+    : sesionesRango.filter(s => s.userId === usuarioFiltro);
+  const nombreFiltro = usuarioFiltro === "todos"
+    ? "Todos los responsables"
+    : ($("filter-usuario").selectedOptions[0]?.textContent || "");
+
+  const activeBtn = document.querySelector(".filter-btn[data-range].active");
+  let rangoTexto;
+  if(activeBtn){
+    rangoTexto = activeBtn.textContent;
+  } else if($("filter-desde").value && $("filter-hasta").value){
+    rangoTexto = `${$("filter-desde").value} a ${$("filter-hasta").value}`;
+  } else {
+    rangoTexto = "—";
+  }
+
+  doc.setFontSize(16);
+  doc.text("Control de Horas — Rubin Editorial", 14, 18);
+  doc.setFontSize(10);
+  doc.setTextColor(100);
+  doc.text(`Período: ${rangoTexto}    ·    Filtro: ${nombreFiltro}`, 14, 25);
+  doc.text(`Generado: ${new Date().toLocaleString("es-AR")}`, 14, 30);
+
+  const totalPorSello = {};
+  let totalGeneral = 0;
+  sesiones.forEach(s => {
+    const sello = perfilesCache[s.userId]?.sello || "—";
+    totalPorSello[sello] = (totalPorSello[sello]||0) + s.segundosActivos;
+    totalGeneral += s.segundosActivos;
+  });
+
+  const resumenLineas = [`Total del período: ${fmtHM(totalGeneral)}`];
+  for(const sello in totalPorSello){
+    resumenLineas.push(`${sello}: ${fmtHM(totalPorSello[sello])}`);
+  }
+  doc.setFontSize(10);
+  doc.setTextColor(20);
+  doc.text(resumenLineas.join("   |   "), 14, 38);
+
+  const ordenadas = [...sesiones].sort((a,b) => new Date(b.horaInicio) - new Date(a.horaInicio));
+  const filas = ordenadas.map(s => {
+    const perfil = perfilesCache[s.userId];
+    return [
+      fmtFecha(s.horaInicio),
+      perfil?.nombre || "(perfil eliminado)",
+      perfil?.sello || "—",
+      fmtHora(s.horaInicio),
+      s.enCurso ? "En curso" : fmtHora(s.horaFin),
+      s.pausas > 0 ? String(s.pausas) : "—",
+      fmtHMS(s.segundosActivos)
+    ];
+  });
+
+  if(filas.length === 0){
+    doc.setFontSize(11);
+    doc.text("No hay registros en este período.", 14, 50);
+  } else {
+    doc.autoTable({
+      head: [["Fecha","Responsable","Sello","Inicio","Fin","Pausas","Horas activas"]],
+      body: filas,
+      startY: 44,
+      styles: { fontSize: 9, textColor: 30 },
+      headStyles: { fillColor: [199,162,74], textColor: 20 }
+    });
+  }
+
+  const nombreArchivo = `control-horas_${new Date().toISOString().slice(0,10)}.pdf`;
+  doc.save(nombreArchivo);
+}
+
+async function iniciarPanelAdmin(){
+  const { data: perfiles } = await sb.from("timer_perfiles").select("id, nombre, sello").eq("is_admin", false);
+  perfilesCache = {};
+  (perfiles || []).forEach(p => perfilesCache[p.id] = p);
+
+  const select = $("filter-usuario");
+  (perfiles || [])
+    .sort((a,b) => a.nombre.localeCompare(b.nombre))
+    .forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p.id;
+      opt.textContent = `${p.nombre} (${p.sello})`;
+      select.appendChild(opt);
+    });
+
+  const { desde, hasta } = calcularRango("hoy");
+  cargarYRenderizarAdmin(desde, hasta);
+}
+
+/* Reconstruye, a partir de eventos ordenados por fecha, una lista de
+   SESIONES (cada start..stop), con hora de inicio, hora de fin,
+   cantidad de pausas y segundos activos (sin contar el tiempo pausado). */
+function reconstruirSesiones(eventosOrdenados){
+  const porUsuario = {};
+  for(const ev of eventosOrdenados){
+    (porUsuario[ev.user_id] ||= []).push(ev);
+  }
+
+  const sesiones = [];
+
+  for(const userId in porUsuario){
+    let actual = null;
+
+    for(const ev of porUsuario[userId]){
+      const t = new Date(ev.creado_en).getTime();
+
+      if(ev.tipo === "start"){
+        actual = { userId, horaInicio: ev.creado_en, horaFin: null, pausas: 0, segundosActivos: 0, corriendoDesde: t, enCurso: true };
+      } else if(ev.tipo === "resume"){
+        if(actual) actual.corriendoDesde = t;
+      } else if(ev.tipo === "pause"){
+        if(actual && actual.corriendoDesde !== null){
+          actual.segundosActivos += (t - actual.corriendoDesde)/1000;
+          actual.corriendoDesde = null;
+          actual.pausas += 1;
+        }
+      } else if(ev.tipo === "stop"){
+        if(actual){
+          if(actual.corriendoDesde !== null){
+            actual.segundosActivos += (t - actual.corriendoDesde)/1000;
+            actual.corriendoDesde = null;
+          }
+          actual.horaFin = ev.creado_en;
+          actual.enCurso = false;
+          sesiones.push(actual);
+          actual = null;
+        }
+      }
+    }
+
+    // Sesión que quedó abierta (sin stop) dentro del rango consultado
+    if(actual){
+      if(actual.corriendoDesde !== null){
+        actual.segundosActivos += (Date.now() - actual.corriendoDesde)/1000;
+      }
+      sesiones.push(actual);
+    }
+  }
+
+  return sesiones;
+}
+
+async function cargarYRenderizarAdmin(desde, hasta){
+  $("admin-table-wrap").innerHTML = '<div class="loading-text">Cargando registros…</div>';
+
+  const { data: eventos, error } = await sb
+    .from("timer_eventos")
+    .select("user_id, tipo, creado_en")
+    .gte("creado_en", desde.toISOString())
+    .lte("creado_en", hasta.toISOString())
+    .order("creado_en", { ascending: true });
+
+  if(error){
+    $("admin-table-wrap").innerHTML = `<div class="empty-state">Error al cargar: ${error.message}</div>`;
+    return;
+  }
+
+  sesionesRango = reconstruirSesiones(eventos || []);
+  renderAdminConFiltros();
+}
+
+function renderAdminConFiltros(){
+  const usuarioFiltro = $("filter-usuario").value;
+  const sesiones = usuarioFiltro === "todos"
+    ? sesionesRango
+    : sesionesRango.filter(s => s.userId === usuarioFiltro);
+
+  renderResumen(sesiones);
+  renderTablaAdmin(sesiones);
+}
+
+function fmtFecha(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString("es-AR", { day:"2-digit", month:"2-digit", year:"numeric" });
+}
+function fmtHora(iso){
+  if(!iso) return "—";
+  const d = new Date(iso);
+  return d.toLocaleTimeString("es-AR", { hour:"2-digit", minute:"2-digit" });
+}
+
+function renderResumen(sesiones){
+  const totalPorSello = {};
+  let totalGeneral = 0;
+  sesiones.forEach(s => {
+    const sello = perfilesCache[s.userId]?.sello || "—";
+    totalPorSello[sello] = (totalPorSello[sello]||0) + s.segundosActivos;
+    totalGeneral += s.segundosActivos;
+  });
+
+  let html = `<div class="summary-card"><div class="label">Total del período</div><div class="value">${fmtHM(totalGeneral)}</div></div>`;
+  for(const sello in totalPorSello){
+    html += `<div class="summary-card"><div class="label">${sello}</div><div class="value">${fmtHM(totalPorSello[sello])}</div></div>`;
+  }
+  $("summary-row").innerHTML = html || "";
+}
+
+function renderTablaAdmin(sesiones){
+  if(sesiones.length === 0){
+    $("admin-table-wrap").innerHTML = '<div class="empty-state">No hay registros en este período.</div>';
+    return;
+  }
+
+  const ordenadas = [...sesiones].sort((a,b) => new Date(b.horaInicio) - new Date(a.horaInicio));
+
+  let html = `<table><thead><tr>
+    <th>Fecha</th><th>Responsable</th><th>Sello</th><th>Inicio</th><th>Fin</th><th>Pausas</th><th>Horas activas</th>
+  </tr></thead><tbody>`;
+  for(const s of ordenadas){
+    const perfil = perfilesCache[s.userId];
+    html += `<tr>
+      <td>${fmtFecha(s.horaInicio)}</td>
+      <td>${perfil?.nombre || "(perfil eliminado)"}</td>
+      <td>${perfil?.sello || "—"}</td>
+      <td class="hrs">${fmtHora(s.horaInicio)}</td>
+      <td class="hrs">${s.enCurso ? "En curso" : fmtHora(s.horaFin)}</td>
+      <td>${s.pausas > 0 ? s.pausas : "—"}</td>
+      <td class="hrs">${fmtHMS(s.segundosActivos)}</td>
+    </tr>`;
+  }
+  html += "</tbody></table>";
+  $("admin-table-wrap").innerHTML = html;
+}
+
+/* ============================================================
+   ARRANQUE: ¿ya hay una sesión activa?
+   ============================================================ */
+(async () => {
+  const { data } = await sb.auth.getSession();
+  if(data.session){
+    await despuesDeLogin(data.session.user);
+  }
+})();
+</script>
+</body>
+</html>
