@@ -264,6 +264,50 @@
 
   .hidden{display:none !important;}
   .loading-text{color:var(--paper-dim);font-size:13px;text-align:center;padding:40px 0;}
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(8,11,15,0.72);
+    display:flex;align-items:center;justify-content:center;
+    z-index:50;
+    padding:20px;
+  }
+  .modal-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:28px;
+    max-width:420px;
+    width:100%;
+  }
+  .modal-card h2{
+    font-family:'Fraunces',serif;
+    font-size:20px;
+    margin:0 0 8px;
+  }
+  .modal-card p.sub{
+    color:var(--paper-dim);
+    font-size:13px;
+    margin:0 0 16px;
+  }
+  .modal-card textarea{
+    width:100%;
+    background:var(--ink);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:11px 12px;
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    resize:vertical;
+    margin-bottom:8px;
+  }
+  .modal-card textarea:focus{outline:2px solid var(--gold-dim);outline-offset:1px;}
+  .modal-actions{
+    display:flex;gap:10px;margin-top:14px;
+  }
+  .modal-actions .btn-control{flex:1;}
 </style>
 </head>
 <body>
@@ -323,6 +367,20 @@
 
   <div class="alarm-banner hidden" id="alarm-banner">
     Llegaste a 3:30 hs de trabajo activo en esta jornada.
+  </div>
+</div>
+
+<!-- MODAL: tareas realizadas (obligatorio al detener) -->
+<div class="modal-overlay hidden" id="modal-tareas">
+  <div class="modal-card">
+    <h2>Antes de detener…</h2>
+    <p class="sub">Enumerá las tareas que realizaste en esta jornada. Es obligatorio para poder cerrar el registro.</p>
+    <textarea id="modal-tareas-texto" rows="6" placeholder="Ej:&#10;- Respondí correos de convocatoria Meteorito&#10;- Armé presupuesto para imprenta&#10;- Revisé maqueta capítulo 3"></textarea>
+    <div class="error-msg hidden" id="modal-tareas-error">Tenés que enumerar al menos una tarea antes de detener.</div>
+    <div class="modal-actions">
+      <button class="btn-control btn-pause" id="modal-cancelar">Cancelar</button>
+      <button class="btn-control btn-stop" id="modal-confirmar">Confirmar y detener</button>
+    </div>
   </div>
 </div>
 
@@ -443,11 +501,10 @@ function calcularEstadoActual(eventos){
   }
 }
 
-async function insertarEvento(tipo){
-  const { error } = await sb.from("timer_eventos").insert({
-    user_id: currentUser.id,
-    tipo
-  });
+async function insertarEvento(tipo, detalle){
+  const payload = { user_id: currentUser.id, tipo };
+  if(detalle) payload.detalle = detalle;
+  const { error } = await sb.from("timer_eventos").insert(payload);
   if(error){
     alert("No se pudo registrar el evento: " + error.message);
     return false;
@@ -594,11 +651,43 @@ $("btn-pause").addEventListener("click", async () => {
 $("btn-resume").addEventListener("click", async () => {
   if(await insertarEvento("resume")) await refrescarEstadoTimer();
 });
-$("btn-stop").addEventListener("click", async () => {
-  if(await insertarEvento("stop")) await refrescarEstadoTimer();
+$("btn-stop").addEventListener("click", abrirModalTareas);
+$("btn-stop-2").addEventListener("click", abrirModalTareas);
+
+function abrirModalTareas(){
+  $("modal-tareas-texto").value = "";
+  hide($("modal-tareas-error"));
+  show($("modal-tareas"));
+  setTimeout(() => $("modal-tareas-texto").focus(), 50);
+}
+
+$("modal-tareas-texto").addEventListener("input", () => {
+  hide($("modal-tareas-error"));
 });
-$("btn-stop-2").addEventListener("click", async () => {
-  if(await insertarEvento("stop")) await refrescarEstadoTimer();
+
+$("modal-cancelar").addEventListener("click", () => {
+  hide($("modal-tareas"));
+});
+
+$("modal-confirmar").addEventListener("click", async () => {
+  const texto = $("modal-tareas-texto").value.trim();
+  if(texto.length === 0){
+    show($("modal-tareas-error"));
+    $("modal-tareas-texto").focus();
+    return;
+  }
+  $("modal-confirmar").disabled = true;
+  $("modal-confirmar").textContent = "Guardando…";
+
+  const ok = await insertarEvento("stop", texto);
+
+  $("modal-confirmar").disabled = false;
+  $("modal-confirmar").textContent = "Confirmar y detener";
+
+  if(ok){
+    hide($("modal-tareas"));
+    await refrescarEstadoTimer();
+  }
 });
 
 /* ============================================================
@@ -708,7 +797,8 @@ function generarPDF(){
       fmtHora(s.horaInicio),
       s.enCurso ? "En curso" : fmtHora(s.horaFin),
       s.pausas > 0 ? String(s.pausas) : "—",
-      fmtHMS(s.segundosActivos)
+      fmtHMS(s.segundosActivos),
+      s.enCurso ? "—" : (s.tareas || "—")
     ];
   });
 
@@ -717,11 +807,12 @@ function generarPDF(){
     doc.text("No hay registros en este período.", 14, 50);
   } else {
     doc.autoTable({
-      head: [["Fecha","Responsable","Sello","Inicio","Fin","Pausas","Horas activas"]],
+      head: [["Fecha","Responsable","Sello","Inicio","Fin","Pausas","Horas activas","Tareas realizadas"]],
       body: filas,
       startY: 44,
-      styles: { fontSize: 9, textColor: 30 },
-      headStyles: { fillColor: [199,162,74], textColor: 20 }
+      styles: { fontSize: 8, textColor: 30 },
+      headStyles: { fillColor: [199,162,74], textColor: 20 },
+      columnStyles: { 7: { cellWidth: 60 } }
     });
   }
 
@@ -783,6 +874,7 @@ function reconstruirSesiones(eventosOrdenados){
           }
           actual.horaFin = ev.creado_en;
           actual.enCurso = false;
+          actual.tareas = ev.detalle || "";
           sesiones.push(actual);
           actual = null;
         }
@@ -806,7 +898,7 @@ async function cargarYRenderizarAdmin(desde, hasta){
 
   const { data: eventos, error } = await sb
     .from("timer_eventos")
-    .select("user_id, tipo, creado_en")
+    .select("user_id, tipo, creado_en, detalle")
     .gte("creado_en", desde.toISOString())
     .lte("creado_en", hasta.toISOString())
     .order("creado_en", { ascending: true });
@@ -865,7 +957,7 @@ function renderTablaAdmin(sesiones){
   const ordenadas = [...sesiones].sort((a,b) => new Date(b.horaInicio) - new Date(a.horaInicio));
 
   let html = `<table><thead><tr>
-    <th>Fecha</th><th>Responsable</th><th>Sello</th><th>Inicio</th><th>Fin</th><th>Pausas</th><th>Horas activas</th>
+    <th>Fecha</th><th>Responsable</th><th>Sello</th><th>Inicio</th><th>Fin</th><th>Pausas</th><th>Horas activas</th><th>Tareas realizadas</th>
   </tr></thead><tbody>`;
   for(const s of ordenadas){
     const perfil = perfilesCache[s.userId];
@@ -877,10 +969,17 @@ function renderTablaAdmin(sesiones){
       <td class="hrs">${s.enCurso ? "En curso" : fmtHora(s.horaFin)}</td>
       <td>${s.pausas > 0 ? s.pausas : "—"}</td>
       <td class="hrs">${fmtHMS(s.segundosActivos)}</td>
+      <td style="white-space:pre-wrap;max-width:260px;">${s.enCurso ? "—" : escapeHtml(s.tareas || "—")}</td>
     </tr>`;
   }
   html += "</tbody></table>";
   $("admin-table-wrap").innerHTML = html;
+}
+
+function escapeHtml(texto){
+  const div = document.createElement("div");
+  div.textContent = texto;
+  return div.innerHTML;
 }
 
 /* ============================================================
