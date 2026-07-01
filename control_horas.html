@@ -400,7 +400,10 @@
 <div class="container wide hidden" id="view-admin">
   <div class="admin-header">
     <h1>Panel de horas</h1>
-    <button class="filter-btn" id="btn-pdf" style="border-color:var(--gold);color:var(--gold);font-weight:600;">⬇ Descargar PDF</button>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="filter-btn" id="btn-nueva-entrada" style="border-color:var(--ok);color:var(--ok);font-weight:600;">+ Nueva entrada</button>
+      <button class="filter-btn" id="btn-pdf" style="border-color:var(--gold);color:var(--gold);font-weight:600;">⬇ Descargar PDF</button>
+    </div>
   </div>
 
   <div class="filters">
@@ -425,6 +428,64 @@
   </div>
 </div>
 
+<!-- MODAL: nueva entrada manual (admin) -->
+<div class="modal-overlay hidden" id="modal-nueva">
+  <div class="modal-card" style="max-width:480px;">
+    <h2>Nueva entrada manual</h2>
+    <p class="sub">Cargá una jornada en nombre de un responsable. Se va a registrar como si hubiese usado el timer normalmente.</p>
+    <label>Responsable</label>
+    <select id="nueva-usuario" style="width:100%;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:11px 12px;color:var(--paper);font-size:14px;margin-bottom:18px;"></select>
+    <label>Fecha</label>
+    <input type="date" id="nueva-fecha" style="margin-bottom:18px;" />
+    <div style="display:flex;gap:12px;">
+      <div style="flex:1;">
+        <label>Hora inicio</label>
+        <input type="time" id="nueva-inicio" style="margin-bottom:18px;" />
+      </div>
+      <div style="flex:1;">
+        <label>Hora fin</label>
+        <input type="time" id="nueva-fin" style="margin-bottom:18px;" />
+      </div>
+    </div>
+    <label>Tareas realizadas</label>
+    <textarea id="nueva-tareas" rows="4" style="width:100%;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:11px 12px;color:var(--paper);font-size:14px;resize:vertical;margin-bottom:8px;" placeholder="Enumerá las tareas de esa jornada…"></textarea>
+    <div class="error-msg hidden" id="nueva-error"></div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="btn-control btn-pause" id="nueva-cancelar">Cancelar</button>
+      <button class="btn-control btn-start" id="nueva-confirmar">Guardar entrada</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: editar entrada existente (admin) -->
+<div class="modal-overlay hidden" id="modal-editar">
+  <div class="modal-card" style="max-width:480px;">
+    <h2>Editar entrada</h2>
+    <p class="sub">Podés corregir el horario de inicio, fin y las tareas registradas.</p>
+    <input type="hidden" id="editar-stop-id" />
+    <input type="hidden" id="editar-start-id" />
+    <label>Fecha</label>
+    <input type="date" id="editar-fecha" style="margin-bottom:18px;" />
+    <div style="display:flex;gap:12px;">
+      <div style="flex:1;">
+        <label>Hora inicio</label>
+        <input type="time" id="editar-inicio" style="margin-bottom:18px;" />
+      </div>
+      <div style="flex:1;">
+        <label>Hora fin</label>
+        <input type="time" id="editar-fin" style="margin-bottom:18px;" />
+      </div>
+    </div>
+    <label>Tareas realizadas</label>
+    <textarea id="editar-tareas" rows="4" style="width:100%;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:11px 12px;color:var(--paper);font-size:14px;resize:vertical;margin-bottom:8px;"></textarea>
+    <div class="error-msg hidden" id="editar-error"></div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="btn-control btn-pause" id="editar-cancelar">Cancelar</button>
+      <button class="btn-control btn-start" id="editar-confirmar">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ============================================================
    CONFIGURACIÓN — completar antes de publicar
@@ -433,7 +494,13 @@ const SUPABASE_URL = "https://wpidayovldtnpkininvz.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndwaWRheW92bGR0bnBraW5pbnZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MzAxMjUsImV4cCI6MjA5ODMwNjEyNX0.qibS79kRazKcQw8YsXNtGxTsyhyDy_N_PXSn6Gu8Q-c";
 const META_ALARMA_SEGUNDOS = 3.5 * 60 * 60; // 3:30 hs
 
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: false
+  }
+});
 
 /* ---------- helpers ---------- */
 const $ = (id) => document.getElementById(id);
@@ -912,7 +979,7 @@ function reconstruirSesiones(eventosOrdenados){
       const t = new Date(ev.creado_en).getTime();
 
       if(ev.tipo === "start"){
-        actual = { userId, horaInicio: ev.creado_en, horaFin: null, pausas: 0, segundosActivos: 0, corriendoDesde: t, enCurso: true };
+        actual = { userId, startId: ev.id, stopId: null, horaInicio: ev.creado_en, horaFin: null, pausas: 0, segundosActivos: 0, corriendoDesde: t, enCurso: true };
       } else if(ev.tipo === "resume"){
         if(actual) actual.corriendoDesde = t;
       } else if(ev.tipo === "pause"){
@@ -928,6 +995,7 @@ function reconstruirSesiones(eventosOrdenados){
             actual.corriendoDesde = null;
           }
           actual.horaFin = ev.creado_en;
+          actual.stopId = ev.id;
           actual.enCurso = false;
           actual.tareas = ev.detalle || "";
           sesiones.push(actual);
@@ -936,7 +1004,6 @@ function reconstruirSesiones(eventosOrdenados){
       }
     }
 
-    // Sesión que quedó abierta (sin stop) dentro del rango consultado
     if(actual){
       if(actual.corriendoDesde !== null){
         actual.segundosActivos += (Date.now() - actual.corriendoDesde)/1000;
@@ -953,7 +1020,7 @@ async function cargarYRenderizarAdmin(desde, hasta){
 
   const { data: eventos, error } = await sb
     .from("timer_eventos")
-    .select("user_id, tipo, creado_en, detalle")
+    .select("id, user_id, tipo, creado_en, detalle")
     .gte("creado_en", desde.toISOString())
     .lte("creado_en", hasta.toISOString())
     .order("creado_en", { ascending: true });
@@ -1012,10 +1079,13 @@ function renderTablaAdmin(sesiones){
   const ordenadas = [...sesiones].sort((a,b) => new Date(b.horaInicio) - new Date(a.horaInicio));
 
   let html = `<table><thead><tr>
-    <th>Fecha</th><th>Responsable</th><th>Sello</th><th>Inicio</th><th>Fin</th><th>Pausas</th><th>Horas activas</th><th>Tareas realizadas</th>
+    <th>Fecha</th><th>Responsable</th><th>Sello</th><th>Inicio</th><th>Fin</th><th>Pausas</th><th>Horas activas</th><th>Tareas realizadas</th><th></th>
   </tr></thead><tbody>`;
   for(const s of ordenadas){
     const perfil = perfilesCache[s.userId];
+    const editBtn = (!s.enCurso && s.stopId && s.startId)
+      ? `<button class="filter-btn btn-editar" data-stop="${s.stopId}" data-start="${s.startId}" data-inicio="${s.horaInicio}" data-fin="${s.horaFin}" data-tareas="${escapeAttr(s.tareas)}" style="font-size:11px;padding:4px 10px;white-space:nowrap;">Editar</button>`
+      : "—";
     html += `<tr>
       <td>${fmtFecha(s.horaInicio)}</td>
       <td>${perfil?.nombre || "(perfil eliminado)"}</td>
@@ -1024,11 +1094,28 @@ function renderTablaAdmin(sesiones){
       <td class="hrs">${s.enCurso ? "En curso" : fmtHora(s.horaFin)}</td>
       <td>${s.pausas > 0 ? s.pausas : "—"}</td>
       <td class="hrs">${fmtHMS(s.segundosActivos)}</td>
-      <td style="white-space:pre-wrap;max-width:260px;">${s.enCurso ? "—" : escapeHtml(s.tareas || "—")}</td>
+      <td style="white-space:pre-wrap;max-width:220px;">${s.enCurso ? "—" : escapeHtml(s.tareas || "—")}</td>
+      <td>${editBtn}</td>
     </tr>`;
   }
   html += "</tbody></table>";
   $("admin-table-wrap").innerHTML = html;
+
+  // Conectar los botones de editar que acaban de renderizarse
+  document.querySelectorAll(".btn-editar").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const inicio = new Date(btn.dataset.inicio);
+      const fin = new Date(btn.dataset.fin);
+      $("editar-stop-id").value = btn.dataset.stop;
+      $("editar-start-id").value = btn.dataset.start;
+      $("editar-fecha").value = inicio.toISOString().slice(0, 10);
+      $("editar-inicio").value = inicio.toTimeString().slice(0, 5);
+      $("editar-fin").value = fin.toTimeString().slice(0, 5);
+      $("editar-tareas").value = btn.dataset.tareas;
+      hide($("editar-error"));
+      show($("modal-editar"));
+    });
+  });
 }
 
 function escapeHtml(texto){
@@ -1036,6 +1123,166 @@ function escapeHtml(texto){
   div.textContent = texto;
   return div.innerHTML;
 }
+
+function escapeAttr(texto){
+  return (texto || "").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+/* ============================================================
+   MODAL: NUEVA ENTRADA MANUAL (ADMIN)
+   ============================================================ */
+$("btn-nueva-entrada").addEventListener("click", () => {
+  // Poblar el selector de usuarios con los perfiles cargados
+  const sel = $("nueva-usuario");
+  sel.innerHTML = "";
+  Object.values(perfilesCache)
+    .sort((a,b) => a.nombre.localeCompare(b.nombre))
+    .forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p.id;
+      opt.textContent = `${p.nombre} (${p.sello})`;
+      sel.appendChild(opt);
+    });
+  // Fecha por defecto: hoy
+  $("nueva-fecha").value = new Date().toISOString().slice(0,10);
+  $("nueva-inicio").value = "";
+  $("nueva-fin").value = "";
+  $("nueva-tareas").value = "";
+  hide($("nueva-error"));
+  show($("modal-nueva"));
+});
+
+$("nueva-cancelar").addEventListener("click", () => hide($("modal-nueva")));
+
+$("nueva-confirmar").addEventListener("click", async () => {
+  const userId = $("nueva-usuario").value;
+  const fecha = $("nueva-fecha").value;
+  const inicio = $("nueva-inicio").value;
+  const fin = $("nueva-fin").value;
+  const tareas = $("nueva-tareas").value.trim();
+
+  if(!fecha || !inicio || !fin || !tareas){
+    $("nueva-error").textContent = "Completá todos los campos.";
+    show($("nueva-error"));
+    return;
+  }
+
+  const tsInicio = new Date(`${fecha}T${inicio}:00`);
+  const tsFin = new Date(`${fecha}T${fin}:00`);
+
+  if(tsFin <= tsInicio){
+    $("nueva-error").textContent = "La hora de fin debe ser posterior a la de inicio.";
+    show($("nueva-error"));
+    return;
+  }
+
+  $("nueva-confirmar").disabled = true;
+  $("nueva-confirmar").textContent = "Guardando…";
+
+  // Insertar evento start
+  const { error: errStart } = await sb.from("timer_eventos").insert({
+    user_id: userId, tipo: "start", creado_en: tsInicio.toISOString()
+  });
+
+  if(errStart){
+    $("nueva-error").textContent = "Error al guardar inicio: " + errStart.message;
+    show($("nueva-error"));
+    $("nueva-confirmar").disabled = false;
+    $("nueva-confirmar").textContent = "Guardar entrada";
+    return;
+  }
+
+  // Insertar evento stop
+  const { error: errStop } = await sb.from("timer_eventos").insert({
+    user_id: userId, tipo: "stop", creado_en: tsFin.toISOString(), detalle: tareas
+  });
+
+  $("nueva-confirmar").disabled = false;
+  $("nueva-confirmar").textContent = "Guardar entrada";
+
+  if(errStop){
+    $("nueva-error").textContent = "Error al guardar fin: " + errStop.message;
+    show($("nueva-error"));
+    return;
+  }
+
+  hide($("modal-nueva"));
+  renderAdminConFiltros(); // refrescar desde cache (o recargar si hace falta)
+  // Recargar desde Supabase para que aparezca la entrada nueva
+  const activeBtn = document.querySelector(".filter-btn[data-range].active");
+  if(activeBtn){
+    const { desde, hasta } = calcularRango(activeBtn.dataset.range);
+    cargarYRenderizarAdmin(desde, hasta);
+  }
+});
+
+/* ============================================================
+   MODAL: EDITAR ENTRADA EXISTENTE (ADMIN)
+   ============================================================ */
+$("editar-cancelar").addEventListener("click", () => hide($("modal-editar")));
+
+$("editar-confirmar").addEventListener("click", async () => {
+  const stopId = $("editar-stop-id").value;
+  const startId = $("editar-start-id").value;
+  const fecha = $("editar-fecha").value;
+  const inicio = $("editar-inicio").value;
+  const fin = $("editar-fin").value;
+  const tareas = $("editar-tareas").value.trim();
+
+  if(!fecha || !inicio || !fin || !tareas){
+    $("editar-error").textContent = "Completá todos los campos.";
+    show($("editar-error"));
+    return;
+  }
+
+  const tsInicio = new Date(`${fecha}T${inicio}:00`);
+  const tsFin = new Date(`${fecha}T${fin}:00`);
+
+  if(tsFin <= tsInicio){
+    $("editar-error").textContent = "La hora de fin debe ser posterior a la de inicio.";
+    show($("editar-error"));
+    return;
+  }
+
+  $("editar-confirmar").disabled = true;
+  $("editar-confirmar").textContent = "Guardando…";
+
+  // Actualizar el evento start
+  const { error: errStart } = await sb
+    .from("timer_eventos")
+    .update({ creado_en: tsInicio.toISOString() })
+    .eq("id", startId);
+
+  if(errStart){
+    $("editar-error").textContent = "Error al actualizar inicio: " + errStart.message;
+    show($("editar-error"));
+    $("editar-confirmar").disabled = false;
+    $("editar-confirmar").textContent = "Guardar cambios";
+    return;
+  }
+
+  // Actualizar el evento stop
+  const { error: errStop } = await sb
+    .from("timer_eventos")
+    .update({ creado_en: tsFin.toISOString(), detalle: tareas })
+    .eq("id", stopId);
+
+  $("editar-confirmar").disabled = false;
+  $("editar-confirmar").textContent = "Guardar cambios";
+
+  if(errStop){
+    $("editar-error").textContent = "Error al actualizar fin: " + errStop.message;
+    show($("editar-error"));
+    return;
+  }
+
+  hide($("modal-editar"));
+  const activeBtn = document.querySelector(".filter-btn[data-range].active");
+  if(activeBtn){
+    const { desde, hasta } = calcularRango(activeBtn.dataset.range);
+    cargarYRenderizarAdmin(desde, hasta);
+  }
+});
 
 /* ============================================================
    ARRANQUE: ¿ya hay una sesión activa?
