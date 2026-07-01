@@ -8,28 +8,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --pink:#BE0065;--navy:#242E65;--navy2:#1a2150;--navy3:#0f1535;
-  --white:#fff;--muted:rgba(255,255,255,0.55);--card:rgba(255,255,255,0.05);
-  --bdr:rgba(255,255,255,0.10);--green:#7ddf9a;--green-bg:rgba(100,220,120,0.1);
-  --yellow:#f5c542;--yellow-bg:rgba(245,197,66,0.1);--sidebar:220px;
-}
+:root{--pink:#BE0065;--navy:#242E65;--navy2:#1a2150;--navy3:#0f1535;--white:#fff;--muted:rgba(255,255,255,0.55);--card:rgba(255,255,255,0.05);--bdr:rgba(255,255,255,0.10);--green:#7ddf9a;--green-bg:rgba(100,220,120,0.1);--yellow:#f5c542;--yellow-bg:rgba(245,197,66,0.1);--sidebar:220px}
 body{background:var(--navy3);color:var(--white);font-family:'Inter',sans-serif;font-weight:300;min-height:100vh}
-/* LOGIN */
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
 .login-box{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:40px;width:100%;max-width:400px}
 .login-logo{text-align:center;margin-bottom:28px}.login-logo img{height:60px}
 .login-box h1{font-family:'Playfair Display',serif;font-style:italic;font-size:22px;text-align:center;margin-bottom:6px}
 .login-box p{color:var(--muted);font-size:13px;text-align:center;margin-bottom:24px}
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-.field label{font-size:12px;color:var(--muted);letter-spacing:.3px}
+.field label{font-size:12px;color:var(--muted)}
 .fi{background:rgba(255,255,255,0.07);border:1px solid var(--bdr);border-radius:8px;padding:10px 14px;color:var(--white);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s;width:100%}
 .fi:focus{border-color:var(--pink)}.fi::placeholder{color:var(--muted)}
 select.fi option{background:#1a2150;color:#fff}
-.l-err{font-size:12px;color:#ff8080;min-height:16px;margin-bottom:10px}
+.l-err{font-size:12px;color:#ff8080;min-height:18px;margin-bottom:10px}
 .btn-full{width:100%;background:var(--pink);color:var(--white);border:none;border-radius:8px;padding:12px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;cursor:pointer;transition:opacity .2s}
 .btn-full:hover{opacity:.88}.btn-full:disabled{opacity:.4;cursor:not-allowed}
-/* LAYOUT */
 .app{display:none;min-height:100vh}
 .sidebar{position:fixed;top:0;left:0;width:var(--sidebar);height:100vh;background:var(--navy);border-right:1px solid var(--bdr);display:flex;flex-direction:column;z-index:100;overflow-y:auto}
 .sb-logo{padding:18px 20px;border-bottom:1px solid var(--bdr)}.sb-logo img{height:38px}
@@ -45,12 +38,10 @@ select.fi option{background:#1a2150;color:#fff}
 .page{display:none}.page.active{display:block}
 .pt{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:3px}
 .ps{color:var(--muted);font-size:13px;margin-bottom:24px}
-/* STATS */
 .sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px}
 .sc{background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:18px}
 .sl{font-size:10px;color:var(--muted);letter-spacing:.5px;margin-bottom:6px;font-family:'Bebas Neue',sans-serif}
-.sv{font-size:26px;font-weight:600;line-height:1}.ss{font-size:11px;color:var(--muted);margin-top:3px}
-/* TABLE */
+.sv{font-size:26px;font-weight:600;line-height:1}
 .tw{background:var(--card);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin-bottom:20px}
 .th{padding:14px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .th h3{font-size:13px;font-weight:500}
@@ -59,71 +50,58 @@ thead th{text-align:left;padding:9px 14px;font-size:10px;color:var(--white);font
 td{padding:11px 14px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(255,255,255,0.02)}
-/* BADGES */
 .b{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 9px;border-radius:10px;white-space:nowrap}
 .bg{background:var(--green-bg);color:var(--green);border:1px solid rgba(125,223,154,.3)}
 .by{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(245,197,66,.3)}
 .bp{background:rgba(190,0,101,.15);color:var(--pink);border:1px solid rgba(190,0,101,.3)}
 .bm{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--bdr)}
-/* PROGRESS */
 .pw{display:flex;align-items:center;gap:8px}
 .pb{flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:2px;min-width:50px}
 .pf{height:100%;border-radius:2px;background:var(--pink)}
 .pp{font-size:11px;color:var(--muted);white-space:nowrap}
-/* SEARCH ROW */
 .sr{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
 .si{flex:1;min-width:180px;background:rgba(255,255,255,.07);border:1px solid var(--bdr);border-radius:8px;padding:9px 13px;color:var(--white);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
 .si:focus{border-color:var(--pink)}.si::placeholder{color:var(--muted)}
 select.si option{background:#1a2150;color:#fff}
-/* BUTTONS */
 .btn{background:var(--pink);color:var(--white);border:none;border-radius:7px;padding:8px 16px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;cursor:pointer;transition:opacity .2s;white-space:nowrap}
 .btn:hover{opacity:.88}.btn:disabled{opacity:.4;cursor:not-allowed}
-.btn-sm{padding:4px 11px;font-size:11px}
 .bto{background:transparent;color:var(--muted);border:1px solid var(--bdr);border-radius:6px;padding:4px 11px;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:.8px;cursor:pointer;transition:all .15s}
 .bto:hover{border-color:var(--pink);color:var(--pink)}
 .btd{background:rgba(255,80,80,.1);color:#ff8080;border:1px solid rgba(255,80,80,.25);border-radius:6px;padding:4px 11px;font-family:'Bebas Neue',sans-serif;font-size:11px;cursor:pointer;transition:all .15s}
 .btd:hover{background:rgba(255,80,80,.2)}
-/* MODAL */
 .mb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
 .mb.open{display:flex}
 .mo{background:var(--navy2);border:1px solid var(--bdr);border-radius:14px;padding:28px;width:100%;max-width:600px;position:relative;margin:auto}
 .mo h2{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:3px}
-.mo .ms{color:var(--muted);font-size:12px;margin-bottom:20px}
-.mo-close{position:absolute;top:16px;right:16px;background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px 8px}
-.mo-close:hover{color:var(--white)}
-.mf{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--bdr);flex-wrap:wrap}
-/* INLINE EDIT */
-.ie{background:transparent;border:none;border-bottom:1px solid var(--bdr);color:var(--white);font-family:'Inter',sans-serif;font-size:13px;padding:3px 6px;outline:none;width:100%;transition:border-color .2s}
-.ie:focus{border-bottom-color:var(--pink)}
-/* MISC */
-.empty{text-align:center;padding:32px;color:var(--muted);font-style:italic;font-family:'Playfair Display',serif;font-size:14px}
-.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.15);border-top-color:var(--white);border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:6px}
-@keyframes sp{to{transform:rotate(360deg)}}
+.mo-sub{color:var(--muted);font-size:12px;margin-bottom:20px}
+.mo-x{position:absolute;top:16px;right:16px;background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px 8px}
+.mo-x:hover{color:var(--white)}
+.mf{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--bdr)}
 .ti{display:inline-block;font-size:10px;background:rgba(125,223,154,.1);color:var(--green);border:1px solid rgba(125,223,154,.2);border-radius:4px;padding:1px 6px}
 .tc{display:inline-block;font-size:10px;background:rgba(190,0,101,.1);color:var(--pink);border:1px solid rgba(190,0,101,.2);border-radius:4px;padding:1px 6px}
 .toast{position:fixed;bottom:20px;right:20px;background:var(--navy);border:1px solid var(--bdr);border-radius:8px;padding:10px 18px;font-size:12px;z-index:400;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.empty{text-align:center;padding:32px;color:var(--muted);font-style:italic;font-family:'Playfair Display',serif;font-size:14px}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.15);border-top-color:var(--white);border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
 hr.dv{border:none;border-top:1px solid var(--bdr);margin:20px 0}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:600px){.form-grid{grid-template-columns:1fr}.main{margin-left:0;padding:16px}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div class="login-wrap" id="lw">
   <div class="login-box">
     <div class="login-logo"><img src="logo_rubin.png" alt="Rubin Editorial"></div>
     <h1>Panel de administración</h1>
     <p>Acceso exclusivo para el equipo editorial</p>
     <div class="field"><label>Correo</label><input class="fi" type="email" id="le" placeholder="correo@ejemplo.com" autocomplete="off"></div>
-    <div class="field"><label>Contraseña</label><input class="fi" type="password" id="lp" placeholder="••••••••"></div>
+    <div class="field"><label>Contraseña</label><input class="fi" type="password" id="lp" placeholder="••••••••" autocomplete="off"></div>
     <div class="l-err" id="lerr"></div>
-    <button class="btn-full" id="lbtn" onclick="doLogin()">Ingresar</button>
+    <button class="btn-full" id="lbtn">Ingresar</button>
   </div>
 </div>
 
-<!-- APP -->
 <div class="app" id="app">
   <aside class="sidebar">
     <div class="sb-logo"><img src="logo_rubin.png" alt="Rubin Editorial"></div>
@@ -138,85 +116,61 @@ hr.dv{border:none;border-top:1px solid var(--bdr);margin:20px 0}
       <div class="ni" data-page="autores">👥 Autores</div>
       <div class="ni" data-page="publicados">📖 Libros publicados</div>
     </nav>
-    <div class="sb-foot"><button class="btn-lo" onclick="doLogout()">Cerrar sesión</button></div>
+    <div class="sb-foot"><button class="btn-lo" id="btn-logout">Cerrar sesión</button></div>
   </aside>
-
   <main class="main">
-
-    <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="pt">Dashboard</div>
-      <div class="ps" id="dash-fecha">Cargando...</div>
+      <div class="ps" id="dash-fecha"></div>
       <div class="sg" id="stats"></div>
-      <div class="tw">
-        <div class="th"><h3>Antologías más cerca del mínimo (USD 500)</h3></div>
+      <div class="tw"><div class="th"><h3>Antologías más cerca del mínimo (USD 500)</h3></div>
         <table><thead><tr><th>LIBRO</th><th>SELLO</th><th>RECAUDADO</th><th>PROGRESO</th></tr></thead>
-        <tbody id="dash-cerca"></tbody></table>
-      </div>
-      <div class="tw">
-        <div class="th"><h3>Libros individuales con ventas</h3></div>
+        <tbody id="dash-cerca"></tbody></table></div>
+      <div class="tw"><div class="th"><h3>Libros individuales con ventas</h3></div>
         <table><thead><tr><th>LIBRO</th><th>AUTOR</th><th>ARS</th><th>USD</th><th>ESTADO</th></tr></thead>
-        <tbody id="dash-ind"></tbody></table>
-      </div>
+        <tbody id="dash-ind"></tbody></table></div>
     </div>
-
-    <!-- BUSCAR -->
     <div class="page" id="page-buscar">
-      <div class="pt">Buscar</div>
-      <div class="ps">Por nombre de autor, email o título de libro</div>
+      <div class="pt">Buscar</div><div class="ps">Por nombre, email o título de libro</div>
       <div class="sr">
-        <input class="si" id="buscar-q" placeholder="Nombre, email o título..." onkeydown="if(event.key==='Enter')doBuscar()">
-        <button class="btn" onclick="doBuscar()">Buscar</button>
+        <input class="si" id="buscar-q" placeholder="Nombre, email o título...">
+        <button class="btn" id="btn-buscar">Buscar</button>
       </div>
       <div id="buscar-res"></div>
     </div>
-
-    <!-- LIBROS -->
     <div class="page" id="page-libros">
-      <div class="pt">Estado por libro</div>
-      <div class="ps">Todas las publicaciones con regalías acumuladas</div>
+      <div class="pt">Estado por libro</div><div class="ps">Todas las publicaciones con regalías acumuladas</div>
       <div class="sr">
-        <input class="si" id="lf-q" placeholder="Filtrar por nombre..." oninput="filtrarLibros()">
-        <select class="si" style="max-width:150px" id="lf-tipo" onchange="filtrarLibros()">
+        <input class="si" id="lf-q" placeholder="Filtrar por nombre...">
+        <select class="si" style="max-width:150px" id="lf-tipo">
           <option value="">Todos los tipos</option>
           <option value="colectivo">Antologías</option>
           <option value="individual">Individuales</option>
         </select>
-        <select class="si" style="max-width:150px" id="lf-sello" onchange="filtrarLibros()">
-          <option value="">Todos los sellos</option>
-        </select>
+        <select class="si" style="max-width:150px" id="lf-sello"><option value="">Todos los sellos</option></select>
       </div>
-      <div class="tw">
-        <table><thead><tr><th>LIBRO</th><th>TIPO</th><th>SELLO</th><th>AUTORES</th><th>ARS</th><th>USD</th><th>ESTADO</th></tr></thead>
-        <tbody id="libros-tb"></tbody></table>
-      </div>
+      <div class="tw"><table><thead><tr><th>LIBRO</th><th>TIPO</th><th>SELLO</th><th>AUTORES</th><th>ARS</th><th>USD</th><th>ESTADO</th></tr></thead>
+        <tbody id="libros-tb"></tbody></table></div>
     </div>
-
-    <!-- PAGOS -->
     <div class="page" id="page-pagos">
-      <div class="pt">Registrar pago</div>
-      <div class="ps">Registrá una liquidación realizada a un autor</div>
+      <div class="pt">Registrar pago</div><div class="ps">Registrá una liquidación realizada a un autor</div>
       <div class="tw" style="max-width:580px">
         <div style="padding:20px;display:flex;flex-direction:column;gap:14px">
-          <div class="form-grid">
-            <div class="field"><label>Libro</label>
-              <select class="fi" id="p-libro" onchange="cargarAutoresPago()"><option value="">Seleccioná...</option></select></div>
-            <div class="field"><label>Autor</label>
-              <select class="fi" id="p-autor"><option value="">Primero seleccioná un libro</option></select></div>
+          <div class="fgrid">
+            <div class="field"><label>Libro</label><select class="fi" id="p-libro"><option value="">Seleccioná...</option></select></div>
+            <div class="field"><label>Autor</label><select class="fi" id="p-autor"><option value="">Primero seleccioná un libro</option></select></div>
           </div>
-          <div class="form-grid">
+          <div class="fgrid">
             <div class="field"><label>Moneda</label>
-              <select class="fi" id="p-moneda" onchange="toggleMoneda()">
+              <select class="fi" id="p-moneda">
                 <option value="USD">USD (dólares)</option>
                 <option value="ARS">ARS (pesos argentinos)</option>
               </select>
             </div>
-            <div class="field"><label id="p-monto-label">Monto</label>
-              <input class="fi" type="number" step="0.01" id="p-monto" placeholder="0.00"></div>
+            <div class="field"><label id="p-monto-lbl">Monto (USD)</label><input class="fi" type="number" step="0.01" id="p-monto" placeholder="0.00"></div>
           </div>
-          <div class="form-grid">
-            <div class="field"><label>Fecha de pago</label>
-              <input class="fi" type="date" id="p-fecha"></div>
+          <div class="fgrid">
+            <div class="field"><label>Fecha de pago</label><input class="fi" type="date" id="p-fecha"></div>
             <div class="field"><label>Método</label>
               <select class="fi" id="p-metodo">
                 <option value="paypal">PayPal (USD)</option>
@@ -225,104 +179,73 @@ hr.dv{border:none;border-top:1px solid var(--bdr);margin:20px 0}
               </select>
             </div>
           </div>
-          <div class="field"><label>Semestres cubiertos (ej: 2025-S2, 2026-S1)</label>
-            <input class="fi" type="text" id="p-semestres" placeholder="2026-S1"></div>
-          <div class="field"><label>Referencia / N° de transacción</label>
-            <input class="fi" type="text" id="p-ref" placeholder="Opcional"></div>
-          <button class="btn" onclick="registrarPago()">Registrar pago</button>
+          <div class="field"><label>Semestres cubiertos (ej: 2025-S2, 2026-S1)</label><input class="fi" type="text" id="p-semestres" placeholder="2026-S1"></div>
+          <div class="field"><label>Referencia / N° de transacción</label><input class="fi" type="text" id="p-ref" placeholder="Opcional"></div>
+          <button class="btn" id="btn-reg-pago">Registrar pago</button>
         </div>
       </div>
       <hr class="dv">
-      <div class="tw">
-        <div class="th"><h3>Pagos registrados</h3></div>
+      <div class="tw"><div class="th"><h3>Pagos registrados</h3></div>
         <table><thead><tr><th>LIBRO</th><th>AUTOR</th><th>MONEDA</th><th>MONTO</th><th>MÉTODO</th><th>FECHA</th><th>SEMESTRES</th><th>ACCIONES</th></tr></thead>
-        <tbody id="pagos-tb"></tbody></table>
-      </div>
+        <tbody id="pagos-tb"></tbody></table></div>
     </div>
-
-    <!-- AUTORES -->
     <div class="page" id="page-autores">
-      <div class="pt">Autores</div>
-      <div class="ps">Autores con al menos una participación confirmada</div>
-      <div class="sr">
-        <input class="si" id="aut-q" placeholder="Filtrar por nombre o email..." oninput="filtrarAutores()">
-      </div>
-      <div class="tw">
-        <table><thead><tr><th>NOMBRE</th><th>EMAIL</th><th>PAÍS</th><th>PARTICIPACIONES</th><th>EDITAR</th></tr></thead>
-        <tbody id="aut-tb"></tbody></table>
-      </div>
+      <div class="pt">Autores</div><div class="ps">Solo autores con participaciones confirmadas</div>
+      <div class="sr"><input class="si" id="aut-q" placeholder="Filtrar por nombre o email..."></div>
+      <div class="tw"><table><thead><tr><th>NOMBRE</th><th>EMAIL</th><th>PAÍS</th><th>PARTICIPACIONES</th><th>EDITAR</th></tr></thead>
+        <tbody id="aut-tb"></tbody></table></div>
     </div>
-
-    <!-- PUBLICADOS -->
     <div class="page" id="page-publicados">
-      <div class="pt">Libros publicados</div>
-      <div class="ps">Metadatos y configuración de cada publicación</div>
-      <div class="sr">
-        <input class="si" id="pub-q" placeholder="Filtrar..." oninput="filtrarPublicados()">
-      </div>
-      <div class="tw">
-        <table><thead><tr><th>TÍTULO</th><th>SELLO</th><th>TIPO</th><th>EDITAR</th></tr></thead>
-        <tbody id="pub-tb"></tbody></table>
-      </div>
+      <div class="pt">Libros publicados</div><div class="ps">Metadatos y configuración de cada publicación</div>
+      <div class="sr"><input class="si" id="pub-q" placeholder="Filtrar..."></div>
+      <div class="tw"><table><thead><tr><th>TÍTULO</th><th>SELLO</th><th>TIPO</th><th>EDITAR</th></tr></thead>
+        <tbody id="pub-tb"></tbody></table></div>
     </div>
-
   </main>
 </div>
 
-<!-- MODAL: PARTICIPANTES / LIBRO DETAIL -->
-<div class="mb" id="modal-part" onclick="if(event.target===this)cerrarModal('modal-part')">
+<!-- MODAL PARTICIPANTES -->
+<div class="mb" id="modal-part">
   <div class="mo" style="max-width:680px">
-    <button class="mo-close" onclick="cerrarModal('modal-part')">✕</button>
-    <h2 id="mp-titulo">Participantes</h2>
-    <div class="ms" id="mp-sub"></div>
-    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-      <button class="bto" onclick="descargarCSV()">⬇ Descargar CSV</button>
-    </div>
+    <button class="mo-x" id="mx-part">✕</button>
+    <h2 id="mp-tit">Participantes</h2><div class="mo-sub" id="mp-sub"></div>
+    <div style="margin-bottom:12px"><button class="bto" id="btn-csv">⬇ Descargar CSV</button></div>
     <div style="max-height:380px;overflow-y:auto;border:1px solid var(--bdr);border-radius:8px">
-      <table style="min-width:500px"><thead><tr><th>NOMBRE</th><th>EMAIL</th><th>SEUDÓNIMO</th><th>CUENTOS</th><th>EDITAR</th></tr></thead>
+      <table><thead><tr><th>NOMBRE</th><th>EMAIL</th><th>SEUDÓNIMO</th><th>CUENTOS</th><th>EDITAR</th></tr></thead>
       <tbody id="mp-tbody"></tbody></table>
     </div>
-    <div class="mf"><button class="bto" onclick="cerrarModal('modal-part')">Cerrar</button></div>
+    <div class="mf"><button class="bto" id="mc-part">Cerrar</button></div>
   </div>
 </div>
 
-<!-- MODAL: EDITAR AUTOR -->
-<div class="mb" id="modal-autor" onclick="if(event.target===this)cerrarModal('modal-autor')">
+<!-- MODAL EDITAR AUTOR -->
+<div class="mb" id="modal-autor">
   <div class="mo" style="max-width:440px">
-    <button class="mo-close" onclick="cerrarModal('modal-autor')">✕</button>
-    <h2>Editar autor</h2>
-    <div class="ms">Los cambios de email y nombre se aplican globalmente</div>
+    <button class="mo-x" id="mx-autor">✕</button>
+    <h2>Editar autor</h2><div class="mo-sub">Los cambios de email y nombre se aplican globalmente</div>
     <input type="hidden" id="ea-id">
     <div class="field"><label>Nombre completo</label><input class="fi" id="ea-nombre" type="text"></div>
-    <div class="field"><label>Email</label><input class="fi" id="ea-email" type="email"></div>
+    <div class="field"><label>Email</label><input class="fi" id="ea-email" type="email" autocomplete="off"></div>
     <div class="field"><label>País de residencia</label><input class="fi" id="ea-pais" type="text"></div>
     <div class="mf">
-      <button class="bto" onclick="cerrarModal('modal-autor')">Cancelar</button>
-      <button class="btn" onclick="guardarAutor()">Guardar cambios</button>
+      <button class="bto" id="mc-autor">Cancelar</button>
+      <button class="btn" id="btn-save-autor">Guardar cambios</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: EDITAR LIBRO -->
-<div class="mb" id="modal-libro" onclick="if(event.target===this)cerrarModal('modal-libro')">
+<!-- MODAL EDITAR LIBRO -->
+<div class="mb" id="modal-libro">
   <div class="mo" style="max-width:560px">
-    <button class="mo-close" onclick="cerrarModal('modal-libro')">✕</button>
-    <h2>Editar publicación</h2>
-    <div class="ms" id="el-sub"></div>
+    <button class="mo-x" id="mx-libro">✕</button>
+    <h2>Editar publicación</h2><div class="mo-sub" id="el-sub"></div>
     <input type="hidden" id="el-id">
-    <div class="form-grid">
-      <div class="field"><label>Título (nombre_libro)</label><input class="fi" id="el-titulo" type="text"></div>
+    <div class="fgrid">
+      <div class="field"><label>Título</label><input class="fi" id="el-titulo" type="text"></div>
       <div class="field"><label>Nombre convocatoria</label><input class="fi" id="el-conv" type="text"></div>
     </div>
-    <div class="form-grid">
-      <div class="field"><label>Sello</label>
-        <select class="fi" id="el-sello">
-          <option value="1">Nébula</option>
-          <option value="2">Luna Roja</option>
-          <option value="3">Rubin Editorial</option>
-          <option value="4">Meteorito</option>
-        </select>
-      </div>
+    <div class="fgrid">
+      <div class="field"><label>Sello</label><select class="fi" id="el-sello"></select></div>
       <div class="field"><label>Tipo</label>
         <select class="fi" id="el-tipo">
           <option value="colectivo">Antología</option>
@@ -332,32 +255,30 @@ hr.dv{border:none;border-top:1px solid var(--bdr);margin:20px 0}
     </div>
     <hr class="dv">
     <div style="font-size:12px;color:var(--muted);margin-bottom:10px">PARTICIPANTES</div>
-    <div style="max-height:280px;overflow-y:auto;border:1px solid var(--bdr);border-radius:8px">
+    <div style="max-height:260px;overflow-y:auto;border:1px solid var(--bdr);border-radius:8px">
       <table><thead><tr><th>NOMBRE</th><th>EMAIL</th><th>CUENTOS</th><th></th></tr></thead>
       <tbody id="el-parts"></tbody></table>
     </div>
     <div class="mf">
-      <button class="bto" onclick="cerrarModal('modal-libro')">Cancelar</button>
-      <button class="btn" onclick="guardarLibro()">Guardar cambios</button>
+      <button class="bto" id="mc-libro">Cancelar</button>
+      <button class="btn" id="btn-save-libro">Guardar cambios</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: EDITAR PAGO -->
-<div class="mb" id="modal-pago" onclick="if(event.target===this)cerrarModal('modal-pago')">
+<!-- MODAL EDITAR PAGO -->
+<div class="mb" id="modal-pago">
   <div class="mo" style="max-width:440px">
-    <button class="mo-close" onclick="cerrarModal('modal-pago')">✕</button>
+    <button class="mo-x" id="mx-pago">✕</button>
     <h2>Editar pago</h2>
     <input type="hidden" id="ep-id">
-    <div class="form-grid">
+    <div class="fgrid">
       <div class="field"><label>Moneda</label>
-        <select class="fi" id="ep-moneda">
-          <option value="USD">USD</option><option value="ARS">ARS</option>
-        </select>
+        <select class="fi" id="ep-moneda"><option value="USD">USD</option><option value="ARS">ARS</option></select>
       </div>
       <div class="field"><label>Monto</label><input class="fi" id="ep-monto" type="number" step="0.01"></div>
     </div>
-    <div class="form-grid">
+    <div class="fgrid">
       <div class="field"><label>Fecha</label><input class="fi" id="ep-fecha" type="date"></div>
       <div class="field"><label>Método</label>
         <select class="fi" id="ep-metodo">
@@ -370,8 +291,8 @@ hr.dv{border:none;border-top:1px solid var(--bdr);margin:20px 0}
     <div class="field"><label>Semestres cubiertos</label><input class="fi" id="ep-semestres" type="text"></div>
     <div class="field"><label>Referencia</label><input class="fi" id="ep-ref" type="text"></div>
     <div class="mf">
-      <button class="bto" onclick="cerrarModal('modal-pago')">Cancelar</button>
-      <button class="btn" onclick="guardarPago()">Guardar</button>
+      <button class="bto" id="mc-pago">Cancelar</button>
+      <button class="btn" id="btn-save-pago">Guardar pago</button>
     </div>
   </div>
 </div>
@@ -379,460 +300,501 @@ hr.dv{border:none;border-top:1px solid var(--bdr);margin:20px 0}
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPA_URL='https://cozhoziafbpjguqgadhl.supabase.co', KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvemhvemlhZmJwamd1cWdhZGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExOTE5MjAsImV4cCI6MjA5Njc2NzkyMH0.RQabp0tsfdtOK-vBVpxV_Y6iLeyEWNeu0xB8HO7BiqI';
-const {createClient}=supabase;
-const db=createClient(SUPA_URL,KEY);
-let allLibros=[],allAutores=[],allPublicados=[],allSellos=[],csvData=null,currentLibroId=null;
+(function() {
+  var SUPA_URL = 'https://cozhoziafbpjguqgadhl.supabase.co';
+  var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvemhvemlhZmJwamd1cWdhZGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExOTE5MjAsImV4cCI6MjA5Njc2NzkyMH0.RQabp0tsfdtOK-vBVpxV_Y6iLeyEWNeu0xB8HO7BiqI';
+  var db = supabase.createClient(SUPA_URL, KEY);
+  var allLibros = [], allAutores = [], allPublicados = [], allSellos = [];
+  var csvData = null, currentLibroId = null, pagosData = [];
 
-// ── AUTH ──────────────────────────────────────────────────────
-async function doLogin(){
-  const e=document.getElementById('le').value.trim(),p=document.getElementById('lp').value;
-  const btn=document.getElementById('lbtn'),err=document.getElementById('lerr');
-  err.textContent='';btn.disabled=true;btn.textContent='Ingresando...';
-  try{
-    const{data,error}=await db.auth.signInWithPassword({email:e,password:p});
-    if(error){err.textContent='Error: '+error.message;btn.disabled=false;btn.textContent='Ingresar';}
-    else if(data?.session){iniciarApp();}
-    else{err.textContent='No se pudo iniciar sesión. Verificá tus credenciales.';btn.disabled=false;btn.textContent='Ingresar';}
-  }catch(ex){err.textContent='Error de conexión: '+ex.message;btn.disabled=false;btn.textContent='Ingresar';}
-}
-async function doLogout(){await db.auth.signOut();document.getElementById('app').style.display='none';document.getElementById('lw').style.display='flex';}
-document.getElementById('lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
-async function checkSession(){const{data:{session}}=await db.auth.getSession();if(session)iniciarApp();}
+  function fmt(n) { return parseFloat(n||0).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function fmtARS(n) { return parseFloat(n||0).toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:0}); }
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+  function toast(msg, tipo) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.borderColor = tipo === 'err' ? 'rgba(255,80,80,.4)' : 'rgba(125,223,154,.3)';
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-function iniciarApp(){
-  document.getElementById('lw').style.display='none';
-  document.getElementById('app').style.display='block';
-  // nav
-  document.querySelectorAll('.ni').forEach(n=>n.addEventListener('click',function(){
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
-    document.getElementById('page-'+this.dataset.page).classList.add('active');
-    this.classList.add('active');
-  }));
-  cargarSellos().then(()=>{cargarDashboard();cargarLibros();cargarAutores();cargarPagos();cargarPublicados();cargarLibrosPago();});
-  document.getElementById('p-fecha').value=new Date().toISOString().split('T')[0];
-}
+  // ── LOGIN ──
+  document.getElementById('lbtn').addEventListener('click', doLogin);
+  document.getElementById('lp').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
 
-// ── SELLOS ────────────────────────────────────────────────────
-async function cargarSellos(){
-  const{data}=await db.from('sellos').select('id,nombre').order('nombre');
-  allSellos=data||[];
-  const sel=document.getElementById('lf-sello');
-  allSellos.forEach(s=>{const o=document.createElement('option');o.value=s.nombre;o.textContent=s.nombre;sel.appendChild(o);});
-  // Poblar select de sello en modal libro
-  const elSello=document.getElementById('el-sello');
-  elSello.innerHTML=allSellos.map(s=>`<option value="${s.id}">${esc(s.nombre)}</option>`).join('');
-}
+  async function doLogin() {
+    var email = document.getElementById('le').value.trim();
+    var pass = document.getElementById('lp').value;
+    var btn = document.getElementById('lbtn');
+    var err = document.getElementById('lerr');
+    err.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'Ingresando...';
+    try {
+      var res = await db.auth.signInWithPassword({ email: email, password: pass });
+      if (res.error) {
+        err.textContent = 'Error: ' + res.error.message;
+        btn.disabled = false; btn.textContent = 'Ingresar';
+      } else if (res.data && res.data.session) {
+        iniciarApp();
+      } else {
+        err.textContent = 'No se pudo iniciar sesión.';
+        btn.disabled = false; btn.textContent = 'Ingresar';
+      }
+    } catch(ex) {
+      err.textContent = 'Error de conexión: ' + ex.message;
+      btn.disabled = false; btn.textContent = 'Ingresar';
+    }
+  }
 
-// ── DASHBOARD ─────────────────────────────────────────────────
-async function cargarDashboard(){
-  document.getElementById('dash-fecha').textContent=new Date().toLocaleDateString('es-AR',{day:'numeric',month:'long',year:'numeric'});
-  const[{data:libros},{data:pers},{data:regs},{data:liqs}]=await Promise.all([
-    db.from('convocatorias').select('id,nombre_libro,tipo,sello_id,sellos(nombre)'),
-    db.from('personas').select('id'),
-    db.from('regalias_semestre').select('convocatoria_id,total_regalias_usd,total_regalias_ars'),
-    db.from('liquidaciones').select('id,convocatoria_id,persona_id,monto_usd,moneda,monto_ars'),
-  ]);
+  document.getElementById('btn-logout').addEventListener('click', async function(){
+    await db.auth.signOut();
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('lw').style.display = 'flex';
+  });
 
-  const regM={};(regs||[]).forEach(r=>{if(!regM[r.convocatoria_id])regM[r.convocatoria_id]={usd:0,ars:0};regM[r.convocatoria_id].usd+=parseFloat(r.total_regalias_usd)||0;regM[r.convocatoria_id].ars+=parseFloat(r.total_regalias_ars)||0;});
-  const liqSet=new Set((liqs||[]).map(l=>l.convocatoria_id));
-  const totalUSD=(regs||[]).reduce((s,r)=>s+(parseFloat(r.total_regalias_usd)||0),0);
-  const totalPag=(liqs||[]).reduce((s,l)=>s+(parseFloat(l.monto_usd)||0),0);
+  // ── SESSION CHECK ──
+  async function checkSession() {
+    try {
+      var res = await db.auth.getSession();
+      if (res.data && res.data.session) iniciarApp();
+    } catch(e) {}
+  }
 
-  document.getElementById('stats').innerHTML=`
-    <div class="sc"><div class="sl">Publicaciones</div><div class="sv">${libros?.length||0}</div></div>
-    <div class="sc"><div class="sl">Autores</div><div class="sv">${pers?.length||0}</div></div>
-    <div class="sc"><div class="sl">Recaudado USD</div><div class="sv">$${fmt(totalUSD)}</div></div>
-    <div class="sc"><div class="sl">Liquidado USD</div><div class="sv">$${fmt(totalPag)}</div></div>`;
+  function iniciarApp() {
+    document.getElementById('lw').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.querySelectorAll('.ni').forEach(function(n){
+      n.addEventListener('click', function(){
+        document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+        document.querySelectorAll('.ni').forEach(function(x){ x.classList.remove('active'); });
+        var pg = document.getElementById('page-' + n.dataset.page);
+        if(pg) pg.classList.add('active');
+        n.classList.add('active');
+      });
+    });
+    // Modal close buttons
+    ['part','autor','libro','pago'].forEach(function(k){
+      var mx = document.getElementById('mx-'+k);
+      var mc = document.getElementById('mc-'+k);
+      var bg = document.getElementById('modal-'+k);
+      if(mx) mx.addEventListener('click', function(){ closeModal('modal-'+k); });
+      if(mc) mc.addEventListener('click', function(){ closeModal('modal-'+k); });
+      if(bg) bg.addEventListener('click', function(e){ if(e.target===bg) closeModal('modal-'+k); });
+    });
+    // Other buttons
+    document.getElementById('btn-csv').addEventListener('click', descargarCSV);
+    document.getElementById('btn-buscar').addEventListener('click', doBuscar);
+    document.getElementById('buscar-q').addEventListener('keydown', function(e){ if(e.key==='Enter') doBuscar(); });
+    document.getElementById('lf-q').addEventListener('input', filtrarLibros);
+    document.getElementById('lf-tipo').addEventListener('change', filtrarLibros);
+    document.getElementById('lf-sello').addEventListener('change', filtrarLibros);
+    document.getElementById('aut-q').addEventListener('input', filtrarAutores);
+    document.getElementById('pub-q').addEventListener('input', filtrarPublicados);
+    document.getElementById('p-libro').addEventListener('change', cargarAutoresPago);
+    document.getElementById('p-moneda').addEventListener('change', toggleMoneda);
+    document.getElementById('btn-reg-pago').addEventListener('click', registrarPago);
+    document.getElementById('btn-save-autor').addEventListener('click', guardarAutor);
+    document.getElementById('btn-save-libro').addEventListener('click', guardarLibro);
+    document.getElementById('btn-save-pago').addEventListener('click', guardarPago);
 
-  // Antologías cerca del mínimo
-  const cerca=(libros||[]).filter(l=>l.tipo==='colectivo')
-    .map(l=>({...l,sello:l.sellos?.nombre||'',usd:regM[l.id]?.usd||0,ars:regM[l.id]?.ars||0}))
-    .filter(l=>l.usd>0&&l.usd<500).sort((a,b)=>b.usd-a.usd).slice(0,8);
+    document.getElementById('dash-fecha').textContent = new Date().toLocaleDateString('es-AR',{day:'numeric',month:'long',year:'numeric'});
+    document.getElementById('p-fecha').value = new Date().toISOString().split('T')[0];
 
-  document.getElementById('dash-cerca').innerHTML=cerca.length
-    ?cerca.map(l=>{const pct=Math.min(100,Math.round(l.usd/500*100));
-      return`<tr><td>${esc(l.nombre_libro)}</td>
-      <td style="color:var(--white)">${esc(l.sello)}</td>
-      <td>USD ${fmt(l.usd)}${l.ars>0?` / ARS ${fmtARS(l.ars)}`:''}</td>
-      <td><div class="pw"><div class="pb"><div class="pf" style="width:${pct}%"></div></div><span class="pp">${pct}%</span></div></td></tr>`;}).join('')
-    :'<tr><td colspan="4" class="empty">Sin antologías en acumulación</td></tr>';
+    cargarSellos().then(function(){
+      cargarDashboard(); cargarLibros(); cargarAutores();
+      cargarPagos(); cargarPublicados(); cargarLibrosPago();
+    });
+  }
 
-  // Individuales con ventas — buscar autores
-  const{data:parts}=await db.from('participaciones').select('convocatoria_id,personas(nombre)').eq('estado','confirmado');
-  const autoresPorLibro={};
-  (parts||[]).forEach(p=>{if(!autoresPorLibro[p.convocatoria_id])autoresPorLibro[p.convocatoria_id]=[];if(p.personas?.nombre)autoresPorLibro[p.convocatoria_id].push(p.personas.nombre);});
+  // ── SELLOS ──
+  async function cargarSellos() {
+    var res = await db.from('sellos').select('id,nombre').order('nombre');
+    allSellos = res.data || [];
+    var sel = document.getElementById('lf-sello');
+    allSellos.forEach(function(s){
+      var o = document.createElement('option'); o.value = s.nombre; o.textContent = s.nombre; sel.appendChild(o);
+    });
+    var elSello = document.getElementById('el-sello');
+    elSello.innerHTML = allSellos.map(function(s){ return '<option value="'+s.id+'">'+esc(s.nombre)+'</option>'; }).join('');
+  }
 
-  const inds=(libros||[]).filter(l=>l.tipo==='individual')
-    .map(l=>({...l,usd:regM[l.id]?.usd||0,ars:regM[l.id]?.ars||0,autor:[...new Set(autoresPorLibro[l.id]||[])].join(', ')||'—'}))
-    .filter(l=>l.usd>0||l.ars>0).sort((a,b)=>(b.usd+b.ars/1400)-(a.usd+a.ars/1400));
+  // ── DASHBOARD ──
+  async function cargarDashboard() {
+    var r1 = await db.from('convocatorias').select('id,nombre_libro,tipo,sello_id,sellos(nombre)');
+    var r2 = await db.from('personas').select('id');
+    var r3 = await db.from('regalias_semestre').select('convocatoria_id,total_regalias_usd,total_regalias_ars');
+    var r4 = await db.from('liquidaciones').select('id,convocatoria_id,monto_usd');
+    var libros = r1.data || [], pers = r2.data || [], regs = r3.data || [], liqs = r4.data || [];
+    var regM = {};
+    regs.forEach(function(r){
+      if(!regM[r.convocatoria_id]) regM[r.convocatoria_id] = {usd:0,ars:0};
+      regM[r.convocatoria_id].usd += parseFloat(r.total_regalias_usd)||0;
+      regM[r.convocatoria_id].ars += parseFloat(r.total_regalias_ars)||0;
+    });
+    var liqSet = {};
+    liqs.forEach(function(l){ liqSet[l.convocatoria_id] = true; });
+    var totalUSD = regs.reduce(function(s,r){ return s+(parseFloat(r.total_regalias_usd)||0); }, 0);
+    var totalPag = liqs.reduce(function(s,l){ return s+(parseFloat(l.monto_usd)||0); }, 0);
+    document.getElementById('stats').innerHTML =
+      '<div class="sc"><div class="sl">Publicaciones</div><div class="sv">'+libros.length+'</div></div>'+
+      '<div class="sc"><div class="sl">Autores</div><div class="sv">'+pers.length+'</div></div>'+
+      '<div class="sc"><div class="sl">Recaudado USD</div><div class="sv">$'+fmt(totalUSD)+'</div></div>'+
+      '<div class="sc"><div class="sl">Liquidado USD</div><div class="sv">$'+fmt(totalPag)+'</div></div>';
+    var cerca = libros.filter(function(l){ return l.tipo==='colectivo'; })
+      .map(function(l){ return Object.assign({},l,{sello:l.sellos&&l.sellos.nombre||'',usd:regM[l.id]&&regM[l.id].usd||0,ars:regM[l.id]&&regM[l.id].ars||0}); })
+      .filter(function(l){ return l.usd>0 && l.usd<500; })
+      .sort(function(a,b){ return b.usd-a.usd; }).slice(0,8);
+    document.getElementById('dash-cerca').innerHTML = cerca.length
+      ? cerca.map(function(l){
+          var pct = Math.min(100,Math.round(l.usd/500*100));
+          return '<tr><td>'+esc(l.nombre_libro)+'</td><td style="color:var(--white)">'+esc(l.sello)+'</td>'+
+            '<td>USD '+fmt(l.usd)+(l.ars>0?' / ARS '+fmtARS(l.ars):'')+'</td>'+
+            '<td><div class="pw"><div class="pb"><div class="pf" style="width:'+pct+'%"></div></div><span class="pp">'+pct+'%</span></div></td></tr>';
+        }).join('')
+      : '<tr><td colspan="4" class="empty">Sin antologías en acumulación</td></tr>';
+    var r5 = await db.from('participaciones').select('convocatoria_id,personas(nombre)').eq('estado','confirmado');
+    var parts = r5.data || [];
+    var autM = {};
+    parts.forEach(function(p){
+      if(!autM[p.convocatoria_id]) autM[p.convocatoria_id]=[];
+      if(p.personas&&p.personas.nombre) autM[p.convocatoria_id].push(p.personas.nombre);
+    });
+    var inds = libros.filter(function(l){ return l.tipo==='individual'; })
+      .map(function(l){ return Object.assign({},l,{usd:regM[l.id]&&regM[l.id].usd||0,ars:regM[l.id]&&regM[l.id].ars||0,autor:[...new Set(autM[l.id]||[])].join(', ')||'—'}); })
+      .filter(function(l){ return l.usd>0||l.ars>0; })
+      .sort(function(a,b){ return (b.usd+b.ars/1400)-(a.usd+a.ars/1400); });
+    document.getElementById('dash-ind').innerHTML = inds.length
+      ? inds.map(function(l){
+          var pagado = liqSet[l.id];
+          return '<tr><td>'+esc(l.nombre_libro)+'</td><td style="font-size:12px;color:var(--muted)">'+esc(l.autor)+'</td>'+
+            '<td style="font-size:12px">'+(l.ars>0?'ARS '+fmtARS(l.ars):'—')+'</td>'+
+            '<td style="font-size:12px">'+(l.usd>0?'USD '+fmt(l.usd):'—')+'</td>'+
+            '<td>'+(pagado?'<span class="b by">Liquidado</span>':'<span class="b bg">Listo</span>')+'</td></tr>';
+        }).join('')
+      : '<tr><td colspan="5" class="empty">Sin datos</td></tr>';
+  }
 
-  document.getElementById('dash-ind').innerHTML=inds.length
-    ?inds.map(l=>{const pagado=liqSet.has(l.id);
-      return`<tr><td>${esc(l.nombre_libro)}</td><td style="font-size:12px;color:var(--muted)">${esc(l.autor)}</td>
-      <td style="font-size:12px">${l.ars>0?'ARS '+fmtARS(l.ars):'—'}</td>
-      <td style="font-size:12px">${l.usd>0?'USD '+fmt(l.usd):'—'}</td>
-      <td>${pagado?'<span class="b by">Liquidado</span>':'<span class="b bg">Listo</span>'}</td></tr>`;}).join('')
-    :'<tr><td colspan="5" class="empty">Sin datos</td></tr>';
-}
+  // ── LIBROS ──
+  async function cargarLibros() {
+    var r1 = await db.from('convocatorias').select('id,nombre_libro,tipo,moneda_liquidacion,sello_id,sellos(nombre)');
+    var r2 = await db.from('participaciones').select('convocatoria_id,persona_id').eq('estado','confirmado');
+    var r3 = await db.from('regalias_semestre').select('convocatoria_id,total_regalias_usd,total_regalias_ars');
+    var libros = r1.data||[], parts = r2.data||[], regs = r3.data||[];
+    var pm = {};
+    parts.forEach(function(p){ if(!pm[p.convocatoria_id]) pm[p.convocatoria_id]=new Set(); pm[p.convocatoria_id].add(p.persona_id); });
+    var rm = {};
+    regs.forEach(function(r){ if(!rm[r.convocatoria_id]) rm[r.convocatoria_id]={usd:0,ars:0}; rm[r.convocatoria_id].usd+=parseFloat(r.total_regalias_usd)||0; rm[r.convocatoria_id].ars+=parseFloat(r.total_regalias_ars)||0; });
+    allLibros = libros.map(function(l){ return Object.assign({},l,{sello:l.sellos&&l.sellos.nombre||'',autores:pm[l.id]&&pm[l.id].size||0,usd:rm[l.id]&&rm[l.id].usd||0,ars:rm[l.id]&&rm[l.id].ars||0}); });
+    filtrarLibros();
+  }
 
-// ── LIBROS ────────────────────────────────────────────────────
-async function cargarLibros(){
-  const[{data:libros},{data:parts},{data:regs}]=await Promise.all([
-    db.from('convocatorias').select('id,nombre_libro,tipo,moneda_liquidacion,sello_id,sellos(nombre)'),
-    db.from('participaciones').select('convocatoria_id,persona_id').eq('estado','confirmado'),
-    db.from('regalias_semestre').select('convocatoria_id,total_regalias_usd,total_regalias_ars'),
-  ]);
-  const pm={};(parts||[]).forEach(p=>{if(!pm[p.convocatoria_id])pm[p.convocatoria_id]=new Set();pm[p.convocatoria_id].add(p.persona_id);});
-  const rm={};(regs||[]).forEach(r=>{if(!rm[r.convocatoria_id])rm[r.convocatoria_id]={usd:0,ars:0};rm[r.convocatoria_id].usd+=parseFloat(r.total_regalias_usd)||0;rm[r.convocatoria_id].ars+=parseFloat(r.total_regalias_ars)||0;});
-  allLibros=(libros||[]).map(l=>({...l,sello:l.sellos?.nombre||'',autores:pm[l.id]?.size||0,usd:rm[l.id]?.usd||0,ars:rm[l.id]?.ars||0}));
-  filtrarLibros();
-}
+  function filtrarLibros() {
+    var q = document.getElementById('lf-q').value.toLowerCase();
+    var tipo = document.getElementById('lf-tipo').value;
+    var sello = document.getElementById('lf-sello').value;
+    var f = allLibros.filter(function(l){ return (!q||l.nombre_libro.toLowerCase().includes(q))&&(!tipo||l.tipo===tipo)&&(!sello||l.sello===sello); });
+    document.getElementById('libros-tb').innerHTML = f.length
+      ? f.map(function(l){
+          var est = l.tipo==='individual' ? '<span class="b bg">Listo</span>'
+            : l.usd>=500 ? '<span class="b bp">Alcanzado</span>'
+            : l.usd>0 ? '<span class="b by">USD '+fmt(l.usd)+'/500</span>'
+            : '<span class="b bm">Sin ventas</span>';
+          return '<tr><td><span style="cursor:pointer;text-decoration:underline;text-decoration-color:rgba(255,255,255,.3)" data-libro-id="'+l.id+'" data-libro-nombre="'+esc(l.nombre_libro)+'">'+esc(l.nombre_libro)+'</span></td>'+
+            '<td>'+(l.tipo==='individual'?'<span class="ti">Individual</span>':'<span class="tc">Antología</span>')+'</td>'+
+            '<td style="color:var(--white);font-size:12px">'+esc(l.sello)+'</td>'+
+            '<td style="text-align:center;color:var(--muted)">'+l.autores+'</td>'+
+            '<td style="font-size:12px">'+(l.ars>0?'ARS '+fmtARS(l.ars):'—')+'</td>'+
+            '<td style="font-size:12px">'+(l.usd>0?'USD '+fmt(l.usd):'—')+'</td>'+
+            '<td>'+est+'</td></tr>';
+        }).join('')
+      : '<tr><td colspan="7" class="empty">Sin resultados</td></tr>';
+    document.querySelectorAll('[data-libro-id]').forEach(function(el){
+      el.addEventListener('click', function(){ verParticipantes(this.dataset.libroId, this.dataset.libroNombre); });
+    });
+  }
 
-function filtrarLibros(){
-  const q=document.getElementById('lf-q').value.toLowerCase();
-  const tipo=document.getElementById('lf-tipo').value;
-  const sello=document.getElementById('lf-sello').value;
-  const f=allLibros.filter(l=>(!q||l.nombre_libro.toLowerCase().includes(q))&&(!tipo||l.tipo===tipo)&&(!sello||l.sello===sello));
-  const estado=l=>{
-    if(l.tipo==='individual')return'<span class="b bg">Listo</span>';
-    if(l.usd>=500)return'<span class="b bp">Mínimo alcanzado</span>';
-    if(l.usd>0)return`<span class="b by">USD ${fmt(l.usd)}/500</span>`;
-    return'<span class="b bm">Sin ventas</span>';
-  };
-  document.getElementById('libros-tb').innerHTML=f.length
-    ?f.map(l=>`<tr>
-      <td><span style="cursor:pointer;color:rgba(255,255,255,.8);text-decoration:underline;text-decoration-color:rgba(255,255,255,.3)" onclick="verParticipantes(${l.id},'${esc(l.nombre_libro)}')">${esc(l.nombre_libro)}</span></td>
-      <td>${l.tipo==='individual'?'<span class="ti">Individual</span>':'<span class="tc">Antología</span>'}</td>
-      <td style="font-size:12px;color:var(--white)">${esc(l.sello)}</td>
-      <td style="text-align:center;color:var(--muted)">${l.autores}</td>
-      <td style="font-size:12px">${l.ars>0?'ARS '+fmtARS(l.ars):'—'}</td>
-      <td style="font-size:12px">${l.usd>0?'USD '+fmt(l.usd):'—'}</td>
-      <td>${estado(l)}</td></tr>`).join('')
-    :'<tr><td colspan="7" class="empty">Sin resultados</td></tr>';
-}
+  // ── PARTICIPANTES ──
+  async function verParticipantes(id, titulo) {
+    currentLibroId = id;
+    document.getElementById('mp-tit').textContent = titulo;
+    document.getElementById('mp-sub').textContent = 'Cargando...';
+    document.getElementById('mp-tbody').innerHTML = '';
+    openModal('modal-part');
+    var res = await db.from('participaciones').select('id,nombre_cuento,seudonimo,personas(id,nombre,email)').eq('convocatoria_id',id).eq('estado','confirmado');
+    var data = res.data || [];
+    var porAutor = {};
+    data.forEach(function(p){
+      var k = p.personas&&p.personas.id;
+      if(!porAutor[k]) porAutor[k]={pid:k,nombre:p.personas&&p.personas.nombre||'',email:p.personas&&p.personas.email||'',cuentos:0};
+      porAutor[k].cuentos++;
+    });
+    var autores = Object.values(porAutor);
+    csvData = autores;
+    document.getElementById('mp-sub').textContent = autores.length+' autores / '+data.length+' cuentos';
+    document.getElementById('mp-tbody').innerHTML = autores.length
+      ? autores.map(function(a){ return '<tr><td>'+esc(a.nombre)+'</td><td style="font-size:11px;color:var(--muted)">'+esc(a.email)+'</td><td style="font-size:11px;color:var(--muted)">—</td><td style="text-align:center">'+a.cuentos+'</td><td><button class="bto" data-pid="'+a.pid+'" data-nombre="'+esc(a.nombre)+'" data-email="'+esc(a.email)+'">Editar</button></td></tr>'; }).join('')
+      : '<tr><td colspan="5" class="empty">Sin participantes</td></tr>';
+    document.querySelectorAll('#mp-tbody .bto').forEach(function(btn){
+      btn.addEventListener('click', function(){ abrirEditarAutor(this.dataset.pid, this.dataset.nombre, this.dataset.email); });
+    });
+  }
 
-// ── PARTICIPANTES MODAL ───────────────────────────────────────
-let partData=[];
-async function verParticipantes(id,titulo){
-  currentLibroId=id;
-  document.getElementById('mp-titulo').textContent=titulo;
-  document.getElementById('mp-sub').textContent='Cargando...';
-  document.getElementById('mp-tbody').innerHTML='';
-  abrirModal('modal-part');
-  const{data}=await db.from('participaciones')
-    .select('id,nombre_cuento,seudonimo,estado,personas(id,nombre,email)')
-    .eq('convocatoria_id',id).eq('estado','confirmado');
-  partData=data||[];
-  const porAutor={};
-  partData.forEach(p=>{const k=p.personas?.id;if(!porAutor[k])porAutor[k]={pid:k,nombre:p.personas?.nombre,email:p.personas?.email,cuentos:[]};porAutor[k].cuentos.push(p);});
-  const autores=Object.values(porAutor);
-  document.getElementById('mp-sub').textContent=`${autores.length} autores · ${partData.length} cuentos`;
-  csvData=autores;
-  document.getElementById('mp-tbody').innerHTML=autores.length
-    ?autores.map(a=>`<tr>
-      <td>${esc(a.nombre)}</td>
-      <td style="font-size:11px;color:var(--muted)">${esc(a.email)}</td>
-      <td style="font-size:11px;color:var(--muted)">${esc(a.cuentos.map(c=>c.seudonimo||'').filter(Boolean)[0]||'—')}</td>
-      <td style="text-align:center">${a.cuentos.length}</td>
-      <td><button class="bto" onclick="editarAutorModal(${a.pid},'${esc(a.nombre)}','${esc(a.email)}')">Editar</button></td>
-    </tr>`).join('')
-    :'<tr><td colspan="5" class="empty">Sin participantes</td></tr>';
-}
-
-function descargarCSV(){
-  if(!csvData)return;
-  const titulo=document.getElementById('mp-titulo').textContent;
-  let csv='Nombre,Email,Seudónimo,Cuentos
+  function descargarCSV() {
+    if(!csvData) return;
+    var titulo = document.getElementById('mp-tit').textContent;
+    var csv = 'Nombre,Email,Cuentos
 ';
-  csvData.forEach(a=>{csv+=`"${a.nombre}","${a.email}","${a.cuentos.map(c=>c.seudonimo||'').filter(Boolean)[0]||''}","${a.cuentos.length}"
-`;});
-  const b=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  const u=URL.createObjectURL(b);
-  const a=document.createElement('a');a.href=u;a.download=`participantes_${titulo.replace(/[^a-z0-9]/gi,'_')}.csv`;a.click();
-  URL.revokeObjectURL(u);
-}
+    csvData.forEach(function(a){ csv += '"'+a.nombre+'","'+a.email+'",'+a.cuentos+'
+'; });
+    var b = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    var u = URL.createObjectURL(b);
+    var a = document.createElement('a'); a.href=u; a.download='participantes_'+titulo.replace(/[^a-z0-9]/gi,'_')+'.csv'; a.click();
+    URL.revokeObjectURL(u);
+  }
 
-// ── EDITAR AUTOR ──────────────────────────────────────────────
-function editarAutorModal(id,nombre,email){
-  document.getElementById('ea-id').value=id;
-  document.getElementById('ea-nombre').value=nombre;
-  document.getElementById('ea-email').value=email;
-  document.getElementById('ea-pais').value='';
-  abrirModal('modal-autor');
-  // cargar pais
-  db.from('personas').select('pais_residencia').eq('id',id).single().then(({data})=>{if(data)document.getElementById('ea-pais').value=data.pais_residencia||'';});
-}
+  // ── EDITAR AUTOR ──
+  function abrirEditarAutor(pid, nombre, email) {
+    document.getElementById('ea-id').value = pid;
+    document.getElementById('ea-nombre').value = nombre;
+    document.getElementById('ea-email').value = email;
+    document.getElementById('ea-pais').value = '';
+    openModal('modal-autor');
+    db.from('personas').select('pais_residencia').eq('id',pid).single().then(function(r){ if(r.data) document.getElementById('ea-pais').value = r.data.pais_residencia||''; });
+  }
 
-async function guardarAutor(){
-  const id=document.getElementById('ea-id').value;
-  const nombre=document.getElementById('ea-nombre').value.trim();
-  const email=document.getElementById('ea-email').value.trim();
-  const pais=document.getElementById('ea-pais').value.trim();
-  const{error}=await db.from('personas').update({nombre,email,pais_residencia:pais||null}).eq('id',id);
-  if(error){toast('Error: '+error.message,'err');return;}
-  toast('Autor actualizado');
-  cerrarModal('modal-autor');
-  cargarAutores();
-  if(currentLibroId)verParticipantes(currentLibroId,document.getElementById('mp-titulo').textContent);
-}
+  async function guardarAutor() {
+    var id = document.getElementById('ea-id').value;
+    var nombre = document.getElementById('ea-nombre').value.trim();
+    var email = document.getElementById('ea-email').value.trim();
+    var pais = document.getElementById('ea-pais').value.trim();
+    var res = await db.from('personas').update({nombre:nombre,email:email,pais_residencia:pais||null}).eq('id',id);
+    if(res.error){ toast('Error: '+res.error.message,'err'); return; }
+    toast('Autor actualizado');
+    closeModal('modal-autor');
+    cargarAutores();
+    if(currentLibroId) verParticipantes(currentLibroId, document.getElementById('mp-tit').textContent);
+  }
 
-// ── LIBROS PUBLICADOS ─────────────────────────────────────────
-async function cargarPublicados(){
-  const{data}=await db.from('convocatorias').select('id,nombre_libro,nombre_convocatoria,tipo,sello_id,sellos(nombre)').order('nombre_libro');
-  allPublicados=data||[];
-  filtrarPublicados();
-}
-
-function filtrarPublicados(){
-  const q=document.getElementById('pub-q').value.toLowerCase();
-  const f=allPublicados.filter(l=>!q||l.nombre_libro.toLowerCase().includes(q));
-  document.getElementById('pub-tb').innerHTML=f.length
-    ?f.map(l=>`<tr>
-      <td>${esc(l.nombre_libro)}</td>
-      <td style="color:var(--white);font-size:12px">${esc(l.sellos?.nombre||'')}</td>
-      <td>${l.tipo==='individual'?'<span class="ti">Individual</span>':'<span class="tc">Antología</span>'}</td>
-      <td><button class="bto" onclick="editarLibro(${l.id})">Editar</button></td>
-    </tr>`).join('')
-    :'<tr><td colspan="4" class="empty">Sin resultados</td></tr>';
-}
-
-async function editarLibro(id){
-  const libro=allPublicados.find(l=>l.id===id);
-  if(!libro)return;
-  document.getElementById('el-id').value=id;
-  document.getElementById('el-titulo').value=libro.nombre_libro;
-  document.getElementById('el-conv').value=libro.nombre_convocatoria||libro.nombre_libro;
-  document.getElementById('el-tipo').value=libro.tipo;
-  document.getElementById('el-sello').value=libro.sello_id;
-  document.getElementById('el-sub').textContent=libro.nombre_libro;
-  // cargar participantes
-  const{data:parts}=await db.from('participaciones')
-    .select('id,nombre_cuento,seudonimo,personas(id,nombre,email)')
-    .eq('convocatoria_id',id).eq('estado','confirmado');
-  const porAutor={};
-  (parts||[]).forEach(p=>{const k=p.personas?.id;if(!porAutor[k])porAutor[k]={pid:k,nombre:p.personas?.nombre,email:p.personas?.email,c:0};porAutor[k].c++;});
-  const autores=Object.values(porAutor);
-  document.getElementById('el-parts').innerHTML=autores.length
-    ?autores.map(a=>`<tr>
-      <td style="font-size:12px">${esc(a.nombre)}</td>
-      <td style="font-size:11px;color:var(--muted)">${esc(a.email)}</td>
-      <td style="text-align:center">${a.c}</td>
-      <td><button class="btd" onclick="quitarParticipante(${id},${a.pid})">Quitar</button></td>
-    </tr>`).join('')
-    :'<tr><td colspan="4" class="empty">Sin participantes</td></tr>';
-  abrirModal('modal-libro');
-}
-
-async function guardarLibro(){
-  const id=document.getElementById('el-id').value;
-  const titulo=document.getElementById('el-titulo').value.trim();
-  const conv=document.getElementById('el-conv').value.trim();
-  const tipo=document.getElementById('el-tipo').value;
-  const selloId=document.getElementById('el-sello').value;
-  const{error}=await db.from('convocatorias').update({nombre_libro:titulo,nombre_convocatoria:conv,tipo,sello_id:selloId}).eq('id',id);
-  if(error){toast('Error: '+error.message,'err');return;}
-  toast('Publicación actualizada');
-  cerrarModal('modal-libro');
-  cargarLibros();cargarPublicados();cargarDashboard();
-}
-
-async function quitarParticipante(libroId,personaId){
-  if(!confirm('¿Quitar este autor del libro?'))return;
-  const{error}=await db.from('participaciones').delete().eq('convocatoria_id',libroId).eq('persona_id',personaId);
-  if(error){toast('Error: '+error.message,'err');return;}
-  toast('Participante eliminado');
-  editarLibro(libroId);
-}
-
-// ── BUSCAR ────────────────────────────────────────────────────
-async function doBuscar(){
-  const q=document.getElementById('buscar-q').value.trim();
-  if(!q)return;
-  const res=document.getElementById('buscar-res');
-  res.innerHTML='<div class="empty"><span class="spin"></span> Buscando...</div>';
-
-  // Buscar persona por nombre o email
-  const{data:personas}=await db.from('personas').select('id,nombre,email').or(`nombre.ilike.%${q}%,email.ilike.%${q}%`).limit(5);
-
-  // Buscar libro por título
-  const{data:libros}=await db.from('convocatorias').select('id,nombre_libro,tipo,sellos(nombre)').ilike('nombre_libro',`%${q}%`).limit(5);
-
-  let html='';
-
-  if(personas?.length){
-    for(const p of personas){
-      const{data:filas}=await db.rpc('buscar_autor',{p_email:p.email});
-      if(filas?.length){
-        html+=`<div class="tw"><div class="th"><h3>${esc(p.nombre)}</h3><span style="font-size:12px;color:var(--muted)">${esc(p.email)}</span></div>
-        <table><thead><tr><th>LIBRO</th><th>TIPO</th><th>ESTADO</th><th>USD</th><th>ARS</th></tr></thead><tbody>
-        ${filas.map(r=>`<tr>
-          <td>${esc(r.nombre_libro)}</td>
-          <td>${r.tipo_libro==='individual'?'<span class="ti">Ind.</span>':'<span class="tc">Antol.</span>'}</td>
-          <td>${r.estado==='listo'?'<span class="b bg">Listo</span>':r.estado==='alcanzado'?'<span class="b bp">Alcanzado</span>':`<span class="b by">Faltan USD ${fmt(r.falta_usd)}</span>`}</td>
-          <td style="font-size:12px">${r.total_usd>0?'USD '+fmt(r.total_usd):'—'}</td>
-          <td style="font-size:12px">${r.total_ars>0?'ARS '+fmtARS(r.total_ars):'—'}</td>
-        </tr>`).join('')}
-        </tbody></table></div>`;
+  // ── BUSCAR ──
+  async function doBuscar() {
+    var q = document.getElementById('buscar-q').value.trim();
+    if(!q) return;
+    var res = document.getElementById('buscar-res');
+    res.innerHTML = '<div class="empty"><span class="spin"></span> Buscando...</div>';
+    var r1 = await db.from('personas').select('id,nombre,email').or('nombre.ilike.%'+q+'%,email.ilike.%'+q+'%').limit(5);
+    var r2 = await db.from('convocatorias').select('id,nombre_libro,tipo,sellos(nombre)').ilike('nombre_libro','%'+q+'%').limit(5);
+    var html = '';
+    if(r1.data&&r1.data.length) {
+      for(var i=0;i<r1.data.length;i++) {
+        var p = r1.data[i];
+        var rf = await db.rpc('buscar_autor',{p_email:p.email});
+        if(rf.data&&rf.data.length) {
+          html += '<div class="tw"><div class="th"><h3>'+esc(p.nombre)+'</h3><span style="font-size:12px;color:var(--muted)">'+esc(p.email)+'</span></div><table><thead><tr><th>LIBRO</th><th>TIPO</th><th>ESTADO</th><th>USD</th><th>ARS</th></tr></thead><tbody>'+
+            rf.data.map(function(r){
+              var est = r.estado==='listo'?'<span class="b bg">Listo</span>':r.estado==='alcanzado'?'<span class="b bp">Alcanzado</span>':'<span class="b by">Faltan USD '+fmt(r.falta_usd)+'</span>';
+              return '<tr><td>'+esc(r.nombre_libro)+'</td><td>'+(r.tipo_libro==='individual'?'<span class="ti">Ind.</span>':'<span class="tc">Antol.</span>')+'</td><td>'+est+'</td><td style="font-size:12px">'+(r.total_usd>0?'USD '+fmt(r.total_usd):'—')+'</td><td style="font-size:12px">'+(r.total_ars>0?'ARS '+fmtARS(r.total_ars):'—')+'</td></tr>';
+            }).join('')+'</tbody></table></div>';
+        }
       }
     }
-  }
-
-  if(libros?.length){
-    for(const l of libros){
-      const[{data:parts},{data:regs}]=await Promise.all([
-        db.from('participaciones').select('personas(nombre,email)').eq('convocatoria_id',l.id).eq('estado','confirmado'),
-        db.from('regalias_semestre').select('total_regalias_usd,total_regalias_ars,semestre').eq('convocatoria_id',l.id),
-      ]);
-      const totUSD=(regs||[]).reduce((s,r)=>s+(parseFloat(r.total_regalias_usd)||0),0);
-      const totARS=(regs||[]).reduce((s,r)=>s+(parseFloat(r.total_regalias_ars)||0),0);
-      const vistos=new Set();const autores=[];
-      (parts||[]).forEach(p=>{if(p.personas&&!vistos.has(p.personas.email)){vistos.add(p.personas.email);autores.push(p.personas);}});
-      html+=`<div class="tw"><div class="th"><h3>${esc(l.nombre_libro)}</h3>
-        <span style="font-size:12px;color:var(--muted)">${esc(l.sellos?.nombre||'')} · ${totUSD>0?'USD '+fmt(totUSD):''}${totARS>0?' / ARS '+fmtARS(totARS):''}</span></div>
-        <table><thead><tr><th>AUTOR</th><th>EMAIL</th></tr></thead><tbody>
-        ${autores.length?autores.map(a=>`<tr><td>${esc(a.nombre)}</td><td style="font-size:12px;color:var(--muted)">${esc(a.email)}</td></tr>`).join(''):'<tr><td colspan="2" class="empty">Sin participantes</td></tr>'}
-        </tbody></table></div>`;
+    if(r2.data&&r2.data.length) {
+      for(var j=0;j<r2.data.length;j++) {
+        var l = r2.data[j];
+        var rp = await db.from('participaciones').select('personas(nombre,email)').eq('convocatoria_id',l.id).eq('estado','confirmado');
+        var rr = await db.from('regalias_semestre').select('total_regalias_usd,total_regalias_ars').eq('convocatoria_id',l.id);
+        var totUSD = (rr.data||[]).reduce(function(s,r){ return s+(parseFloat(r.total_regalias_usd)||0); },0);
+        var totARS = (rr.data||[]).reduce(function(s,r){ return s+(parseFloat(r.total_regalias_ars)||0); },0);
+        var vistos = {}, autores = [];
+        (rp.data||[]).forEach(function(p){ if(p.personas&&!vistos[p.personas.email]){vistos[p.personas.email]=true;autores.push(p.personas);} });
+        html += '<div class="tw"><div class="th"><h3>'+esc(l.nombre_libro)+'</h3><span style="font-size:12px;color:var(--muted)">'+esc((l.sellos&&l.sellos.nombre)||'')+' '+(totUSD>0?'USD '+fmt(totUSD):'')+(totARS>0?' / ARS '+fmtARS(totARS):'')+'</span></div><table><thead><tr><th>AUTOR</th><th>EMAIL</th></tr></thead><tbody>'+
+          (autores.length?autores.map(function(a){ return '<tr><td>'+esc(a.nombre)+'</td><td style="font-size:12px;color:var(--muted)">'+esc(a.email)+'</td></tr>'; }).join(''):'<tr><td colspan="2" class="empty">Sin participantes</td></tr>')+'</tbody></table></div>';
+      }
     }
+    res.innerHTML = html || '<div class="empty">Sin resultados para "'+esc(q)+'"</div>';
   }
 
-  res.innerHTML=html||`<div class="empty">Sin resultados para "${esc(q)}"</div>`;
-}
+  // ── PAGOS ──
+  function toggleMoneda() {
+    var m = document.getElementById('p-moneda').value;
+    document.getElementById('p-monto-lbl').textContent = 'Monto ('+m+')';
+  }
 
-// ── PAGOS ─────────────────────────────────────────────────────
-function toggleMoneda(){
-  const m=document.getElementById('p-moneda').value;
-  document.getElementById('p-monto-label').textContent=`Monto (${m})`;
-}
+  async function cargarLibrosPago() {
+    var res = await db.from('convocatorias').select('id,nombre_libro').order('nombre_libro');
+    var sel = document.getElementById('p-libro');
+    sel.innerHTML = '<option value="">Seleccioná...</option>';
+    (res.data||[]).forEach(function(l){ var o=document.createElement('option');o.value=l.id;o.textContent=l.nombre_libro;sel.appendChild(o); });
+  }
 
-async function cargarLibrosPago(){
-  const{data}=await db.from('convocatorias').select('id,nombre_libro').order('nombre_libro');
-  const sel=document.getElementById('p-libro');
-  sel.innerHTML='<option value="">Seleccioná...</option>';
-  (data||[]).forEach(l=>{const o=document.createElement('option');o.value=l.id;o.textContent=l.nombre_libro;sel.appendChild(o);});
-}
+  async function cargarAutoresPago() {
+    var id = document.getElementById('p-libro').value;
+    var sel = document.getElementById('p-autor');
+    if(!id){ sel.innerHTML='<option>Primero seleccioná un libro</option>'; return; }
+    var res = await db.from('participaciones').select('persona_id,personas(id,nombre,email)').eq('convocatoria_id',id).eq('estado','confirmado');
+    var vistos = {}, autores = [];
+    (res.data||[]).forEach(function(p){ if(!vistos[p.persona_id]){vistos[p.persona_id]=true;autores.push(p.personas);} });
+    sel.innerHTML = autores.map(function(a){ return '<option value="'+a.id+'">'+esc(a.nombre)+' ('+esc(a.email)+')</option>'; }).join('');
+  }
 
-async function cargarAutoresPago(){
-  const id=document.getElementById('p-libro').value;
-  const sel=document.getElementById('p-autor');
-  if(!id){sel.innerHTML='<option>Primero seleccioná un libro</option>';return;}
-  const{data}=await db.from('participaciones').select('persona_id,personas(id,nombre,email)').eq('convocatoria_id',id).eq('estado','confirmado');
-  const vistos=new Set();const autores=[];
-  (data||[]).forEach(p=>{if(!vistos.has(p.persona_id)){vistos.add(p.persona_id);autores.push(p.personas);}});
-  sel.innerHTML=autores.map(a=>`<option value="${a.id}">${esc(a.nombre)} (${esc(a.email)})</option>`).join('');
-}
+  async function registrarPago() {
+    var libroId = document.getElementById('p-libro').value;
+    var autorId = document.getElementById('p-autor').value;
+    var moneda = document.getElementById('p-moneda').value;
+    var monto = parseFloat(document.getElementById('p-monto').value);
+    var fecha = document.getElementById('p-fecha').value;
+    var metodo = document.getElementById('p-metodo').value;
+    var semestres = document.getElementById('p-semestres').value.trim();
+    var ref = document.getElementById('p-ref').value.trim();
+    if(!libroId||!autorId||!monto||!fecha){ toast('Completá todos los campos obligatorios','err'); return; }
+    var payload = {convocatoria_id:libroId,persona_id:autorId,fecha_pago:fecha,metodo_pago:metodo,moneda:moneda,semestres_cubiertos:semestres||null,referencia:ref||null,semestre_hasta:semestres.split(',')[0].trim()||'2026-S1'};
+    if(moneda==='USD') payload.monto_usd=monto;
+    else { payload.monto_ars=monto; payload.monto_usd=0; }
+    var res = await db.from('liquidaciones').insert(payload);
+    if(res.error){ toast('Error: '+res.error.message,'err'); return; }
+    toast('Pago registrado');
+    cargarPagos(); cargarDashboard();
+  }
 
-async function registrarPago(){
-  const libroId=document.getElementById('p-libro').value;
-  const autorId=document.getElementById('p-autor').value;
-  const moneda=document.getElementById('p-moneda').value;
-  const monto=parseFloat(document.getElementById('p-monto').value);
-  const fecha=document.getElementById('p-fecha').value;
-  const metodo=document.getElementById('p-metodo').value;
-  const semestres=document.getElementById('p-semestres').value.trim();
-  const ref=document.getElementById('p-ref').value.trim();
-  if(!libroId||!autorId||!monto||!fecha){toast('Completá todos los campos obligatorios','err');return;}
-  const payload={convocatoria_id:libroId,persona_id:autorId,fecha_pago:fecha,metodo_pago:metodo,moneda,semestres_cubiertos:semestres||null,referencia:ref||null,semestre_hasta:semestres.split(',')[0]?.trim()||'2026-S1'};
-  if(moneda==='USD')payload.monto_usd=monto;
-  else{payload.monto_ars=monto;payload.monto_usd=0;}
-  const{error}=await db.from('liquidaciones').insert(payload);
-  if(error){toast('Error: '+error.message,'err');return;}
-  toast('Pago registrado');
-  cargarPagos();cargarDashboard();
-}
+  async function cargarPagos() {
+    var res = await db.from('liquidaciones').select('id,moneda,monto_usd,monto_ars,fecha_pago,metodo_pago,semestres_cubiertos,referencia,convocatorias(nombre_libro),personas(nombre)').order('fecha_pago',{ascending:false}).limit(100);
+    pagosData = res.data || [];
+    renderPagos();
+  }
 
-async function cargarPagos(){
-  const{data}=await db.from('liquidaciones')
-    .select('id,moneda,monto_usd,monto_ars,fecha_pago,metodo_pago,semestres_cubiertos,referencia,convocatorias(nombre_libro),personas(nombre)')
-    .order('fecha_pago',{ascending:false}).limit(100);
-  document.getElementById('pagos-tb').innerHTML=data?.length
-    ?data.map(p=>`<tr>
-      <td style="font-size:12px">${esc(p.convocatorias?.nombre_libro)}</td>
-      <td style="font-size:12px">${esc(p.personas?.nombre)}</td>
-      <td><span class="b bm">${p.moneda}</span></td>
-      <td>${p.moneda==='ARS'?'ARS '+fmtARS(p.monto_ars||0):'USD '+fmt(p.monto_usd||0)}</td>
-      <td style="font-size:11px;color:var(--muted)">${p.metodo_pago||'—'}</td>
-      <td style="font-size:12px">${p.fecha_pago}</td>
-      <td style="font-size:11px;color:var(--muted)">${p.semestres_cubiertos||p.semestre_hasta||'—'}</td>
-      <td style="display:flex;gap:6px;flex-wrap:wrap">
-        <button class="bto" onclick="editarPago(${JSON.stringify(p).replace(/'/g,'&#39;').replace(/"/g,'&quot;')})">Editar</button>
-        <button class="btd" onclick="eliminarPago(${p.id})">Borrar</button>
-      </td>
-    </tr>`).join('')
-    :'<tr><td colspan="8" class="empty">Sin pagos registrados</td></tr>';
-}
+  function renderPagos() {
+    document.getElementById('pagos-tb').innerHTML = pagosData.length
+      ? pagosData.map(function(p,i){
+          var monto = p.moneda==='ARS' ? 'ARS '+fmtARS(p.monto_ars||0) : 'USD '+fmt(p.monto_usd||0);
+          return '<tr><td style="font-size:12px">'+esc((p.convocatorias&&p.convocatorias.nombre_libro)||'')+'</td>'+
+            '<td style="font-size:12px">'+esc((p.personas&&p.personas.nombre)||'')+'</td>'+
+            '<td><span class="b bm">'+esc(p.moneda)+'</span></td>'+
+            '<td>'+monto+'</td>'+
+            '<td style="font-size:11px;color:var(--muted)">'+esc(p.metodo_pago||'—')+'</td>'+
+            '<td style="font-size:12px">'+esc(p.fecha_pago)+'</td>'+
+            '<td style="font-size:11px;color:var(--muted)">'+esc(p.semestres_cubiertos||'—')+'</td>'+
+            '<td style="display:flex;gap:6px"><button class="bto" data-pago-idx="'+i+'">Editar</button><button class="btd" data-pago-del="'+p.id+'">Borrar</button></td></tr>';
+        }).join('')
+      : '<tr><td colspan="8" class="empty">Sin pagos registrados</td></tr>';
+    document.querySelectorAll('[data-pago-idx]').forEach(function(btn){
+      btn.addEventListener('click', function(){ abrirEditarPago(pagosData[parseInt(this.dataset.pagoIdx)]); });
+    });
+    document.querySelectorAll('[data-pago-del]').forEach(function(btn){
+      btn.addEventListener('click', function(){ eliminarPago(this.dataset.pagoDel); });
+    });
+  }
 
-function editarPago(p){
-  document.getElementById('ep-id').value=p.id;
-  document.getElementById('ep-moneda').value=p.moneda||'USD';
-  document.getElementById('ep-monto').value=p.moneda==='ARS'?(p.monto_ars||0):(p.monto_usd||0);
-  document.getElementById('ep-fecha').value=p.fecha_pago;
-  document.getElementById('ep-metodo').value=p.metodo_pago||'paypal';
-  document.getElementById('ep-semestres').value=p.semestres_cubiertos||'';
-  document.getElementById('ep-ref').value=p.referencia||'';
-  abrirModal('modal-pago');
-}
+  function abrirEditarPago(p) {
+    document.getElementById('ep-id').value = p.id;
+    document.getElementById('ep-moneda').value = p.moneda||'USD';
+    document.getElementById('ep-monto').value = p.moneda==='ARS' ? (p.monto_ars||0) : (p.monto_usd||0);
+    document.getElementById('ep-fecha').value = p.fecha_pago;
+    document.getElementById('ep-metodo').value = p.metodo_pago||'paypal';
+    document.getElementById('ep-semestres').value = p.semestres_cubiertos||'';
+    document.getElementById('ep-ref').value = p.referencia||'';
+    openModal('modal-pago');
+  }
 
-async function guardarPago(){
-  const id=document.getElementById('ep-id').value;
-  const moneda=document.getElementById('ep-moneda').value;
-  const monto=parseFloat(document.getElementById('ep-monto').value);
-  const payload={moneda,fecha_pago:document.getElementById('ep-fecha').value,metodo_pago:document.getElementById('ep-metodo').value,semestres_cubiertos:document.getElementById('ep-semestres').value||null,referencia:document.getElementById('ep-ref').value||null};
-  if(moneda==='USD'){payload.monto_usd=monto;payload.monto_ars=null;}else{payload.monto_ars=monto;payload.monto_usd=0;}
-  const{error}=await db.from('liquidaciones').update(payload).eq('id',id);
-  if(error){toast('Error: '+error.message,'err');return;}
-  toast('Pago actualizado');cerrarModal('modal-pago');cargarPagos();cargarDashboard();
-}
+  async function guardarPago() {
+    var id = document.getElementById('ep-id').value;
+    var moneda = document.getElementById('ep-moneda').value;
+    var monto = parseFloat(document.getElementById('ep-monto').value);
+    var payload = {moneda:moneda,fecha_pago:document.getElementById('ep-fecha').value,metodo_pago:document.getElementById('ep-metodo').value,semestres_cubiertos:document.getElementById('ep-semestres').value||null,referencia:document.getElementById('ep-ref').value||null};
+    if(moneda==='USD'){payload.monto_usd=monto;payload.monto_ars=null;}else{payload.monto_ars=monto;payload.monto_usd=0;}
+    var res = await db.from('liquidaciones').update(payload).eq('id',id);
+    if(res.error){ toast('Error: '+res.error.message,'err'); return; }
+    toast('Pago actualizado'); closeModal('modal-pago'); cargarPagos(); cargarDashboard();
+  }
 
-async function eliminarPago(id){
-  if(!confirm('¿Eliminar este pago? Esta acción no se puede deshacer.'))return;
-  const{error}=await db.from('liquidaciones').delete().eq('id',id);
-  if(error){toast('Error: '+error.message,'err');return;}
-  toast('Pago eliminado');cargarPagos();cargarDashboard();
-}
+  async function eliminarPago(id) {
+    if(!confirm('¿Eliminar este pago? No se puede deshacer.')) return;
+    var res = await db.from('liquidaciones').delete().eq('id',id);
+    if(res.error){ toast('Error: '+res.error.message,'err'); return; }
+    toast('Pago eliminado'); cargarPagos(); cargarDashboard();
+  }
 
-// ── AUTORES ───────────────────────────────────────────────────
-async function cargarAutores(){
-  const[{data:pers},{data:parts}]=await Promise.all([
-    db.from('personas').select('id,nombre,email,pais_residencia').order('nombre'),
-    db.from('participaciones').select('persona_id').eq('estado','confirmado'),
-  ]);
-  const pm={};(parts||[]).forEach(p=>{pm[p.persona_id]=(pm[p.persona_id]||0)+1;});
-  // Solo mostrar autores con al menos 1 participación confirmada
-  allAutores=(pers||[]).filter(p=>pm[p.id]>0).map(p=>({...p,partic:pm[p.id]||0}));
-  filtrarAutores();
-}
+  // ── AUTORES ──
+  async function cargarAutores() {
+    var r1 = await db.from('personas').select('id,nombre,email,pais_residencia').order('nombre');
+    var r2 = await db.from('participaciones').select('persona_id').eq('estado','confirmado');
+    var pm = {};
+    (r2.data||[]).forEach(function(p){ pm[p.persona_id]=(pm[p.persona_id]||0)+1; });
+    allAutores = (r1.data||[]).filter(function(p){ return pm[p.id]>0; }).map(function(p){ return Object.assign({},p,{partic:pm[p.id]||0}); });
+    filtrarAutores();
+  }
 
-function filtrarAutores(){
-  const q=document.getElementById('aut-q').value.toLowerCase();
-  const f=allAutores.filter(a=>!q||a.nombre?.toLowerCase().includes(q)||a.email?.toLowerCase().includes(q));
-  document.getElementById('aut-tb').innerHTML=f.length
-    ?f.map(a=>`<tr>
-      <td>${esc(a.nombre)}</td>
-      <td style="font-size:12px;color:var(--muted)">${esc(a.email)}</td>
-      <td style="font-size:12px;color:var(--muted)">${a.pais_residencia||'—'}</td>
-      <td style="text-align:center">${a.partic}</td>
-      <td><button class="bto" onclick="editarAutorModal(${a.id},'${esc(a.nombre)}','${esc(a.email)}')">Editar</button></td>
-    </tr>`).join('')
-    :'<tr><td colspan="5" class="empty">Sin resultados</td></tr>';
-}
+  function filtrarAutores() {
+    var q = document.getElementById('aut-q').value.toLowerCase();
+    var f = allAutores.filter(function(a){ return !q||a.nombre&&a.nombre.toLowerCase().includes(q)||a.email&&a.email.toLowerCase().includes(q); });
+    document.getElementById('aut-tb').innerHTML = f.length
+      ? f.map(function(a){ return '<tr><td>'+esc(a.nombre)+'</td><td style="font-size:12px;color:var(--muted)">'+esc(a.email)+'</td><td style="font-size:12px;color:var(--muted)">'+esc(a.pais_residencia||'—')+'</td><td style="text-align:center">'+a.partic+'</td><td><button class="bto" data-pid="'+a.id+'" data-nombre="'+esc(a.nombre)+'" data-email="'+esc(a.email)+'">Editar</button></td></tr>'; }).join('')
+      : '<tr><td colspan="5" class="empty">Sin resultados</td></tr>';
+    document.querySelectorAll('#aut-tb .bto').forEach(function(btn){
+      btn.addEventListener('click', function(){ abrirEditarAutor(this.dataset.pid, this.dataset.nombre, this.dataset.email); });
+    });
+  }
 
-// ── MODALES ───────────────────────────────────────────────────
-function abrirModal(id){document.getElementById(id).classList.add('open');}
-function cerrarModal(id){document.getElementById(id).classList.remove('open');}
+  // ── LIBROS PUBLICADOS ──
+  async function cargarPublicados() {
+    var res = await db.from('convocatorias').select('id,nombre_libro,nombre_convocatoria,tipo,sello_id,sellos(nombre)').order('nombre_libro');
+    allPublicados = res.data || [];
+    filtrarPublicados();
+  }
 
-// ── UTILS ─────────────────────────────────────────────────────
-function toast(msg,tipo='ok'){
-  const t=document.getElementById('toast');t.textContent=msg;
-  t.style.borderColor=tipo==='err'?'rgba(255,80,80,.4)':'rgba(125,223,154,.3)';
-  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
-}
-function fmt(n){return parseFloat(n||0).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function fmtARS(n){return parseFloat(n||0).toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:0});}
-function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;');}
+  function filtrarPublicados() {
+    var q = document.getElementById('pub-q').value.toLowerCase();
+    var f = allPublicados.filter(function(l){ return !q||l.nombre_libro.toLowerCase().includes(q); });
+    document.getElementById('pub-tb').innerHTML = f.length
+      ? f.map(function(l){ return '<tr><td>'+esc(l.nombre_libro)+'</td><td style="color:var(--white);font-size:12px">'+esc((l.sellos&&l.sellos.nombre)||'')+'</td><td>'+(l.tipo==='individual'?'<span class="ti">Individual</span>':'<span class="tc">Antología</span>')+'</td><td><button class="bto" data-pub-id="'+l.id+'">Editar</button></td></tr>'; }).join('')
+      : '<tr><td colspan="4" class="empty">Sin resultados</td></tr>';
+    document.querySelectorAll('[data-pub-id]').forEach(function(btn){
+      btn.addEventListener('click', function(){ editarLibro(this.dataset.pubId); });
+    });
+  }
 
-checkSession();
+  async function editarLibro(id) {
+    var libro = allPublicados.find(function(l){ return String(l.id)===String(id); });
+    if(!libro) return;
+    document.getElementById('el-id').value = id;
+    document.getElementById('el-titulo').value = libro.nombre_libro;
+    document.getElementById('el-conv').value = libro.nombre_convocatoria||libro.nombre_libro;
+    document.getElementById('el-tipo').value = libro.tipo;
+    document.getElementById('el-sello').value = libro.sello_id;
+    document.getElementById('el-sub').textContent = libro.nombre_libro;
+    var res = await db.from('participaciones').select('persona_id,personas(id,nombre,email)').eq('convocatoria_id',id).eq('estado','confirmado');
+    var vistos = {}, autores = [];
+    (res.data||[]).forEach(function(p){ if(!vistos[p.persona_id]){vistos[p.persona_id]=true;autores.push({pid:p.persona_id,nombre:p.personas&&p.personas.nombre||'',email:p.personas&&p.personas.email||''});} });
+    document.getElementById('el-parts').innerHTML = autores.length
+      ? autores.map(function(a){ return '<tr><td style="font-size:12px">'+esc(a.nombre)+'</td><td style="font-size:11px;color:var(--muted)">'+esc(a.email)+'</td><td style="text-align:center">1+</td><td><button class="btd" data-quitar-libro="'+id+'" data-quitar-persona="'+a.pid+'">Quitar</button></td></tr>'; }).join('')
+      : '<tr><td colspan="4" class="empty">Sin participantes</td></tr>';
+    document.querySelectorAll('[data-quitar-libro]').forEach(function(btn){
+      btn.addEventListener('click', function(){ quitarParticipante(this.dataset.quitarLibro, this.dataset.quitarPersona); });
+    });
+    openModal('modal-libro');
+  }
+
+  async function guardarLibro() {
+    var id = document.getElementById('el-id').value;
+    var titulo = document.getElementById('el-titulo').value.trim();
+    var conv = document.getElementById('el-conv').value.trim();
+    var tipo = document.getElementById('el-tipo').value;
+    var selloId = document.getElementById('el-sello').value;
+    var res = await db.from('convocatorias').update({nombre_libro:titulo,nombre_convocatoria:conv,tipo:tipo,sello_id:selloId}).eq('id',id);
+    if(res.error){ toast('Error: '+res.error.message,'err'); return; }
+    toast('Publicación actualizada'); closeModal('modal-libro'); cargarLibros(); cargarPublicados(); cargarDashboard();
+  }
+
+  async function quitarParticipante(libroId, personaId) {
+    if(!confirm('¿Quitar este autor del libro?')) return;
+    var res = await db.from('participaciones').delete().eq('convocatoria_id',libroId).eq('persona_id',personaId);
+    if(res.error){ toast('Error: '+res.error.message,'err'); return; }
+    toast('Participante eliminado'); editarLibro(libroId);
+  }
+
+  checkSession();
+})();
 </script>
 </body>
 </html>
