@@ -344,6 +344,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
       </div>
       <div style="margin-top:12px;display:flex;gap:8px">
         <button class="btn btn-primary btn-sm" id="dl-save-meta">Guardar cambios</button>
+        <button class="btn btn-danger btn-sm" id="dl-del-libro-btn">Eliminar publicacion</button>
       </div>
     </div>
     <!-- Regalías por semestre -->
@@ -461,7 +462,15 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
         <div class="fg"><label>CUIT / DNI / Cédula</label><input class="fi" id="da-cuit" type="text" placeholder="Ej: 20-12345678-9"></div>
         <div class="fg"><label>Fecha de nacimiento</label><input class="fi" id="da-dob" type="date"></div>
       </div>
-      <div style="margin-top:12px"><button class="btn btn-primary btn-sm" id="da-save">Guardar cambios</button></div>
+      <div class="fg" style="margin-top:10px">
+        <label>Seudónimo principal</label>
+        <input class="fi" id="da-seud" type="text" placeholder="Nombre con el que publica habitualmente">
+        <div style="font-size:11px;color:var(--text3);margin-top:4px">Seudónimos en obras específicas se editan desde cada libro</div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px;justify-content:space-between;align-items:center">
+        <button class="btn btn-primary btn-sm" id="da-save">Guardar cambios</button>
+        <button class="btn btn-danger btn-sm" id="da-del-btn">Eliminar autor</button>
+      </div>
     </div>
     <div class="drawer-section">
       <div class="ds-title">Participaciones y regalías</div>
@@ -613,6 +622,23 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
   </div>
 </div>
 
+
+<!-- MODAL: CONFIRMAR BORRADO AUTOR -->
+<div id="modal-del-autor" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:500;align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--surface);border-radius:12px;padding:28px;width:100%;max-width:440px;box-shadow:var(--shadow-lg);border-top:4px solid var(--red)">
+    <div style="font-size:16px;font-weight:700;margin-bottom:8px">Eliminar autor</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:6px">Estás por eliminar:</div>
+    <div id="del-autor-nombre" style="font-size:15px;font-weight:600;color:var(--red);margin-bottom:12px;padding:8px 12px;background:var(--red-bg);border-radius:6px"></div>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:8px">Esta acción elimina al autor y <strong>todas sus participaciones</strong> en todos los libros. No se puede deshacer.</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Para confirmar, escribí el nombre exacto:</div>
+    <input class="fi" id="del-autor-confirm" type="text" placeholder="Escribí el nombre para confirmar" style="margin-bottom:16px">
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="document.getElementById('modal-del-autor').style.display='none'">Cancelar</button>
+      <button class="btn btn-danger" id="del-autor-ok">Eliminar definitivamente</button>
+    </div>
+  </div>
+</div>
+
 </body>
 <script>
 var SUPA_URL = 'https://cozhoziafbpjguqgadhl.supabase.co';
@@ -708,7 +734,8 @@ function globalClickHandler(e){
   else if(t.id==='btn-nuevo-autor') abrirNuevoAutor();
   else if(t.id==='btn-nuevo-autor-autores') abrirNuevoAutor();
   else if(t.id==='btn-nuevo-libro') abrirNuevoLibro();
-  else if(t.closest('[data-del-libro]')){var d=t.closest('[data-del-libro]');abrirDelLibro(d.dataset.delLibro,d.dataset.delNombre);}
+  else if(t.id==='dl-del-libro-btn'){var lid=val('dl-id'),lnom=($('dl-titulo')&&$('dl-titulo').textContent)||'';abrirDelLibro(lid,lnom);}
+  else if(t.id==='da-del-btn'){var aid=val('da-id'),anom=($('da-titulo')&&$('da-titulo').textContent)||'';abrirDelAutor(aid,anom);}
   else if(t.id==='na-save') guardarNuevoAutor();
   else if(t.id==='bus-btn') doBuscar();
   else if(t.closest('[data-open-libro]')) abrirLibro(t.closest('[data-open-libro]').dataset.openLibro);
@@ -1232,33 +1259,119 @@ async function downloadReport(){
   var libroId=STATE.currentLibroId;
   var l=STATE.libros.find(function(x){return String(x.id)===String(libroId);});
   if(!l)return;
-  var rows=[['REPORTE DE REGALIAS: '+l.nombre_libro],['Sello: '+l.sello,'Tipo: '+(l.tipo==='individual'?'Libro individual':'Antologia'),'Fecha publicacion: '+(l.fecha_publicacion||'—')],[]];
-  rows.push(['REGALIAS POR SEMESTRE']);
-  rows.push(['Semestre','Fuente','ARS (Buscalibre)','USD (Amazon)','Estado']);
-  l.reg.items.forEach(function(r){
-    var pagado=l.semsPaid.has(r.semestre);
-    var esBL=r.fuente==='buscalibre';
-    rows.push([r.semestre,r.fuente,esBL?parseFloat(r.total_regalias_ars||0):0,!esBL?parseFloat(r.total_regalias_usd||0):0,pagado?'Pagado':'Pendiente']);
-  });
+  toast('Generando reporte...');
+  // Fetch detailed Amazon data
+  var[ventasRes,pagosRes]=await Promise.all([
+    db.from('ventas_amazon_detalle').select('periodo,tienda,moneda,regalias').eq('convocatoria_id',libroId).order('periodo'),
+    db.from('pagos_amazon').select('tienda,periodo_inicio,periodo_fin,moneda_origen,regalias_acumuladas,retencion,ganancias_netas,tipo_cambio,moneda_destino,importe_pago,estado').order('periodo_inicio')
+  ]);
+  var ventas=ventasRes.data||[];
+  var pagosAll=pagosRes.data||[];
+  var autorById={};STATE.autores.forEach(function(a){autorById[a.id]=a;});
+
+  var wb=XLSX.utils.book_new();
+
+  // ── Hoja 1: Resumen ──
+  var rows1=[
+    ['REPORTE DE REGALIAS'],
+    ['Libro',l.nombre_libro],
+    ['Sello',l.sello],
+    ['Tipo',l.tipo==='individual'?'Libro individual':'Antologia'],
+    ['Fecha publicacion',l.fecha_publicacion||'—'],
+    ['Generado',new Date().toLocaleDateString('es-AR')],
+    [],
+    ['TOTALES ACUMULADOS'],
+    ['Fuente','Moneda','Monto neto','Observaciones']
+  ];
   var tU=l.reg.items.filter(function(r){return r.fuente!=='buscalibre';}).reduce(function(s,r){return s+(parseFloat(r.total_regalias_usd)||0);},0);
   var tA=l.reg.items.filter(function(r){return r.fuente==='buscalibre';}).reduce(function(s,r){return s+(parseFloat(r.total_regalias_ars)||0);},0);
-  rows.push(['TOTALES','',tA,tU,'']);
-  rows.push([]);
-  // Participants
-  rows.push(['PARTICIPANTES']);
-  rows.push(['Nombre','Email','Seudónimo','Pais','Obra','Palabras']);
-  var autorById={};STATE.autores.forEach(function(a){autorById[a.id]=a;});
-  l.parts.forEach(function(p){var a=autorById[p.persona_id]||{};rows.push([a.nombre||'—',a.email||'—',p.seudonimo||'—',a.pais_residencia||'—',p.nombre_cuento||'—',p.palabras||'—']);});
-  rows.push([]);
-  // Pagos
+  if(tU>0) rows1.push(['Amazon KDP','USD',tU,'Neto despues de retenciones e impuestos']);
+  if(tA>0){var bruto=tA/(1-0.03);rows1.push(['Buscalibre','ARS',tA,'Neto despues de retencion IIBB 3% (bruto: '+bruto.toFixed(2)+')']);}
+  if(l.tipo==='colectivo'){var falta=Math.max(0,500-l.reg.usd);rows1.push([]);rows1.push(['Minimo USD 500 para liquidar','USD',l.reg.usd,falta>0?'Faltan USD '+falta.toFixed(2):'ALCANZADO']);}
+  rows1.push([]);
   if(l.liqs.length){
-    rows.push(['PAGOS REALIZADOS']);
-    rows.push(['Autor','Moneda','Monto','Fecha','Semestres','Metodo','Referencia']);
-    l.liqs.forEach(function(p){var a=autorById[p.persona_id]||{};rows.push([a.nombre||'—',p.moneda,p.moneda==='ARS'?(p.monto_ars||0):(p.monto_usd||0),p.fecha_pago,p.semestres_cubiertos||'—',p.metodo_pago||'—',p.referencia||'—']);});
+    rows1.push(['PAGOS REALIZADOS A AUTORES']);
+    rows1.push(['Autor','Moneda','Monto','Semestres','Metodo','Fecha','Referencia']);
+    l.liqs.forEach(function(p){var a=autorById[p.persona_id]||{};rows1.push([a.nombre||'—',p.moneda,p.moneda==='ARS'?(p.monto_ars||0):(p.monto_usd||0),p.semestres_cubiertos||'—',p.metodo_pago||'—',p.fecha_pago,p.referencia||'—']);});
   }
-  var wb=XLSX.utils.book_new();
-  var ws=XLSX.utils.aoa_to_sheet(rows);
-  XLSX.utils.book_append_sheet(wb,ws,'Reporte');
+  var ws1=XLSX.utils.aoa_to_sheet(rows1);
+  XLSX.utils.book_append_sheet(wb,ws1,'Resumen');
+
+  // ── Hoja 2: Detalle Amazon por venta ──
+  if(ventas.length){
+    var rows2=[
+      ['DETALLE DE VENTAS AMAZON KDP'],
+      ['Libro',l.nombre_libro],
+      [],
+      ['Como se calcula: Amazon paga un % del precio de lista (35%, 60% o 70%) segun el tipo de libro y la tienda.'],
+      ['Las regalias en moneda local (EUR, GBP, MXN, etc.) se convierten a USD al tipo de cambio del dia del pago.'],
+      ['Los pagos efectivos se realizan aprox. 60 dias despues del cierre del periodo de ventas.'],
+      [],
+      ['Periodo','Tienda','Moneda local','Regalias (moneda local)','Tipo de cambio a USD','Regalias en USD','Retencion impositiva','Ganancia neta USD','Estado pago']
+    ];
+    ventas.forEach(function(v){
+      var per=v.periodo;
+      var y=parseInt(per.substring(0,4)),m=parseInt(per.substring(5,7));
+      // Find matching payment record
+      var pago=pagosAll.find(function(p){
+        if(p.tienda!==v.tienda)return false;
+        var ps=p.periodo_inicio?p.periodo_inicio.substring(0,7):'';
+        var pe=p.periodo_fin?p.periodo_fin.substring(0,7):'';
+        return per>=ps&&per<=pe;
+      });
+      var tc=pago?pago.tipo_cambio:'—';
+      var esUSD=v.moneda==='USD';
+      var usdVal=esUSD?parseFloat(v.regalias||0):(tc&&tc!=='—'?parseFloat(v.regalias||0)*parseFloat(tc):null);
+      var retencion=pago?pago.retencion:'—';
+      var neto=pago?pago.ganancias_netas:'—';
+      var estado=pago?pago.estado:'Pendiente';
+      rows2.push([
+        per,
+        v.tienda,
+        v.moneda,
+        parseFloat(v.regalias||0),
+        tc,
+        usdVal!=null?parseFloat(usdVal.toFixed(4)):'ver tipo de cambio',
+        retencion,
+        neto,
+        estado
+      ]);
+    });
+    rows2.push([]);
+    var totVentas=ventas.reduce(function(s,v){return s+(parseFloat(v.regalias||0)||0);},0);
+    rows2.push(['TOTAL REGALIAS (monedas mixtas)',totVentas,'','','','USD '+tU.toFixed(2)+' (convertido)','','','']);
+    var ws2=XLSX.utils.aoa_to_sheet(rows2);
+    XLSX.utils.book_append_sheet(wb,ws2,'Detalle Amazon');
+  }
+
+  // ── Hoja 3: Buscalibre ──
+  var blItems=l.reg.items.filter(function(r){return r.fuente==='buscalibre';});
+  if(blItems.length){
+    var rows3=[
+      ['DETALLE DE VENTAS BUSCALIBRE'],
+      ['Libro',l.nombre_libro],
+      [],
+      ['Como se calcula: Buscalibre paga en pesos argentinos (ARS). Aplica retencion IIBB 3% antes de depositar.'],
+      ['Formula: Monto bruto ARS x (1 - 0.03) = Monto neto ARS'],
+      [],
+      ['Semestre','Monto bruto ARS','Retencion IIBB (3%)','Monto neto ARS','Estado']
+    ];
+    blItems.forEach(function(r){
+      var neto=parseFloat(r.total_regalias_ars||0);
+      var bruto=neto/(1-0.03);
+      var retencion=bruto*0.03;
+      rows3.push([r.semestre,parseFloat(bruto.toFixed(2)),parseFloat(retencion.toFixed(2)),neto,l.semsPaid.has(r.semestre)?'Pagado':'Pendiente']);
+    });
+    var ws3=XLSX.utils.aoa_to_sheet(rows3);
+    XLSX.utils.book_append_sheet(wb,ws3,'Detalle Buscalibre');
+  }
+
+  // ── Hoja 4: Participantes ──
+  var rows4=[['Nombre','Email','Seudonimo','Pais','Nacionalidad','CUIT/DNI','Obra','Palabras']];
+  l.parts.forEach(function(p){var a=autorById[p.persona_id]||{};rows4.push([a.nombre||'',a.email||'',p.seudonimo||a.seudonimo||'',a.pais_residencia||'',a.nacionalidad||'',a.cuit||'',p.nombre_cuento||'',p.palabras||'']);});
+  var ws4=XLSX.utils.aoa_to_sheet(rows4);
+  XLSX.utils.book_append_sheet(wb,ws4,'Participantes');
+
   XLSX.writeFile(wb,'reporte_'+l.nombre_libro.replace(/[^a-z0-9]/gi,'_')+'.xlsx');
   toast('Reporte descargado');
 }
@@ -1346,7 +1459,7 @@ function renderAutores(){
   if(sort==='partic') f.sort(function(a,b){return b.partic-a.partic;});
   else f.sort(function(a,b){return(a.nombre||'').localeCompare(b.nombre||'');});
   $('aut-tb').innerHTML=f.length?f.map(function(a){
-    var seudos=[...new Set(a.parts.map(function(p){return p.seudonimo||'';}).filter(Boolean))].join(', ')||'—';
+    var seudos=a.seudonimo||[...new Set(a.parts.map(function(p){return p.seudonimo||'';}).filter(Boolean))].join(', ')||'—';
     return'<tr data-open-autor="'+a.id+'" style="cursor:pointer">'+
       '<td style="font-weight:500">'+esc(a.nombre)+'</td>'+
       '<td style="font-size:12px;color:var(--text3);font-style:italic">'+esc(seudos)+'</td>'+
@@ -1364,7 +1477,7 @@ function abrirAutor(id){
   $('da-sub').textContent=a.email+(a.pais_residencia?' · '+a.pais_residencia:'');
   setVal('da-nombre',a.nombre);setVal('da-email',a.email);
   setVal('da-pais',a.pais_residencia||'');setVal('da-nac',a.nacionalidad||'');
-  setVal('da-cuit',a.cuit||'');setVal('da-dob',a.fecha_nacimiento||'');
+  setVal('da-cuit',a.cuit||'');setVal('da-dob',a.fecha_nacimiento||'');setVal('da-seud',a.seudonimo||'');
   // Participaciones y regalías
   var libros=STATE.libros.filter(function(l){return l.parts.some(function(p){return String(p.persona_id)===String(id);});});
   $('da-libros').innerHTML=libros.length?libros.map(function(l){
@@ -1387,7 +1500,7 @@ function abrirAutor(id){
 }
 async function saveAutor(){
   var id=val('da-id');
-  var res=await db.from('personas').update({nombre:val('da-nombre').trim(),email:val('da-email').trim(),pais_residencia:val('da-pais').trim()||null,nacionalidad:val('da-nac').trim()||null,cuit:val('da-cuit').trim()||null,fecha_nacimiento:val('da-dob')||null}).eq('id',id);
+  var res=await db.from('personas').update({nombre:val('da-nombre').trim(),email:val('da-email').trim(),pais_residencia:val('da-pais').trim()||null,nacionalidad:val('da-nac').trim()||null,cuit:val('da-cuit').trim()||null,fecha_nacimiento:val('da-dob')||null,seudonimo:val('da-seud').trim()||null}).eq('id',id);
   if(res.error){toast('Error: '+res.error.message,'err');return;}
   toast('Autor actualizado');await loadAll();renderAutores();
   $('da-titulo').textContent=val('da-nombre');
@@ -1503,6 +1616,32 @@ document.addEventListener('click',function(ev){
       var res=await db.from('convocatorias').delete().eq('id',libroParaBorrar.id);
       if(res.error){toast('Error: '+res.error.message,'err');return;}
       toast('Libro eliminado');closeModal('modal-del-libro');setVal('del-libro-confirm','');libroParaBorrar=null;
+      await loadAll();
+    })();
+  }
+});
+
+
+var autorParaBorrar=null;
+function abrirDelAutor(id,nombre){
+  autorParaBorrar={id:id,nombre:nombre};
+  var el=document.getElementById('del-autor-nombre');if(el)el.textContent=nombre;
+  document.getElementById('del-autor-confirm').value='';
+  document.getElementById('modal-del-autor').style.display='flex';
+}
+document.addEventListener('click',function(ev){
+  if(ev.target.id==='del-autor-ok'){
+    (async function(){
+      if(!autorParaBorrar)return;
+      var confirmado=(document.getElementById('del-autor-confirm').value||'').trim();
+      if(confirmado!==autorParaBorrar.nombre){toast('El nombre no coincide. Escribilo exactamente.','err');return;}
+      await db.from('participaciones').delete().eq('persona_id',autorParaBorrar.id);
+      var res=await db.from('personas').delete().eq('id',autorParaBorrar.id);
+      if(res.error){toast('Error: '+res.error.message,'err');return;}
+      toast('Autor eliminado');
+      document.getElementById('modal-del-autor').style.display='none';
+      autorParaBorrar=null;
+      closeAllDrawers();
       await loadAll();
     })();
   }
