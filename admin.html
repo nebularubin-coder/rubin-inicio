@@ -699,20 +699,32 @@ function globalInputHandler(e){
 }
 
 // ── LOAD ALL ──
+async function fetchPaginated(builder){
+  var all=[], from=0, BATCH=1000;
+  while(true){
+    var res=await builder.range(from,from+BATCH-1);
+    if(res.error) throw new Error(res.error.message);
+    all=all.concat(res.data||[]);
+    if((res.data||[]).length<BATCH) break;
+    from+=BATCH;
+  }
+  return all;
+}
+
 async function loadAll(){
   try {
-    var[r1,r2,r3,r4,r5,r6]=await Promise.all([
+    var[r1,r2,r5,r6]=await Promise.all([
       db.from('sellos').select('id,nombre').order('nombre'),
-      db.from('convocatorias').select('id,nombre_libro,nombre_convocatoria,tipo,moneda_liquidacion,sello_id,fecha_publicacion,sellos(nombre)').order('nombre_libro').range(0,999),
-      db.from('personas').select('id,nombre,email,pais_residencia,cuit,nacionalidad,fecha_nacimiento').order('nombre').range(0,4999),
-      db.from('participaciones').select('id,persona_id,convocatoria_id,nombre_cuento,seudonimo,palabras,sinopsis,estado').eq('estado','confirmado').range(0,9999),
-      db.from('regalias_semestre').select('id,convocatoria_id,semestre,total_regalias_usd,total_regalias_ars,fuente').range(0,4999),
-      db.from('liquidaciones').select('id,convocatoria_id,persona_id,moneda,monto_usd,monto_ars,fecha_pago,metodo_pago,semestres_cubiertos,referencia,convocatorias(nombre_libro),personas(nombre)').order('fecha_pago',{ascending:false}).range(0,4999),
+      db.from('convocatorias').select('id,nombre_libro,nombre_convocatoria,tipo,moneda_liquidacion,sello_id,fecha_publicacion,sellos(nombre)').order('nombre_libro'),
+      db.from('regalias_semestre').select('id,convocatoria_id,semestre,total_regalias_usd,total_regalias_ars,fuente'),
+      db.from('liquidaciones').select('id,convocatoria_id,persona_id,moneda,monto_usd,monto_ars,fecha_pago,metodo_pago,semestres_cubiertos,referencia,convocatorias(nombre_libro),personas(nombre)').order('fecha_pago',{ascending:false}),
     ]);
+    var personas=await fetchPaginated(db.from('personas').select('id,nombre,email,pais_residencia,cuit,nacionalidad,fecha_nacimiento').order('nombre'));
+    var participaciones=await fetchPaginated(db.from('participaciones').select('id,persona_id,convocatoria_id,nombre_cuento,seudonimo,palabras,sinopsis,estado').eq('estado','confirmado'));
     STATE.sellos=r1.data||[];
     STATE.libros=r2.data||[];
-    STATE.autores=r3.data||[];
-    STATE.participaciones=r4.data||[];
+    STATE.autores=personas;
+    STATE.participaciones=participaciones;
     STATE.regalias=r5.data||[];
     STATE.pagos=r6.data||[];
 
