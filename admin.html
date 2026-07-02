@@ -1472,12 +1472,16 @@ function abrirNuevoLibro(){
   if(nlSello) nlSello.innerHTML=STATE.sellos.map(function(s){return'<option value="'+s.id+'">'+esc(s.nombre)+'</option>';}).join('');
   openModal('modal-nuevo-libro');
 }
-on('nl-save','click',async function(){
-  var titulo=val('nl-titulo').trim();
-  if(!titulo){toast('El titulo es obligatorio','err');return;}
-  var res=await db.from('convocatorias').insert({nombre_libro:titulo,nombre_convocatoria:titulo,sello_id:val('nl-sello'),tipo:val('nl-tipo'),moneda_liquidacion:'ARS',fecha_publicacion:val('nl-fecha')||null}).select('id').single();
-  if(res.error){toast('Error: '+res.error.message,'err');return;}
-  toast('Libro creado');closeModal('modal-nuevo-libro');await loadAll();
+document.addEventListener('click',function(ev){
+  if(ev.target.id==='nl-save'||(ev.target.closest&&ev.target.closest('#nl-save'))){
+    (async function(){
+      var titulo=val('nl-titulo').trim();
+      if(!titulo){toast('El titulo es obligatorio','err');return;}
+      var res=await db.from('convocatorias').insert({nombre_libro:titulo,nombre_convocatoria:titulo,sello_id:val('nl-sello'),tipo:val('nl-tipo'),moneda_liquidacion:'ARS',fecha_publicacion:val('nl-fecha')||null}).select('id').single();
+      if(res.error){toast('Error: '+res.error.message,'err');return;}
+      toast('Libro creado');closeModal('modal-nuevo-libro');await loadAll();
+    })();
+  }
 });
 
 // ── BORRAR LIBRO ──
@@ -1488,16 +1492,20 @@ function abrirDelLibro(id,nombre){
   setVal('del-libro-confirm','');
   openModal('modal-del-libro');
 }
-on('del-libro-ok','click',async function(){
-  if(!libroParaBorrar)return;
-  var confirmado=val('del-libro-confirm').trim();
-  if(confirmado!==libroParaBorrar.nombre){toast('El titulo no coincide. Escribilo exactamente.','err');return;}
-  await db.from('participaciones').delete().eq('convocatoria_id',libroParaBorrar.id);
-  await db.from('regalias_semestre').delete().eq('convocatoria_id',libroParaBorrar.id);
-  var res=await db.from('convocatorias').delete().eq('id',libroParaBorrar.id);
-  if(res.error){toast('Error: '+res.error.message,'err');return;}
-  toast('Libro eliminado');closeModal('modal-del-libro');setVal('del-libro-confirm','');libroParaBorrar=null;
-  await loadAll();
+document.addEventListener('click',function(ev){
+  if(ev.target.id==='del-libro-ok'){
+    (async function(){
+      if(!libroParaBorrar)return;
+      var confirmado=val('del-libro-confirm').trim();
+      if(confirmado!==libroParaBorrar.nombre){toast('El titulo no coincide. Escribilo exactamente.','err');return;}
+      await db.from('participaciones').delete().eq('convocatoria_id',libroParaBorrar.id);
+      await db.from('regalias_semestre').delete().eq('convocatoria_id',libroParaBorrar.id);
+      var res=await db.from('convocatorias').delete().eq('id',libroParaBorrar.id);
+      if(res.error){toast('Error: '+res.error.message,'err');return;}
+      toast('Libro eliminado');closeModal('modal-del-libro');setVal('del-libro-confirm','');libroParaBorrar=null;
+      await loadAll();
+    })();
+  }
 });
 
 checkSession();
