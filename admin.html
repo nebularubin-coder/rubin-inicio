@@ -357,14 +357,21 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
       <div id="dl-parts-list"></div>
       <!-- Agregar autor -->
       <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">Agregar autor</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <input class="fi" id="add-email" type="email" placeholder="Email del autor" style="flex:2;min-width:160px">
-          <input class="fi" id="add-nombre" type="text" placeholder="Nombre (si es nuevo)" style="flex:2;min-width:140px">
-          <input class="fi" id="add-obra" type="text" placeholder="Título de la obra" style="flex:2;min-width:140px">
-          <button class="btn btn-primary btn-sm" id="add-autor-btn">Agregar</button>
+        <button class="btn btn-secondary btn-sm" id="toggle-add-autor" style="width:100%;justify-content:space-between">
+          <span>+ Agregar autor</span><span id="toggle-add-icon">▼</span>
+        </button>
+        <div id="add-autor-panel" style="display:none;margin-top:10px">
+          <div style="display:flex;gap:6px;margin-bottom:8px">
+            <button class="btn btn-secondary btn-sm" id="btn-select-existente">Seleccionar autor existente</button>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input class="fi" id="add-email" type="email" placeholder="Email del autor" style="flex:2;min-width:160px">
+            <input class="fi" id="add-nombre" type="text" placeholder="Nombre (si es nuevo)" style="flex:2;min-width:140px">
+            <input class="fi" id="add-obra" type="text" placeholder="Título de la obra" style="flex:2;min-width:140px">
+            <button class="btn btn-primary btn-sm" id="add-autor-btn">Agregar</button>
+          </div>
+          <div id="add-autor-msg" style="font-size:12px;margin-top:6px"></div>
         </div>
-        <div id="add-autor-msg" style="font-size:12px;margin-top:6px"></div>
       </div>
       <!-- Importar -->
       <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -756,22 +763,39 @@ function renderDrawerRoyalties(l) {
   var items=l.reg.items.sort(function(a,b){return a.semestre.localeCompare(b.semestre);});
   if(!items.length){$('dl-royalties').innerHTML='<div class="empty" style="padding:16px 0">Sin regalias registradas</div>';return;}
   var html='<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">';
-  html+='<div style="display:grid;grid-template-columns:90px 90px 1fr 1fr 80px;gap:0;background:var(--surface2);padding:8px 12px;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase"><span>SEMESTRE</span><span>FUENTE</span><span>ARS</span><span>USD</span><span style="text-align:center">PAGADO</span></div>';
+  html+='<div style="display:grid;grid-template-columns:90px 100px 1fr 80px;gap:0;background:var(--surface2);padding:8px 12px;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase"><span>SEMESTRE</span><span>FUENTE</span><span>IMPORTE ORIGINAL</span><span style="text-align:center">ESTADO</span></div>';
   items.forEach(function(r){
     var pagado=l.semsPaid.has(r.semestre);
-    html+='<div style="display:grid;grid-template-columns:90px 90px 1fr 1fr 80px;gap:0;padding:9px 12px;border-top:1px solid var(--border);align-items:center">'+
+    // Show only the original currency based on source
+    var esBuscalibre=r.fuente==='buscalibre';
+    var ars=parseFloat(r.total_regalias_ars||0);
+    var usd=parseFloat(r.total_regalias_usd||0);
+    var importeHtml;
+    if(esBuscalibre){
+      importeHtml='<div><div style="font-size:12px;font-weight:500">ARS '+fmtARS(ars)+'</div>'+
+        (usd>0?'<div style="font-size:10px;color:var(--text3)">~ USD '+fmt(usd)+' (referencia)</div>':'')+'</div>';
+    } else {
+      importeHtml='<div><div style="font-size:12px;font-weight:500">USD '+fmt(usd)+'</div></div>';
+    }
+    html+='<div style="display:grid;grid-template-columns:90px 100px 1fr 80px;gap:0;padding:9px 12px;border-top:1px solid var(--border);align-items:center">'+
       '<span style="font-size:12px;font-weight:600">'+esc(r.semestre)+'</span>'+
       '<span class="chip">'+esc(r.fuente)+'</span>'+
-      '<span style="font-size:12px;color:var(--text3)">'+(parseFloat(r.total_regalias_ars||0)>0?'$'+fmtARS(r.total_regalias_ars):'—')+'</span>'+
-      '<span style="font-size:12px;font-weight:500">'+(parseFloat(r.total_regalias_usd||0)>0?'$'+fmt(r.total_regalias_usd):'—')+'</span>'+
+      importeHtml+
       '<span style="text-align:center">'+(pagado?'<span class="badge b-green" style="font-size:10px">Pagado</span>':'<span class="badge b-gray" style="font-size:10px">Pendiente</span>')+'</span>'+
     '</div>';
   });
   html+='</div>';
-  var totHtml='<div style="display:flex;gap:16px;margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border)">';
-  if(l.reg.usd>0) totHtml+='<div><div style="font-size:10px;color:var(--text3);font-weight:600">TOTAL USD</div><div style="font-size:16px;font-weight:700;color:var(--accent)">$'+fmt(l.reg.usd)+'</div></div>';
-  if(l.reg.ars>0) totHtml+='<div><div style="font-size:10px;color:var(--text3);font-weight:600">TOTAL ARS</div><div style="font-size:16px;font-weight:700;color:var(--text)">'+fmtARS(l.reg.ars)+'</div></div>';
-  if(l.tipo==='colectivo'){var falta=Math.max(0,500-l.reg.usd);totHtml+='<div><div style="font-size:10px;color:var(--text3);font-weight:600">FALTA PARA MIN.</div><div style="font-size:16px;font-weight:700;color:'+(falta>0?'var(--red)':'var(--green)')+'">$'+fmt(falta)+'</div></div>';}
+  // Totals: separate ARS (buscalibre) from USD (amazon)
+  var totalARS=l.reg.items.filter(function(r){return r.fuente==='buscalibre';}).reduce(function(s,r){return s+(parseFloat(r.total_regalias_ars)||0);},0);
+  var totalUSD=l.reg.items.filter(function(r){return r.fuente!=='buscalibre';}).reduce(function(s,r){return s+(parseFloat(r.total_regalias_usd)||0);},0);
+  var totalUSDref=l.reg.usd; // includes buscalibre converted, for minimum calc
+  var totHtml='<div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap">';
+  if(totalUSD>0) totHtml+='<div style="padding:10px 14px;background:var(--blue-bg);border:1px solid #bfdbfe;border-radius:8px"><div style="font-size:10px;color:var(--blue);font-weight:600;letter-spacing:.5px">AMAZON (USD)</div><div style="font-size:18px;font-weight:700;color:var(--blue)">$'+fmt(totalUSD)+'</div></div>';
+  if(totalARS>0) totHtml+='<div style="padding:10px 14px;background:#fef9c3;border:1px solid #fde68a;border-radius:8px"><div style="font-size:10px;color:#854d0e;font-weight:600;letter-spacing:.5px">BUSCALIBRE (ARS)</div><div style="font-size:18px;font-weight:700;color:#854d0e">$ '+fmtARS(totalARS)+'</div></div>';
+  if(l.tipo==='colectivo'){
+    var falta=Math.max(0,500-totalUSDref);
+    totHtml+='<div style="padding:10px 14px;background:'+(falta>0?'var(--red-bg)':'var(--green-bg)')+';border:1px solid '+(falta>0?'#fca5a5':'#86efac')+';border-radius:8px"><div style="font-size:10px;color:'+(falta>0?'var(--red)':'var(--green)')+';font-weight:600;letter-spacing:.5px">'+(falta>0?'FALTA PARA MINIMO':'MINIMO ALCANZADO')+'</div><div style="font-size:18px;font-weight:700;color:'+(falta>0?'var(--red)':'var(--green)')+'">'+(falta>0?'$'+fmt(falta)+' USD':'✓')+'</div></div>';
+  }
   totHtml+='</div>';
   $('dl-royalties').innerHTML=html+totHtml;
 }
@@ -788,24 +812,46 @@ function renderDrawerParts(l) {
   var html='<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">';
   autores.forEach(function(a,i){
     var p=a.persona||{};
-    html+='<div style="padding:10px 14px;'+(i>0?'border-top:1px solid var(--border)':'')+'">'+
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'+
+    var obrasId='obras-'+p.id+'-'+l.id;
+    html+='<div style="padding:10px 14px;'+(i>0?'border-top:1px solid var(--border)':'')+'">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between">'+
         '<div>'+
           '<span style="font-size:13px;font-weight:600">'+esc(p.nombre||'—')+'</span>'+
           '<span style="font-size:11px;color:var(--text3);margin-left:8px">'+esc(p.email||'')+'</span>'+
+          '<span style="font-size:11px;color:var(--text3);margin-left:6px">· '+a.obras.length+' obra'+(a.obras.length!==1?'s':'')+'</span>'+
         '</div>'+
-        '<button class="btn btn-danger btn-sm" style="font-size:10px" data-quitar-persona="'+p.id+'" data-quitar-libro="'+l.id+'">Quitar</button>'+
+        '<div style="display:flex;gap:6px">'+
+          '<button class="btn btn-secondary btn-sm" style="font-size:10px" data-toggle-obras="'+obrasId+'">Ver obras</button>'+
+          '<button class="btn btn-danger btn-sm" style="font-size:10px" data-quitar-persona="'+p.id+'" data-quitar-libro="'+l.id+'">Quitar</button>'+
+        '</div>'+
       '</div>'+
-      '<div style="display:flex;flex-wrap:wrap;gap:4px">'+
-        a.obras.map(function(o){return'<span class="chip" style="font-size:11px">'+esc(o.nombre_cuento)+(o.seudonimo?' · <em>'+esc(o.seudonimo)+'</em>':'')+'</span>';}).join('')+
+      '<div id="'+obrasId+'" style="display:none;margin-top:8px">'+
+        '<div style="display:flex;flex-direction:column;gap:4px">'+
+          a.obras.map(function(o){
+            return'<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--surface2);border-radius:6px;border:1px solid var(--border)">'+
+              '<div>'+
+                '<span style="font-size:12px;font-weight:500">'+esc(o.nombre_cuento)+'</span>'+
+                (o.seudonimo?'<span style="font-size:11px;color:var(--text3);margin-left:6px">— '+esc(o.seudonimo)+'</span>':'')+
+              '</div>'+
+              '<button class="btn btn-secondary btn-sm" style="font-size:10px" data-edit-obra="'+o.id+'" data-obra-nombre="'+esc(o.nombre_cuento)+'" data-obra-seud="'+esc(o.seudonimo||'')+'" data-obra-sin="'+esc(o.sinopsis||'')+'" data-obra-pal="'+esc(o.palabras||'')+'">Editar</button>'+
+            '</div>';
+          }).join('')+
+        '</div>'+
       '</div>'+
     '</div>';
   });
   html+='</div>';
   $('dl-parts-list').innerHTML=html;
   $('dl-parts-list').addEventListener('click',function(e){
+    var tog=e.target.closest('[data-toggle-obras]');
+    if(tog){
+      var div=document.getElementById(tog.dataset.toggleObras);
+      if(div){var open=div.style.display==='block';div.style.display=open?'none':'block';tog.textContent=open?'Ver obras':'Ocultar obras';}
+    }
+    var eq=e.target.closest('[data-edit-obra]');
+    if(eq) abrirEditarObra(eq.dataset);
     var btn=e.target.closest('[data-quitar-persona]');
-    if(btn) quitarParticipante(btn.dataset.quitarLibro,btn.dataset.quitarPersona);
+    if(btn&&confirm('¿Confirmas quitar a este autor del libro? Esta accion no se puede deshacer.')) quitarParticipante(btn.dataset.quitarLibro,btn.dataset.quitarPersona);
   });
 }
 
@@ -1167,8 +1213,132 @@ async function doBuscar() {
 window.abrirAutor=abrirAutor;
 window.abrirLibro=abrirLibro;
 
+
+// ── TOGGLE ADD AUTOR ──────────────────────────────────────────
+document.addEventListener('click', function(e) {
+  if(e.target.id==='toggle-add-autor'||e.target.closest('#toggle-add-autor')) {
+    var panel=$('add-autor-panel');
+    var icon=$('toggle-add-icon');
+    if(!panel)return;
+    var open=panel.style.display==='block';
+    panel.style.display=open?'none':'block';
+    if(icon)icon.textContent=open?'\u25bc':'\u25b2';
+  }
+  if(e.target.id==='btn-select-existente') abrirSeleccionarAutor();
+});
+
+// ── EDITAR OBRA ──────────────────────────────────────────────
+function abrirEditarObra(ds) {
+  $('eo-id').value=ds.editObra;
+  $('eo-titulo').value=ds.obraNombre||'';
+  $('eo-seud').value=ds.obraSeud||'';
+  $('eo-sin').value=ds.obraSin||'';
+  $('eo-pal').value=ds.obraPal||'';
+  document.getElementById('modal-obra').style.display='flex';
+}
+on('eo-save','click',async function(){
+  var id=$('eo-id').value;
+  if(!confirm('Confirmas guardar los cambios en esta obra?'))return;
+  var payload={nombre_cuento:$('eo-titulo').value.trim(),seudonimo:$('eo-seud').value.trim()||null};
+  var res=await db.from('participaciones').update(payload).eq('id',id);
+  if(res.error){toast('Error: '+res.error.message,'err');return;}
+  toast('Obra actualizada');
+  document.getElementById('modal-obra').style.display='none';
+  await loadAll();
+  var l=STATE.libros.find(function(x){return String(x.id)===String(STATE.currentLibroId);});
+  if(l)renderDrawerParts(l);
+});
+
+// ── SELECCIONAR AUTOR EXISTENTE ───────────────────────────────
+var selAutorSelected=new Set();
+function abrirSeleccionarAutor(){
+  selAutorSelected=new Set();
+  renderSelAutorList('');
+  $('sel-autor-q').value='';
+  $('sel-autor-obra').value='';
+  document.getElementById('modal-sel-autor').style.display='flex';
+}
+on('sel-autor-q','input',function(){renderSelAutorList(this.value);});
+function renderSelAutorList(q){
+  var ql=(q||'').toLowerCase();
+  var libroId=STATE.currentLibroId;
+  var libro=STATE.libros.find(function(l){return String(l.id)===String(libroId);});
+  var yaEnLibro=new Set((libro?libro.parts:[]).map(function(p){return p.persona_id;}));
+  var f=STATE.autores.filter(function(a){
+    return a.partic>0&&(!ql||a.nombre&&a.nombre.toLowerCase().includes(ql)||a.email&&a.email.toLowerCase().includes(ql));
+  }).slice(0,60);
+  var html=f.length?f.map(function(a){
+    var yaEsta=yaEnLibro.has(a.id);
+    var checked=selAutorSelected.has(a.id);
+    return'<label style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--border);cursor:'+(yaEsta?'default':'pointer')+';opacity:'+(yaEsta?'.5':'1')+'">'+
+      '<input type="checkbox" data-sel-id="'+a.id+'" '+(checked?'checked':'')+' '+(yaEsta?'disabled':'')+'>'+
+      '<div style="flex:1"><div style="font-size:13px;font-weight:500">'+esc(a.nombre)+'</div><div style="font-size:11px;color:var(--text3)">'+esc(a.email)+'</div></div>'+
+      (yaEsta?'<span class="badge b-gray" style="font-size:10px">Ya en libro</span>':'')+
+    '</label>';
+  }).join(''):'<div class="empty">Sin resultados</div>';
+  $('sel-autor-list').innerHTML=html;
+  document.querySelectorAll('[data-sel-id]').forEach(function(cb){
+    cb.addEventListener('change',function(){
+      var id=parseInt(this.dataset.selId);
+      if(this.checked) selAutorSelected.add(id); else selAutorSelected.delete(id);
+    });
+  });
+}
+on('sel-autor-ok','click',async function(){
+  var obra=($('sel-autor-obra').value||'').trim();
+  if(!obra){toast('Ingresa el titulo de la obra','err');return;}
+  if(!selAutorSelected.size){toast('Selecciona al menos un autor','err');return;}
+  if(!confirm('Agregar '+selAutorSelected.size+' autor(es) al libro?'))return;
+  var libroId=STATE.currentLibroId;
+  var ok=0,err=0;
+  for(var pid of selAutorSelected){
+    var r=await db.from('participaciones').insert({persona_id:pid,convocatoria_id:libroId,nombre_cuento:obra,estado:'confirmado'});
+    if(!r.error)ok++;else err++;
+  }
+  toast(ok+' autor(es) agregado(s)'+(err>0?', '+err+' errores':''));
+  document.getElementById('modal-sel-autor').style.display='none';
+  await loadAll();
+  var l=STATE.libros.find(function(x){return String(x.id)===String(libroId);});
+  if(l){renderDrawerParts(l);renderDrawerPago(l);}
+});
+
 checkSession();
 
 </script>
+
+<!-- MODAL: EDITAR OBRA -->
+<div style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:400;align-items:center;justify-content:center" id="modal-obra">
+  <div style="background:var(--surface);border-radius:12px;padding:24px;width:100%;max-width:480px;box-shadow:var(--shadow-lg)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:700">Editar obra</div>
+      <button style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3)" onclick="document.getElementById('modal-obra').style.display='none'">✕</button>
+    </div>
+    <input type="hidden" id="eo-id">
+    <div class="fg" style="margin-bottom:10px"><label>Título</label><input class="fi" id="eo-titulo" type="text"></div>
+    <div class="fg" style="margin-bottom:10px"><label>Seudónimo</label><input class="fi" id="eo-seud" type="text" placeholder="Opcional"></div>
+    
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="document.getElementById('modal-obra').style.display='none'">Cancelar</button>
+      <button class="btn btn-primary" id="eo-save">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SELECCIONAR AUTOR EXISTENTE -->
+<div style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:400;align-items:center;justify-content:center" id="modal-sel-autor">
+  <div style="background:var(--surface);border-radius:12px;padding:24px;width:100%;max-width:560px;max-height:80vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="font-size:16px;font-weight:700">Seleccionar autor existente</div>
+      <button style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3)" onclick="document.getElementById('modal-sel-autor').style.display='none'">✕</button>
+    </div>
+    <input class="fi" id="sel-autor-q" placeholder="Buscar por nombre o email..." style="margin-bottom:10px">
+    <div class="fg" style="margin-bottom:10px"><label>Título de la obra</label><input class="fi" id="sel-autor-obra" placeholder="Requerido"></div>
+    <div style="flex:1;overflow-y:auto;border:1px solid var(--border);border-radius:8px;margin-bottom:14px" id="sel-autor-list"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="document.getElementById('modal-sel-autor').style.display='none'">Cancelar</button>
+      <button class="btn btn-primary" id="sel-autor-ok">Agregar seleccionados</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
