@@ -695,7 +695,7 @@ function globalChangeHandler(e){
   else if(id==='aut-q'||id==='aut-pais'||id==='aut-sort') renderAutores();
   else if(id==='pag-q') renderPagos();
   else if(id==='pago-autor'){calcPagoTotal();}
-  else if(id==='pago-moneda') onPagoMonedaChange();
+  else if(id==='pago-moneda'){onPagoMonedaChange();calcPagoTotal();}
   else if(id==='sel-autor-q') renderSelAutorList(e.target.value);
   else if(e.target.classList.contains('sem-chk')) calcPagoTotal();
   else if(e.target.dataset.selId){ var pid=parseInt(e.target.dataset.selId); if(e.target.checked) STATE.selAutorSel.add(pid); else STATE.selAutorSel.delete(pid); }
@@ -869,13 +869,17 @@ async function abrirLibro(id){
   renderDrawerAmazonBreakdown(l);
   renderDrawerBuscalibreBreakdown(l);
   renderDrawerParts(l);
-  renderDrawerPago(l);
+  renderDrawerPago(l); // primero con los datos que ya tiene, para no bloquear la apertura
   renderDrawerHistorial(l);
   setVal('add-email',''); setVal('add-nombre',''); setVal('add-obra','');
   var ap=$('add-autor-panel'); if(ap) ap.style.display='none';
   var ic=$('toggle-add-icon'); if(ic) ic.textContent='▼';
   $('dl-import-preview').innerHTML=''; $('dl-import-ok').style.display='none';
   openDrawer('drawer-libro');
+  // Enriquecer con la conversion cruzada de moneda y re-renderizar los semestres
+  enriquecerConversionSemestres(l).then(function(){
+    if(String(STATE.currentLibroId)===String(id)){ renderSemestresCheck(l); calcPagoTotal(); }
+  });
 }
 
 function renderDrawerRoyalties(l){
@@ -1097,10 +1101,15 @@ function renderSemestresCheck(l){
   cont.innerHTML=items.map(function(r){
     var pagado=l.semsPaid.has(r.semestre);
     var usd=parseFloat(r.total_regalias_usd||0), ars=parseFloat(r.total_regalias_ars||0);
+    var usdEquiv=r.usd_equivalente!=null?r.usd_equivalente:null;
+    var arsEquiv=r.ars_equivalente!=null?r.ars_equivalente:null;
+    var equivTxt='';
+    if(r.fuente==='buscalibre') equivTxt=usdEquiv!=null?' <span style="color:var(--text3)">(≈ USD $'+fmt(usdEquiv)+')</span>':(r.conv_pendiente?' <span style="color:var(--text3)">(tipo de cambio pendiente)</span>':'');
+    if(r.fuente==='amazon') equivTxt=arsEquiv!=null?' <span style="color:var(--text3)">(≈ ARS $'+fmtARS(arsEquiv)+')</span>':(r.conv_pendiente?' <span style="color:var(--text3)">(tipo de cambio pendiente)</span>':'');
     return'<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:6px;cursor:'+(pagado?'default':'pointer')+';background:'+(pagado?'var(--surface2)':'var(--surface)')+'">'+
-      '<input type="checkbox" class="sem-chk" data-usd="'+usd+'" data-ars="'+ars+'" value="'+esc(r.semestre)+'"'+(pagado?' disabled checked':'')+'>'+
+      '<input type="checkbox" class="sem-chk" data-usd="'+usd+'" data-ars="'+ars+'" data-usd-equiv="'+(usdEquiv!=null?usdEquiv:'')+'" data-ars-equiv="'+(arsEquiv!=null?arsEquiv:'')+'" data-fuente="'+esc(r.fuente)+'" value="'+esc(r.semestre)+'"'+(pagado?' disabled checked':'')+'>'+
       '<div style="flex:1"><div style="font-size:12px;font-weight:600">'+esc(r.semestre)+' <span class="chip" style="font-size:10px">'+esc(r.fuente)+'</span></div>'+
-      '<div style="font-size:11px;color:var(--text3)">'+(usd>0?'USD $'+fmt(usd):'')+' '+(ars>0?'ARS $'+fmtARS(ars):'')+'</div></div>'+
+      '<div style="font-size:11px;color:var(--text3)">'+(usd>0?'USD $'+fmt(usd):'')+' '+(ars>0?'ARS $'+fmtARS(ars):'')+equivTxt+'</div></div>'+
       (pagado?'<span class="badge b-green" style="font-size:10px">Pagado</span>':'')+
     '</label>';
   }).join('');
@@ -1115,17 +1124,28 @@ function calcPagoTotal(){
     var totalObras=l.parts.length||1;
     prop=autorObras/totalObras;
   }
-  var tU=0,tA=0,sems=[];
+  var moneda=val('pago-moneda')||'USD';
+  var t=0,sems=[],faltaConversion=false;
   document.querySelectorAll('.sem-chk:checked:not([disabled])').forEach(function(cb){
-    tU+=(parseFloat(cb.dataset.usd)||0)*prop;
-    tA+=(parseFloat(cb.dataset.ars)||0)*prop;
+    var fuente=cb.dataset.fuente;
+    var val_;
+    if(moneda==='USD'){
+      val_=fuente==='amazon'?parseFloat(cb.dataset.usd):parseFloat(cb.dataset.usdEquiv);
+    } else {
+      val_=fuente==='buscalibre'?parseFloat(cb.dataset.ars):parseFloat(cb.dataset.arsEquiv);
+    }
+    if(isNaN(val_)){
+      faltaConversion=true;
+    } else {
+      t+=val_*prop;
+    }
     sems.push(cb.value);
   });
   var tot=$('pago-total');
   var propStr=l&&l.tipo==='colectivo'?' ('+Math.round(prop*100)+'% del libro)':'';
-  if(tot) tot.innerHTML=sems.length?'Total a liquidar'+propStr+': '+(tU>0?'<strong>USD $'+fmt(tU)+'</strong> ':'')+(tA>0?'<strong>ARS $'+fmtARS(tA)+'</strong>':''):'';
-  setVal('pago-monto',tU>0?tU.toFixed(2):'');
-  setVal('pago-ars',tA>0?Math.round(tA):'');
+  if(tot) tot.innerHTML=sems.length?'Total a liquidar'+propStr+' en '+moneda+': '+(moneda==='USD'?'<strong>USD $'+fmt(t)+'</strong>':'<strong>ARS $'+fmtARS(t)+'</strong>')+(faltaConversion?' <span style="color:var(--red);font-size:11px">(falta tipo de cambio de algun semestre, monto incompleto)</span>':''):'';
+  setVal('pago-monto',moneda==='USD'&&t>0?t.toFixed(2):'');
+  setVal('pago-ars',moneda==='ARS'&&t>0?Math.round(t):'');
   setVal('pago-sems-txt',sems.join(', '));
 }
 async function registrarPago(){
@@ -1161,6 +1181,63 @@ function renderDrawerHistorial(l){
 // ── CALCULO COMPARTIDO: Bruto -> Retencion -> Neto por tienda (Amazon) ──
 // Misma formula que usa la vista v_regalias_amazon_semestre en Supabase,
 // reutilizada aca para el desglose por tienda y el reporte descargable.
+// ── DRAWER: enriquecer semestres con conversion cruzada USD<->ARS ──
+// para que "Registrar pago" pueda sumar en cualquier moneda sin importar
+// de que fuente vino cada semestre.
+function semestreDe(periodo){
+  return periodo.substring(0,4)+'-S'+(parseInt(periodo.substring(5,7),10)<=6?'1':'2');
+}
+async function enriquecerConversionSemestres(l){
+  var[ventasAmzRes,pagosRes,ventasBlRes,tcRes]=await Promise.all([
+    db.from('ventas_amazon_detalle').select('periodo,tienda,moneda,regalias').eq('convocatoria_id',l.id).order('periodo'),
+    db.from('pagos_amazon').select('tienda,periodo_inicio,periodo_fin,regalias_acumuladas,retencion,tipo_cambio').order('periodo_inicio'),
+    db.from('ventas_buscalibre_detalle').select('periodo,total_ars').eq('convocatoria_id',l.id).order('periodo'),
+    db.from('tipos_cambio_mensual').select('periodo,tasa_a_usd').eq('moneda','ARS')
+  ]);
+  var tcByPeriodo={};
+  (tcRes.data||[]).forEach(function(t){tcByPeriodo[t.periodo]=parseFloat(t.tasa_a_usd);});
+
+  var calcAmz=calcAmazonResumen(ventasAmzRes.data||[],pagosRes.data||[]);
+  // Amazon: USD nativo por semestre + equivalente ARS (usando la tasa del mes de cada venta)
+  var amzPorSem={};
+  Object.keys(calcAmz.porPeriodo).forEach(function(per){
+    var sem=semestreDe(per);
+    var usd=calcAmz.porPeriodo[per];
+    var tasa=tcByPeriodo[per];
+    if(!amzPorSem[sem])amzPorSem[sem]={usd:0,arsEquiv:0,pendiente:false};
+    amzPorSem[sem].usd+=usd;
+    if(tasa) amzPorSem[sem].arsEquiv+=usd/tasa; else amzPorSem[sem].pendiente=true;
+  });
+
+  // Buscalibre: ARS nativo por semestre + equivalente USD
+  var blPorPeriodo={};
+  (ventasBlRes.data||[]).forEach(function(v){
+    blPorPeriodo[v.periodo]=(blPorPeriodo[v.periodo]||0)+(parseFloat(v.total_ars)||0);
+  });
+  var blPorSem={};
+  Object.keys(blPorPeriodo).forEach(function(per){
+    var sem=semestreDe(per);
+    var netoArs=blPorPeriodo[per]*0.97;
+    var tasa=tcByPeriodo[per];
+    if(!blPorSem[sem])blPorSem[sem]={ars:0,usdEquiv:0,pendiente:false};
+    blPorSem[sem].ars+=netoArs;
+    if(tasa) blPorSem[sem].usdEquiv+=netoArs*tasa; else blPorSem[sem].pendiente=true;
+  });
+
+  // Enriquecer l.reg.items (mutando in-place, cada item ya tiene semestre+fuente)
+  l.reg.items.forEach(function(it){
+    if(it.fuente==='amazon'){
+      var a=amzPorSem[it.semestre];
+      it.ars_equivalente=a?a.arsEquiv:null;
+      it.conv_pendiente=a?a.pendiente:true;
+    } else if(it.fuente==='buscalibre'){
+      var b=blPorSem[it.semestre];
+      it.usd_equivalente=b?b.usdEquiv:null;
+      it.conv_pendiente=b?b.pendiente:true;
+    }
+  });
+}
+
 function calcAmazonResumen(ventasRaw,pagosAll){
   var ventasMap={};
   ventasRaw.forEach(function(v){
@@ -1177,7 +1254,7 @@ function calcAmazonResumen(ventasRaw,pagosAll){
       return periodo>=ps&&periodo<=pe;
     });
   }
-  var resumenTienda={};var totalUSD=0;var pendiente=false;
+  var resumenTienda={};var totalUSD=0;var pendiente=false;var porPeriodo={};
   ventas.forEach(function(v){
     var pago=findPago(v.tienda,v.periodo);
     var esUSD=v.moneda==='USD';
@@ -1196,8 +1273,9 @@ function calcAmazonResumen(ventasRaw,pagosAll){
     resumenTienda[v.tienda].retencion+=ret;
     resumenTienda[v.tienda].neto+=neto;
     totalUSD+=neto;
+    porPeriodo[v.periodo]=(porPeriodo[v.periodo]||0)+neto;
   });
-  return{resumenTienda:resumenTienda,totalUSD:totalUSD,pendiente:pendiente,ventas:ventas,findPago:findPago};
+  return{resumenTienda:resumenTienda,totalUSD:totalUSD,pendiente:pendiente,ventas:ventas,findPago:findPago,porPeriodo:porPeriodo};
 }
 
 // ── DRAWER: Detalle del calculo Amazon (bruto / retencion / neto por tienda) ──
