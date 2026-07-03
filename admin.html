@@ -350,6 +350,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
     <div class="drawer-section">
       <div class="ds-title">Regalías recaudadas</div>
       <div id="dl-royalties"></div>
+      <div id="dl-amazon-breakdown"></div>
       <div style="margin-top:10px">
         <button class="btn btn-secondary btn-sm" id="dl-download-report">⬇ Descargar reporte</button>
       </div>
@@ -642,7 +643,17 @@ function iniciarApp(){
   // File input
   var fi=$('dl-import-file'); if(fi && typeof leerImport==='function') fi.addEventListener('change',leerImport);
   // Auth
-  var lo=$('btn-logout'); if(lo) lo.addEventListener('click',function(){db.auth.signOut().then(function(){location.reload();});});
+  var lo=$('btn-logout');
+  if(lo && !lo.dataset.bound){
+    lo.dataset.bound='1';
+    lo.addEventListener('click',function(){
+      lo.disabled=true; lo.textContent='Cerrando sesion...';
+      db.auth.signOut().catch(function(e){ console.error('signOut error:',e); }).finally(function(){
+        try{ localStorage.clear(); }catch(e){}
+        location.href=location.pathname;
+      });
+    });
+  }
   loadAll();
 }
 
@@ -713,10 +724,12 @@ async function fetchPaginated(builder){
 
 async function loadAll(){
   try {
-    var[r1,r2,r5,r6]=await Promise.all([
+    var[r1,r2,r5a,r5b,r6]=await Promise.all([
       db.from('sellos').select('id,nombre').order('nombre'),
-      db.from('convocatorias').select('id,nombre_libro,nombre_convocatoria,tipo,moneda_liquidacion,sello_id,fecha_publicacion,sellos(nombre)').order('nombre_libro'),
-      db.from('regalias_semestre').select('id,convocatoria_id,semestre,total_regalias_usd,total_regalias_ars,fuente'),
+      db.from('convocatorias').select('id,nombre_libro,nombre_convocatoria,tipo,sello_id,fecha_publicacion,sellos(nombre)').order('nombre_libro'),
+      // Calculo en vivo (reemplaza regalias_semestre, que quedo en desuso)
+      db.from('v_regalias_amazon_semestre').select('convocatoria_id,semestre,tienda,moneda,total_neto_usd'),
+      db.from('v_regalias_buscalibre_semestre').select('convocatoria_id,semestre,total_neto_ars'),
       db.from('liquidaciones').select('id,convocatoria_id,persona_id,moneda,monto_usd,monto_ars,fecha_pago,metodo_pago,semestres_cubiertos,referencia,convocatorias(nombre_libro),personas(nombre)').order('fecha_pago',{ascending:false}),
     ]);
     var personas=await fetchPaginated(db.from('personas').select('id,nombre,email,pais_residencia,cuit,nacionalidad,fecha_nacimiento,seudonimo').order('nombre'));
@@ -725,8 +738,20 @@ async function loadAll(){
     STATE.libros=r2.data||[];
     STATE.autores=personas;
     STATE.participaciones=participaciones;
-    STATE.regalias=r5.data||[];
     STATE.pagos=r6.data||[];
+
+    // Agregar Amazon por convocatoria+semestre (la vista viene granular por tienda)
+    var amazonPorSemestre={};
+    (r5a.data||[]).forEach(function(r){
+      var k=r.convocatoria_id+'|'+r.semestre;
+      if(!amazonPorSemestre[k]) amazonPorSemestre[k]={convocatoria_id:r.convocatoria_id,semestre:r.semestre,total_regalias_usd:0,total_regalias_ars:null,fuente:'amazon'};
+      amazonPorSemestre[k].total_regalias_usd+=parseFloat(r.total_neto_usd)||0;
+    });
+    // Buscalibre ya viene un renglon por convocatoria+semestre
+    var buscalibrePorSemestre=(r5b.data||[]).map(function(r){
+      return{convocatoria_id:r.convocatoria_id,semestre:r.semestre,total_regalias_usd:null,total_regalias_ars:parseFloat(r.total_neto_ars)||0,fuente:'buscalibre'};
+    });
+    STATE.regalias=Object.values(amazonPorSemestre).concat(buscalibrePorSemestre);
 
     // Index for fast lookup
     var partsByLibro={}, regByLibro={}, liqByLibro={}, partsByAutor={};
@@ -827,7 +852,7 @@ function renderLibros(){
 }
 
 // ── DRAWER LIBRO ──
-function abrirLibro(id){
+async function abrirLibro(id){
   var l=STATE.libros.find(function(x){return String(x.id)===String(id);});
   if(!l)return;
   STATE.currentLibroId=id;
@@ -840,6 +865,7 @@ function abrirLibro(id){
   setVal('dl-sello',l.sello_id);
   setVal('dl-fecha-pub',l.fecha_publicacion||'');
   renderDrawerRoyalties(l);
+  renderDrawerAmazonBreakdown(l);
   renderDrawerParts(l);
   renderDrawerPago(l);
   renderDrawerHistorial(l);
@@ -1130,20 +1156,10 @@ function renderDrawerHistorial(l){
   }).join('');
 }
 
-// ── DOWNLOAD REPORT ──
-async function downloadReport(){
-  var libroId=STATE.currentLibroId;
-  var l=STATE.libros.find(function(x){return String(x.id)===String(libroId);});
-  if(!l)return;
-  toast('Generando reporte...');
-  var[ventasRes,pagosRes]=await Promise.all([
-    db.from('ventas_amazon_detalle').select('periodo,tienda,moneda,regalias').eq('convocatoria_id',libroId).order('periodo'),
-    db.from('pagos_amazon').select('tienda,periodo_inicio,periodo_fin,regalias_acumuladas,retencion,ganancias_netas,tipo_cambio,importe_pago,estado').order('periodo_inicio')
-  ]);
-  var ventasRaw=ventasRes.data||[];
-  var pagosAll=pagosRes.data||[];
-  var autorById={};STATE.autores.forEach(function(a){autorById[a.id]=a;});
-  // Agrupar ventas por periodo+tienda
+// ── CALCULO COMPARTIDO: Bruto -> Retencion -> Neto por tienda (Amazon) ──
+// Misma formula que usa la vista v_regalias_amazon_semestre en Supabase,
+// reutilizada aca para el desglose por tienda y el reporte descargable.
+function calcAmazonResumen(ventasRaw,pagosAll){
   var ventasMap={};
   ventasRaw.forEach(function(v){
     var k=v.periodo+'|'+v.tienda;
@@ -1159,14 +1175,13 @@ async function downloadReport(){
       return periodo>=ps&&periodo<=pe;
     });
   }
-  var wb=XLSX.utils.book_new();
-  // Calcular totales por tienda
-  var resumenTienda={};var totalUSD=0;
+  var resumenTienda={};var totalUSD=0;var pendiente=false;
   ventas.forEach(function(v){
     var pago=findPago(v.tienda,v.periodo);
     var esUSD=v.moneda==='USD';
-    var tc=pago&&pago.tipo_cambio?parseFloat(pago.tipo_cambio):1;
-    var usdBruto=esUSD?v.regalias:v.regalias*tc;
+    var tc=pago&&pago.tipo_cambio?parseFloat(pago.tipo_cambio):(esUSD?1:null);
+    var usdBruto=tc!=null?v.regalias*tc:null;
+    if(usdBruto==null){pendiente=true;return;}
     var tasaRet=0;
     if(esUSD&&pago&&parseFloat(pago.regalias_acumuladas||0)>0){
       tasaRet=parseFloat(pago.retencion||0)/parseFloat(pago.regalias_acumuladas);
@@ -1180,6 +1195,63 @@ async function downloadReport(){
     resumenTienda[v.tienda].neto+=neto;
     totalUSD+=neto;
   });
+  return{resumenTienda:resumenTienda,totalUSD:totalUSD,pendiente:pendiente,ventas:ventas,findPago:findPago};
+}
+
+// ── DRAWER: Detalle del calculo Amazon (bruto / retencion / neto por tienda) ──
+async function renderDrawerAmazonBreakdown(l){
+  var cont=$('dl-amazon-breakdown');
+  if(!cont)return;
+  cont.innerHTML='<div class="empty" style="padding:8px 0;font-size:12px">Calculando...</div>';
+  var[ventasRes,pagosRes]=await Promise.all([
+    db.from('ventas_amazon_detalle').select('periodo,tienda,moneda,regalias').eq('convocatoria_id',l.id).order('periodo'),
+    db.from('pagos_amazon').select('tienda,periodo_inicio,periodo_fin,regalias_acumuladas,retencion,tipo_cambio').order('periodo_inicio')
+  ]);
+  var ventasRaw=ventasRes.data||[];
+  if(!ventasRaw.length){cont.innerHTML='';return;}
+  var pagosAll=pagosRes.data||[];
+  var calc=calcAmazonResumen(ventasRaw,pagosAll);
+  var tiendas=Object.keys(calc.resumenTienda).sort();
+  if(!tiendas.length){cont.innerHTML='';return;}
+  var html='<div style="margin-top:10px"><div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Detalle del calculo (Amazon)</div>';
+  html+='<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">';
+  html+='<div style="display:grid;grid-template-columns:1fr 100px 100px 100px;padding:8px 12px;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;background:var(--surface2)"><span>TIENDA</span><span style="text-align:right">BRUTO USD</span><span style="text-align:right">RETENCION</span><span style="text-align:right">NETO USD</span></div>';
+  tiendas.forEach(function(t){
+    var r=calc.resumenTienda[t];
+    html+='<div style="display:grid;grid-template-columns:1fr 100px 100px 100px;padding:8px 12px;border-top:1px solid var(--border);align-items:center">'+
+      '<span style="font-size:12px">'+esc(t)+'</span>'+
+      '<span style="font-size:12px;text-align:right;color:var(--text3)">$'+fmt(r.usdBruto)+'</span>'+
+      '<span style="font-size:12px;text-align:right;color:var(--red)">'+(r.retencion>0?'-$'+fmt(r.retencion):'—')+'</span>'+
+      '<span style="font-size:12px;text-align:right;font-weight:600">$'+fmt(r.neto)+'</span></div>';
+  });
+  html+='</div>';
+  html+='<div style="margin-top:8px;padding:8px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">'+
+    '<span style="font-size:11px;color:var(--text3)">Total neto (suma de tiendas)</span>'+
+    '<span style="font-size:14px;font-weight:700;color:var(--accent)">$'+fmt(calc.totalUSD)+'</span></div>';
+  if(calc.pendiente)html+='<div style="font-size:11px;color:var(--text3);margin-top:6px">* Hay ventas sin pago de Amazon cargado todavia (tipo de cambio pendiente); no estan incluidas en este total.</div>';
+  html+='</div>';
+  cont.innerHTML=html;
+}
+
+// ── DOWNLOAD REPORT ──
+async function downloadReport(){
+  var libroId=STATE.currentLibroId;
+  var l=STATE.libros.find(function(x){return String(x.id)===String(libroId);});
+  if(!l)return;
+  toast('Generando reporte...');
+  var[ventasRes,pagosRes]=await Promise.all([
+    db.from('ventas_amazon_detalle').select('periodo,tienda,moneda,regalias').eq('convocatoria_id',libroId).order('periodo'),
+    db.from('pagos_amazon').select('tienda,periodo_inicio,periodo_fin,regalias_acumuladas,retencion,ganancias_netas,tipo_cambio,importe_pago,estado').order('periodo_inicio')
+  ]);
+  var ventasRaw=ventasRes.data||[];
+  var pagosAll=pagosRes.data||[];
+  var autorById={};STATE.autores.forEach(function(a){autorById[a.id]=a;});
+  var calc=calcAmazonResumen(ventasRaw,pagosAll);
+  var ventas=calc.ventas;
+  var findPago=calc.findPago;
+  var wb=XLSX.utils.book_new();
+  var resumenTienda=calc.resumenTienda;
+  var totalUSD=calc.totalUSD;
   // HOJA 1: Resumen
   var rows1=[
     ['REPORTE DE REGALIAS - '+l.nombre_libro],[],
