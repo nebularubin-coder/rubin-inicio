@@ -575,7 +575,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 <script>
 var SUPA_URL = 'https://cozhoziafbpjguqgadhl.supabase.co';
 var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvemhvemlhZmJwamd1cWdhZGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExOTE5MjAsImV4cCI6MjA5Njc2NzkyMH0.RQabp0tsfdtOK-vBVpxV_Y6iLeyEWNeu0xB8HO7BiqI';
-var db = supabase.createClient(SUPA_URL, KEY);
+var db = supabase.createClient(SUPA_URL, KEY, {auth:{persistSession:true,autoRefreshToken:true}});
 
 var STATE = { sellos:[], libros:[], autores:[], pagos:[], regalias:[], participaciones:[], currentLibroId:null, importData:[], importLibroId:null, selAutorSel:new Set() };
 
@@ -614,7 +614,7 @@ function doLogin(){
     else{err.textContent='No se pudo iniciar sesion.';btn.disabled=false;btn.textContent='Ingresar';}
   }).catch(function(ex){err.textContent='Error: '+ex.message;btn.disabled=false;btn.textContent='Ingresar';});
 }
-function checkSession(){ db.auth.getSession().then(function(r){if(r.data&&r.data.session)iniciarApp();}).catch(function(){}); }
+function checkSession(){ db.auth.getSession().then(function(r){if(r.data&&r.data.session)iniciarApp();}).catch(function(err){ console.error('checkSession error:', err); toast('Error al verificar sesion: '+err.message,'err'); }); }
 
 // ── APP INIT ──
 function iniciarApp(){
