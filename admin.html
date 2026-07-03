@@ -640,7 +640,7 @@ function iniciarApp(){
   $('drawer-bg').addEventListener('click',closeAllDrawers);
   ['dl-close','da-close','dp-close'].forEach(function(id){var el=$(id);if(el)el.addEventListener('click',closeAllDrawers);});
   // File input
-  var fi=$('dl-import-file'); if(fi) fi.addEventListener('change',leerImport);
+  var fi=$('dl-import-file'); if(fi && typeof leerImport==='function') fi.addEventListener('change',leerImport);
   // Auth
   var lo=$('btn-logout'); if(lo) lo.addEventListener('click',function(){db.auth.signOut().then(function(){location.reload();});});
   loadAll();
