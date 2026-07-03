@@ -351,6 +351,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
       <div class="ds-title">Regalías recaudadas</div>
       <div id="dl-royalties"></div>
       <div id="dl-amazon-breakdown"></div>
+      <div id="dl-buscalibre-breakdown"></div>
       <div style="margin-top:10px">
         <button class="btn btn-secondary btn-sm" id="dl-download-report">⬇ Descargar reporte</button>
       </div>
@@ -866,6 +867,7 @@ async function abrirLibro(id){
   setVal('dl-fecha-pub',l.fecha_publicacion||'');
   renderDrawerRoyalties(l);
   renderDrawerAmazonBreakdown(l);
+  renderDrawerBuscalibreBreakdown(l);
   renderDrawerParts(l);
   renderDrawerPago(l);
   renderDrawerHistorial(l);
@@ -1229,6 +1231,57 @@ async function renderDrawerAmazonBreakdown(l){
     '<span style="font-size:11px;color:var(--text3)">Total neto (suma de tiendas)</span>'+
     '<span style="font-size:14px;font-weight:700;color:var(--accent)">$'+fmt(calc.totalUSD)+'</span></div>';
   if(calc.pendiente)html+='<div style="font-size:11px;color:var(--text3);margin-top:6px">* Hay ventas sin pago de Amazon cargado todavia (tipo de cambio pendiente); no estan incluidas en este total.</div>';
+  html+='</div>';
+  cont.innerHTML=html;
+}
+
+// ── DRAWER: Detalle del calculo Buscalibre (bruto / impuesto 3% / neto ARS / equivalente USD) ──
+async function renderDrawerBuscalibreBreakdown(l){
+  var cont=$('dl-buscalibre-breakdown');
+  if(!cont)return;
+  cont.innerHTML='';
+  var[ventasRes,tcRes]=await Promise.all([
+    db.from('ventas_buscalibre_detalle').select('periodo,cantidad,total_ars').eq('convocatoria_id',l.id).order('periodo'),
+    db.from('tipos_cambio_mensual').select('periodo,tasa_a_usd').eq('moneda','ARS')
+  ]);
+  var ventasRaw=ventasRes.data||[];
+  if(!ventasRaw.length)return;
+  var tcByPeriodo={};
+  (tcRes.data||[]).forEach(function(t){tcByPeriodo[t.periodo]=parseFloat(t.tasa_a_usd);});
+  // Agrupar por periodo (mes)
+  var porPeriodo={};
+  ventasRaw.forEach(function(v){
+    if(!porPeriodo[v.periodo])porPeriodo[v.periodo]={periodo:v.periodo,bruto:0};
+    porPeriodo[v.periodo].bruto+=parseFloat(v.total_ars)||0;
+  });
+  var periodos=Object.keys(porPeriodo).sort();
+  var totalBruto=0,totalImpuesto=0,totalNetoArs=0,totalNetoUsd=0,pendiente=false;
+  var filas=periodos.map(function(per){
+    var bruto=porPeriodo[per].bruto;
+    var impuesto=bruto*0.03;
+    var netoArs=bruto-impuesto;
+    var tasa=tcByPeriodo[per];
+    var netoUsd=tasa!=null?netoArs*tasa:null;
+    totalBruto+=bruto; totalImpuesto+=impuesto; totalNetoArs+=netoArs;
+    if(netoUsd!=null)totalNetoUsd+=netoUsd; else pendiente=true;
+    return{periodo:per,bruto:bruto,impuesto:impuesto,netoArs:netoArs,netoUsd:netoUsd,tasa:tasa};
+  });
+  var html='<div style="margin-top:10px"><div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Detalle del calculo (Buscalibre)</div>';
+  html+='<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">';
+  html+='<div style="display:grid;grid-template-columns:80px 1fr 90px 90px 90px;padding:8px 12px;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;background:var(--surface2)"><span>PERIODO</span><span style="text-align:right">BRUTO ARS</span><span style="text-align:right">IMPUESTO 3%</span><span style="text-align:right">NETO ARS</span><span style="text-align:right">≈ USD</span></div>';
+  filas.forEach(function(f){
+    html+='<div style="display:grid;grid-template-columns:80px 1fr 90px 90px 90px;padding:8px 12px;border-top:1px solid var(--border);align-items:center">'+
+      '<span style="font-size:12px">'+esc(f.periodo)+'</span>'+
+      '<span style="font-size:12px;text-align:right;color:var(--text3)">$'+fmtARS(f.bruto)+'</span>'+
+      '<span style="font-size:12px;text-align:right;color:var(--red)">-$'+fmtARS(f.impuesto)+'</span>'+
+      '<span style="font-size:12px;text-align:right;font-weight:600">$'+fmtARS(f.netoArs)+'</span>'+
+      '<span style="font-size:12px;text-align:right;color:var(--text3)">'+(f.netoUsd!=null?'$'+fmt(f.netoUsd):'Pendiente')+'</span></div>';
+  });
+  html+='</div>';
+  html+='<div style="margin-top:8px;padding:8px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'+
+    '<span style="font-size:11px;color:var(--text3)">Total neto ARS · equivalente USD (tipo de cambio del mes de cada liquidacion)</span>'+
+    '<span style="font-size:14px;font-weight:700;color:var(--accent)">$'+fmtARS(totalNetoArs)+' &nbsp;≈&nbsp; $'+fmt(totalNetoUsd)+' USD</span></div>';
+  if(pendiente)html+='<div style="font-size:11px;color:var(--text3);margin-top:6px">* Falta cargar el tipo de cambio de algun periodo en tipos_cambio_mensual; ese mes no esta incluido en el equivalente USD.</div>';
   html+='</div>';
   cont.innerHTML=html;
 }
