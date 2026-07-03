@@ -699,7 +699,7 @@ function globalInputHandler(e){
 }
 
 // ── LOAD ALL ──
-async async async function fetchPaginated(builder){
+async function fetchPaginated(builder){
   var all=[], from=0, BATCH=1000;
   while(true){
     var res=await builder.range(from,from+BATCH-1);
