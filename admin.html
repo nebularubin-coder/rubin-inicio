@@ -1187,6 +1187,27 @@ function renderDrawerHistorial(l){
 function semestreDe(periodo){
   return periodo.substring(0,4)+'-S'+(parseInt(periodo.substring(5,7),10)<=6?'1':'2');
 }
+// ── CALCULO COMPARTIDO: Buscalibre (Bruto ARS -> Impuesto 3% -> Neto -> equivalente USD) ──
+function calcBuscalibreResumen(ventasRaw,tcByPeriodo){
+  var porPeriodo={};
+  ventasRaw.forEach(function(v){
+    if(!porPeriodo[v.periodo])porPeriodo[v.periodo]={periodo:v.periodo,bruto:0};
+    porPeriodo[v.periodo].bruto+=parseFloat(v.total_ars)||0;
+  });
+  var periodos=Object.keys(porPeriodo).sort();
+  var totalBruto=0,totalImpuesto=0,totalNetoArs=0,totalNetoUsd=0,pendiente=false;
+  var filas=periodos.map(function(per){
+    var bruto=porPeriodo[per].bruto;
+    var impuesto=bruto*0.03;
+    var netoArs=bruto-impuesto;
+    var tasa=tcByPeriodo[per];
+    var netoUsd=tasa!=null?netoArs*tasa:null;
+    totalBruto+=bruto; totalImpuesto+=impuesto; totalNetoArs+=netoArs;
+    if(netoUsd!=null)totalNetoUsd+=netoUsd; else pendiente=true;
+    return{periodo:per,bruto:bruto,impuesto:impuesto,netoArs:netoArs,netoUsd:netoUsd,tasa:tasa};
+  });
+  return{filas:filas,totalBruto:totalBruto,totalImpuesto:totalImpuesto,totalNetoArs:totalNetoArs,totalNetoUsd:totalNetoUsd,pendiente:pendiente};
+}
 async function enriquecerConversionSemestres(l){
   var[ventasAmzRes,pagosRes,ventasBlRes,tcRes]=await Promise.all([
     db.from('ventas_amazon_detalle').select('periodo,tienda,moneda,regalias').eq('convocatoria_id',l.id).order('periodo'),
@@ -1326,24 +1347,8 @@ async function renderDrawerBuscalibreBreakdown(l){
   if(!ventasRaw.length)return;
   var tcByPeriodo={};
   (tcRes.data||[]).forEach(function(t){tcByPeriodo[t.periodo]=parseFloat(t.tasa_a_usd);});
-  // Agrupar por periodo (mes)
-  var porPeriodo={};
-  ventasRaw.forEach(function(v){
-    if(!porPeriodo[v.periodo])porPeriodo[v.periodo]={periodo:v.periodo,bruto:0};
-    porPeriodo[v.periodo].bruto+=parseFloat(v.total_ars)||0;
-  });
-  var periodos=Object.keys(porPeriodo).sort();
-  var totalBruto=0,totalImpuesto=0,totalNetoArs=0,totalNetoUsd=0,pendiente=false;
-  var filas=periodos.map(function(per){
-    var bruto=porPeriodo[per].bruto;
-    var impuesto=bruto*0.03;
-    var netoArs=bruto-impuesto;
-    var tasa=tcByPeriodo[per];
-    var netoUsd=tasa!=null?netoArs*tasa:null;
-    totalBruto+=bruto; totalImpuesto+=impuesto; totalNetoArs+=netoArs;
-    if(netoUsd!=null)totalNetoUsd+=netoUsd; else pendiente=true;
-    return{periodo:per,bruto:bruto,impuesto:impuesto,netoArs:netoArs,netoUsd:netoUsd,tasa:tasa};
-  });
+  var r=calcBuscalibreResumen(ventasRaw,tcByPeriodo);
+  var filas=r.filas, totalNetoArs=r.totalNetoArs, totalNetoUsd=r.totalNetoUsd, pendiente=r.pendiente;
   var html='<div style="margin-top:10px"><div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Detalle del calculo (Buscalibre)</div>';
   html+='<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">';
   html+='<div style="display:grid;grid-template-columns:80px 1fr 90px 90px 90px;padding:8px 12px;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;background:var(--surface2)"><span>PERIODO</span><span style="text-align:right">BRUTO ARS</span><span style="text-align:right">IMPUESTO 3%</span><span style="text-align:right">NETO ARS</span><span style="text-align:right">≈ USD</span></div>';
@@ -1370,12 +1375,16 @@ async function downloadReport(){
   var l=STATE.libros.find(function(x){return String(x.id)===String(libroId);});
   if(!l)return;
   toast('Generando reporte...');
-  var[ventasRes,pagosRes]=await Promise.all([
+  var[ventasRes,pagosRes,ventasBlRes,tcRes]=await Promise.all([
     db.from('ventas_amazon_detalle').select('periodo,tienda,moneda,regalias').eq('convocatoria_id',libroId).order('periodo'),
-    db.from('pagos_amazon').select('tienda,periodo_inicio,periodo_fin,regalias_acumuladas,retencion,ganancias_netas,tipo_cambio,importe_pago,estado').order('periodo_inicio')
+    db.from('pagos_amazon').select('tienda,periodo_inicio,periodo_fin,regalias_acumuladas,retencion,ganancias_netas,tipo_cambio,importe_pago,estado').order('periodo_inicio'),
+    db.from('ventas_buscalibre_detalle').select('periodo,total_ars').eq('convocatoria_id',libroId).order('periodo'),
+    db.from('tipos_cambio_mensual').select('periodo,tasa_a_usd').eq('moneda','ARS')
   ]);
   var ventasRaw=ventasRes.data||[];
   var pagosAll=pagosRes.data||[];
+  var tcByPeriodo={};
+  (tcRes.data||[]).forEach(function(t){tcByPeriodo[t.periodo]=parseFloat(t.tasa_a_usd);});
   var autorById={};STATE.autores.forEach(function(a){autorById[a.id]=a;});
   var calc=calcAmazonResumen(ventasRaw,pagosAll);
   var ventas=calc.ventas;
@@ -1383,13 +1392,21 @@ async function downloadReport(){
   var wb=XLSX.utils.book_new();
   var resumenTienda=calc.resumenTienda;
   var totalUSD=calc.totalUSD;
+  // Equivalente ARS del total de Amazon (sumando cada periodo con la tasa de ese mes)
+  var totalUSDenARS=0, totalUSDpendienteARS=false;
+  Object.keys(calc.porPeriodo).forEach(function(per){
+    var tasa=tcByPeriodo[per];
+    if(tasa) totalUSDenARS+=calc.porPeriodo[per]/tasa; else totalUSDpendienteARS=true;
+  });
+  // Buscalibre: calculo real por periodo (no reconstruido desde el semestre)
+  var calcBl=calcBuscalibreResumen(ventasBlRes.data||[],tcByPeriodo);
   // HOJA 1: Resumen
   var rows1=[
     ['REPORTE DE REGALIAS - '+l.nombre_libro],[],
     ['Sello',l.sello],['Tipo',l.tipo==='individual'?'Libro individual':'Antologia'],
     ['Fecha publicacion',l.fecha_publicacion||'—'],['Generado',new Date().toLocaleDateString('es-AR')],
     [],['TOTALES POR CANAL'],
-    ['Canal','Moneda nativa','Total nativo','Tipo cambio ref.','Bruto USD','Retencion USD','Neto USD']
+    ['Canal','Moneda nativa','Total nativo','Tipo cambio ref.','Bruto USD','Retencion USD','Neto USD','Equivalente ARS']
   ];
   Object.keys(resumenTienda).sort().forEach(function(tienda){
     var r=resumenTienda[tienda];
@@ -1398,14 +1415,17 @@ async function downloadReport(){
       esUSD?'(directo)':parseFloat((r.usdBruto/r.nativo).toFixed(4)),
       parseFloat(r.usdBruto.toFixed(4)),
       r.retencion>0?('-'+parseFloat(r.retencion.toFixed(4))):0,
-      parseFloat(r.neto.toFixed(4))]);
+      parseFloat(r.neto.toFixed(4)),
+      '']);
   });
-  var blItems=l.reg.items.filter(function(r){return r.fuente==='buscalibre';});
-  var totalARS=0;blItems.forEach(function(r){totalARS+=parseFloat(r.total_regalias_ars||0);});
-  if(totalARS>0){var arsB=totalARS/(1-0.03);rows1.push(['Buscalibre','ARS',parseFloat(arsB.toFixed(2)),'—','—',('-'+parseFloat((arsB*0.03).toFixed(2))),parseFloat(totalARS.toFixed(2))]);}
+  var totalARS=calcBl.totalNetoArs;
+  if(totalARS>0){var arsB=calcBl.totalBruto;rows1.push(['Buscalibre','ARS',parseFloat(arsB.toFixed(2)),'—','—',('-'+parseFloat(calcBl.totalImpuesto.toFixed(2))),parseFloat(totalARS.toFixed(2)),
+    calcBl.pendiente?'Incompleto':'≈ USD '+parseFloat(calcBl.totalNetoUsd.toFixed(2))]);}
   rows1.push([]);
-  rows1.push(['TOTAL NETO USD (Amazon)','','','','','',parseFloat(totalUSD.toFixed(4))]);
-  if(totalARS>0)rows1.push(['TOTAL NETO ARS (Buscalibre)','','','','','',parseFloat(totalARS.toFixed(2))]);
+  rows1.push(['TOTAL NETO USD (Amazon)','','','','','',parseFloat(totalUSD.toFixed(4)),
+    totalUSDpendienteARS?'≈ ARS (incompleto, falta tipo de cambio de algun mes)':'≈ ARS '+parseFloat(totalUSDenARS.toFixed(2))]);
+  if(totalARS>0)rows1.push(['TOTAL NETO ARS (Buscalibre)','','','','','',parseFloat(totalARS.toFixed(2)),
+    calcBl.pendiente?'≈ USD (incompleto, falta tipo de cambio de algun mes)':'≈ USD '+parseFloat(calcBl.totalNetoUsd.toFixed(2))]);
   if(l.tipo==='colectivo'){rows1.push([]);var falta=Math.max(0,500-totalUSD);rows1.push(['Minimo USD 500 para liquidar antologia','Acumulado: USD '+totalUSD.toFixed(2),falta>0?'Faltan: USD '+falta.toFixed(2):'ALCANZADO']);}
   if(l.liqs.length){
     rows1.push([]);rows1.push(['PAGOS REALIZADOS']);
@@ -1425,7 +1445,7 @@ async function downloadReport(){
       ['4. Este reporte usa los PAGOS REALES confirmados, NO el Estimador de Regalias de KDP.'],
       ['5. Los pagos se realizan aprox. 60 dias despues del cierre del periodo de ventas.'],
       [],
-      ['Periodo','Tienda','Moneda local','Regalias brutas (moneda local)','Tipo de cambio USD','Regalias brutas USD','Tasa retencion %','Retencion impositiva USD','Regalias NETAS USD','Estado','Referencia pago']
+      ['Periodo','Tienda','Moneda local','Regalias brutas (moneda local)','Tipo de cambio USD','Regalias brutas USD','Tasa retencion %','Retencion impositiva USD','Regalias NETAS USD','Tipo cambio ARS/USD (mes)','Equivalente ARS','Estado','Referencia pago']
     ];
     ventas.forEach(function(v){
       var pago=findPago(v.tienda,v.periodo);
@@ -1436,6 +1456,8 @@ async function downloadReport(){
       if(esUSD&&pago&&parseFloat(pago.regalias_acumuladas||0)>0){tasaRet=parseFloat(pago.retencion||0)/parseFloat(pago.regalias_acumuladas);}
       var ret=usdBruto!=null?usdBruto*tasaRet:null;
       var neto=usdBruto!=null?usdBruto-ret:null;
+      var tasaArs=tcByPeriodo[v.periodo];
+      var netoArsEquiv=(neto!=null&&tasaArs)?neto/tasaArs:null;
       rows2.push([
         v.periodo,v.tienda,v.moneda,
         parseFloat(v.regalias.toFixed(4)),
@@ -1444,22 +1466,40 @@ async function downloadReport(){
         tasaRet>0?(parseFloat((tasaRet*100).toFixed(2))+'%'):'0%',
         ret!=null&&ret>0?parseFloat(ret.toFixed(4)):0,
         neto!=null?parseFloat(neto.toFixed(4)):'Pendiente',
+        tasaArs?parseFloat((1/tasaArs).toFixed(2)):'Pendiente',
+        netoArsEquiv!=null?parseFloat(netoArsEquiv.toFixed(2)):'Pendiente',
         pago?pago.estado:'Pendiente',
         pago?(v.tienda+' '+pago.periodo_inicio+' / '+pago.periodo_fin):'-'
       ]);
     });
     rows2.push([]);
-    rows2.push(['TOTAL','','',parseFloat(ventasRaw.reduce(function(s,v){return s+(parseFloat(v.regalias)||0);},0).toFixed(4)),'','','','','USD '+parseFloat(totalUSD.toFixed(4))+' neto','','']);
+    rows2.push(['TOTAL','','',parseFloat(ventasRaw.reduce(function(s,v){return s+(parseFloat(v.regalias)||0);},0).toFixed(4)),'','','','','USD '+parseFloat(totalUSD.toFixed(4))+' neto','',
+      totalUSDpendienteARS?'Incompleto':'ARS '+parseFloat(totalUSDenARS.toFixed(2)),'','']);
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows2),'Detalle Amazon');
   }
   // HOJA 3: Buscalibre
-  if(blItems.length){
+  if(calcBl.filas.length){
     var rows3=[['DETALLE BUSCALIBRE - '+l.nombre_libro],[],
-      ['METODOLOGIA'],['Buscalibre paga en ARS. Aplica retencion IIBB 3% antes de depositar.'],
-      ['Formula: Monto bruto ARS x (1 - 0.03) = Monto neto ARS'],[],
-      ['Semestre','Monto bruto ARS','Retencion IIBB 3%','Monto neto ARS','Estado']
+      ['METODOLOGIA'],['Buscalibre paga en ARS. Se descuenta 3% (impuestos) antes de liquidar.'],
+      ['Formula: Monto bruto ARS x (1 - 0.03) = Monto neto ARS'],
+      ['El equivalente en USD usa el tipo de cambio BNA venta del ultimo dia habil de cada mes (tipos_cambio_mensual).'],[],
+      ['Periodo','Monto bruto ARS','Impuesto 3%','Monto neto ARS','Tipo cambio (mes)','Equivalente USD','Semestre','Estado']
     ];
-    blItems.forEach(function(r){var neto=parseFloat(r.total_regalias_ars||0);var bruto=neto/(1-0.03);rows3.push([r.semestre,parseFloat(bruto.toFixed(2)),parseFloat((bruto*0.03).toFixed(2)),neto,l.semsPaid.has(r.semestre)?'Pagado':'Pendiente']);});
+    calcBl.filas.forEach(function(f){
+      rows3.push([
+        f.periodo,
+        parseFloat(f.bruto.toFixed(2)),
+        parseFloat(f.impuesto.toFixed(2)),
+        parseFloat(f.netoArs.toFixed(2)),
+        f.tasa!=null?parseFloat((1/f.tasa).toFixed(2)):'Pendiente',
+        f.netoUsd!=null?parseFloat(f.netoUsd.toFixed(2)):'Pendiente',
+        semestreDe(f.periodo),
+        l.semsPaid.has(semestreDe(f.periodo))?'Pagado':'Pendiente'
+      ]);
+    });
+    rows3.push([]);
+    rows3.push(['TOTAL','',parseFloat(calcBl.totalImpuesto.toFixed(2)),parseFloat(calcBl.totalNetoArs.toFixed(2)),'',
+      calcBl.pendiente?'Incompleto (falta tipo de cambio de algun mes)':parseFloat(calcBl.totalNetoUsd.toFixed(2)),'','']);
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows3),'Detalle Buscalibre');
   }
   // HOJA 4: Participantes
