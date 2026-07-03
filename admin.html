@@ -1411,6 +1411,13 @@ async function doBuscar(){
   res.innerHTML=html||'<div class="card" style="padding:24px;text-align:center;color:var(--text3)">Sin resultados para "'+esc(q)+'"</div>';
 }
 
+var lBtn=$('l-btn');
+if(lBtn) lBtn.addEventListener('click', doLogin);
+['l-email','l-pass'].forEach(function(id){
+  var el=$(id);
+  if(el) el.addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+});
+
 checkSession();
 
 </script>
