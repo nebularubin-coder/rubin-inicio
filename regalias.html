@@ -4,53 +4,65 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portal de Regalías — Rubin Editorial</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  :root{--pink:#BE0065;--navy:#242E65;--navy3:#0f1535;--white:#ffffff;--muted:rgba(255,255,255,0.55);--card:rgba(255,255,255,0.05);--bdr:rgba(255,255,255,0.10);--green:rgba(100,220,120,0.15);--green-text:#7ddf9a}
-  body{background:var(--navy3);color:var(--white);font-family:'Inter',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column;align-items:center}
-  header{width:100%;background:var(--navy);border-bottom:2px solid var(--pink);display:flex;align-items:center;justify-content:center;padding:20px 24px}
-  header img{height:56px;width:auto}
-  .hero{text-align:center;padding:64px 24px 40px;max-width:560px;width:100%}
-  .eyebrow{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:var(--pink);margin-bottom:16px}
-  .hero h1{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(28px,5vw,40px);font-weight:400;line-height:1.2;margin-bottom:16px}
-  .hero p{color:var(--muted);font-size:15px;line-height:1.7}
-  .search-wrap{width:100%;max-width:560px;padding:0 24px 48px}
-  .search-box{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:14px}
-  .search-box label{font-size:13px;color:var(--muted)}
-  .hint{font-size:12px;color:rgba(255,255,255,0.35);margin-top:-8px;font-style:italic}
+  :root{
+    --bg:#f0f2f7;--surface:#ffffff;--surface2:#f8f9fc;
+    --navy:#1c2340;--accent:#6366f1;--pink:#BE0065;
+    --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+    --border:#e2e8f0;--border2:#cbd5e1;
+    --green:#16a34a;--green-bg:#dcfce7;
+    --yellow:#d97706;--yellow-bg:#fef3c7;
+    --red:#dc2626;--red-bg:#fee2e2;
+    --purple:#7c3aed;--purple-bg:#ede9fe;
+    --shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md:0 4px 6px rgba(0,0,0,0.07),0 2px 4px rgba(0,0,0,0.05);
+  }
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:400;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+  header{width:100%;background:var(--navy);border-bottom:3px solid var(--pink);display:flex;align-items:center;justify-content:center;padding:20px 24px}
+  header img{height:48px;width:auto}
+  .hero{text-align:center;padding:56px 24px 36px;max-width:560px;width:100%}
+  .eyebrow{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:var(--pink);margin-bottom:14px}
+  .hero h1{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(26px,5vw,36px);font-weight:400;line-height:1.2;margin-bottom:14px;color:var(--navy)}
+  .hero p{color:var(--text2);font-size:14.5px;line-height:1.7}
+  .search-wrap{width:100%;max-width:560px;padding:0 24px 40px}
+  .search-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-md)}
+  .search-box label{font-size:12.5px;color:var(--text2);font-weight:600}
+  .hint{font-size:11.5px;color:var(--text3);margin-top:-6px;font-style:italic}
   .input-row{display:flex;gap:10px}
-  input[type="email"]{flex:1;background:rgba(255,255,255,0.08);border:1px solid var(--bdr);border-radius:8px;padding:12px 16px;color:var(--white);font-family:'Inter',sans-serif;font-size:15px;font-weight:300;outline:none;transition:border-color 0.2s}
-  input[type="email"]::placeholder{color:var(--muted)}
-  input[type="email"]:focus{border-color:var(--pink)}
-  .btn{background:var(--pink);color:var(--white);border:none;border-radius:8px;padding:12px 24px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;cursor:pointer;transition:opacity 0.2s,transform 0.1s;white-space:nowrap}
-  .btn:hover{opacity:0.88}.btn:active{transform:scale(0.97)}.btn:disabled{opacity:0.4;cursor:not-allowed}
-  .btn-outline{background:transparent;color:var(--white);border:1px solid var(--bdr);border-radius:8px;padding:8px 16px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:border-color 0.2s,color 0.2s}
+  input[type="email"]{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;font-weight:400;outline:none;transition:border-color 0.15s}
+  input[type="email"]::placeholder{color:var(--text3)}
+  input[type="email"]:focus{border-color:var(--accent)}
+  .btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:11px 22px;font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;letter-spacing:0.2px;cursor:pointer;transition:opacity 0.15s,transform 0.1s;white-space:nowrap}
+  .btn:hover{opacity:0.9}.btn:active{transform:scale(0.97)}.btn:disabled{opacity:0.45;cursor:not-allowed}
+  .btn-outline{background:var(--surface);color:var(--navy);border:1px solid var(--border2);border-radius:8px;padding:8px 16px;font-family:'Inter',sans-serif;font-weight:600;font-size:12.5px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:border-color 0.15s,color 0.15s}
   .btn-outline:hover{border-color:var(--pink);color:var(--pink)}
   .results-wrap{width:100%;max-width:800px;padding:0 24px 80px}
-  .results-header{margin-bottom:20px;border-bottom:1px solid var(--bdr);padding-bottom:16px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px}
-  .autor-nombre{font-family:'Playfair Display',serif;font-style:italic;font-size:22px}
-  .autor-sub{font-size:13px;color:var(--muted);margin-top:4px}
-  .nota{background:rgba(36,46,101,0.6);border:1px solid var(--bdr);border-left:3px solid var(--pink);border-radius:8px;padding:16px 20px;font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:24px}
-  .nota a{color:var(--pink)}
-  .libro-card{background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:20px 24px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto;gap:8px 24px;align-items:center;transition:border-color 0.2s}
-  .libro-card:hover{border-color:rgba(190,0,101,0.35)}
-  .libro-titulo{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:4px}
-  .libro-meta{font-size:12px;color:var(--muted)}
-  .sello-tag{display:inline-block;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1.5px;color:var(--white);border:1px solid rgba(255,255,255,0.35);border-radius:4px;padding:2px 7px;margin-right:8px}
-  .tipo-tag{display:inline-block;font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:1px;color:var(--muted);border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:2px 6px;margin-right:4px}
-  .badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:6px 14px;border-radius:20px;white-space:nowrap}
-  .badge-p{background:rgba(255,255,255,0.07);color:var(--muted);border:1px solid var(--bdr)}
-  .badge-a{background:rgba(190,0,101,0.15);color:var(--pink);border:1px solid rgba(190,0,101,0.4)}
-  .badge-l{background:var(--green);color:var(--green-text);border:1px solid rgba(100,220,120,0.3)}
-  .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-  .badge-p .dot{background:var(--muted)}.badge-a .dot{background:var(--pink)}.badge-l .dot{background:var(--green-text)}
-  .monto-detalle{font-size:11px;color:var(--muted);text-align:right;margin-top:4px}
-  .msg{text-align:center;padding:48px 24px;color:var(--muted);font-style:italic;font-family:'Playfair Display',serif;font-size:16px;line-height:1.7}
-  .msg.error{color:#ff6b8a}.msg a{color:var(--pink)}
-  .spinner{display:inline-block;width:20px;height:20px;border:2px solid rgba(255,255,255,0.15);border-top-color:var(--pink);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:8px}
+  .results-header{margin-bottom:18px;border-bottom:1px solid var(--border);padding-bottom:16px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px}
+  .autor-nombre{font-family:'Playfair Display',serif;font-style:italic;font-size:21px;color:var(--navy)}
+  .autor-sub{font-size:12.5px;color:var(--text2);margin-top:4px}
+  .nota{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--pink);border-radius:8px;padding:14px 18px;font-size:12.3px;color:var(--text2);line-height:1.6;margin-bottom:22px}
+  .nota a{color:var(--pink);font-weight:600;text-decoration:none}
+  .libro-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto;gap:8px 24px;align-items:center;box-shadow:var(--shadow);transition:border-color 0.15s}
+  .libro-card:hover{border-color:var(--accent)}
+  .libro-titulo{font-family:'Playfair Display',serif;font-size:15.5px;font-weight:700;margin-bottom:4px;color:var(--navy)}
+  .libro-meta{font-size:11.5px;color:var(--text3)}
+  .sello-tag{display:inline-block;font-family:'Inter',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.5px;color:var(--navy);border:1px solid var(--border2);border-radius:4px;padding:2px 7px;margin-right:6px;text-transform:uppercase}
+  .tipo-tag{display:inline-block;font-family:'Inter',sans-serif;font-weight:500;font-size:10px;letter-spacing:0.3px;color:var(--text3);border:1px solid var(--border);border-radius:4px;padding:2px 6px;margin-right:4px}
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;white-space:nowrap}
+  .badge-gray{background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
+  .badge-purple{background:var(--purple-bg);color:var(--purple)}
+  .badge-green{background:var(--green-bg);color:var(--green)}
+  .badge-yellow{background:var(--yellow-bg);color:var(--yellow)}
+  .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  .badge-gray .dot{background:var(--text3)}.badge-purple .dot{background:var(--purple)}.badge-green .dot{background:var(--green)}.badge-yellow .dot{background:var(--yellow)}
+  .monto-detalle{font-size:11px;color:var(--text3);text-align:right;margin-top:4px}
+  .msg{text-align:center;padding:48px 24px;color:var(--text2);font-style:italic;font-family:'Playfair Display',serif;font-size:16px;line-height:1.7}
+  .msg.error{color:var(--red)}.msg a{color:var(--pink)}
+  .spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:8px}
   @keyframes spin{to{transform:rotate(360deg)}}
-  footer{margin-top:auto;width:100%;border-top:1px solid var(--bdr);text-align:center;padding:20px;font-size:12px;color:var(--muted)}
+  footer{margin-top:auto;width:100%;border-top:1px solid var(--border);text-align:center;padding:20px;font-size:11.5px;color:var(--text3);background:var(--surface)}
   @media(max-width:520px){.input-row{flex-direction:column}.libro-card{grid-template-columns:1fr}.monto-detalle{text-align:left}.results-header{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
@@ -77,7 +89,7 @@
 <div class="results-wrap" id="rw" style="display:none"></div>
 
 <footer>
-  <a href="admin.html" style="color:rgba(255,255,255,0.15);text-decoration:none;font-size:11px;margin-right:16px">&#x25A0;</a>&copy; Rubin Editorial &nbsp;&middot;&nbsp; Montos expresados en USD &nbsp;&middot;&nbsp;
+  <a href="admin.html" style="color:var(--border2);text-decoration:none;font-size:11px;margin-right:16px">&#x25A0;</a>&copy; Rubin Editorial &nbsp;&middot;&nbsp; Montos expresados en USD &nbsp;&middot;&nbsp;
   El mínimo divisible de USD&nbsp;500 aplica por antología, no por suma de participaciones
 </footer>
 
@@ -110,10 +122,12 @@ async function buscar(){
 function render(rows){
   const nombre=rows[0].nombre_mostrar||'';
   const total=rows.length;
+  const liquidados=rows.filter(r=>r.estado==='liquidado').length;
   const listos=rows.filter(r=>r.estado==='listo').length;
   const alc=rows.filter(r=>r.estado==='alcanzado').length;
 
   let sub=`${total} ${total===1?'publicación':'publicaciones'} registrada${total===1?'':'s'}`;
+  if(liquidados>0) sub+=` · ${liquidados} ya liquidado${liquidados===1?'':'s'}`;
   if(alc>0) sub+=` · ${alc} antología${alc===1?'':'s'} con mínimo alcanzado`;
   if(listos>0) sub+=` · ${listos} libro${listos===1?'':'s'} listo${listos===1?'':'s'} para liquidar`;
 
@@ -133,22 +147,33 @@ function render(rows){
 
   rows.forEach(r=>{
     const esInd = r.tipo_libro === 'individual';
-    let badge='', detalle='';
+    let badge='';
 
-    if(esInd){
+    if(r.estado==='liquidado'){
+      let montos=[];
+      if(parseFloat(r.liquidado_usd||0)>0) montos.push(`USD ${fmt(r.liquidado_usd)}`);
+      if(parseFloat(r.liquidado_ars||0)>0) montos.push(`ARS ${fmtARS(r.liquidado_ars)}`);
+      badge=`<div><span class="badge badge-yellow"><span class="dot"></span>Ya liquidado</span>
+             ${montos.length?`<div class="monto-detalle">${montos.join(' · ')} pagados</div>`:''}
+             </div>`;
+    } else if(esInd){
       const tieneARS = parseFloat(r.total_ars||0) > 0;
       const tieneUSD = parseFloat(r.total_usd||0) > 0;
       let montos=[];
       if(tieneUSD) montos.push(`USD ${fmt(r.total_usd)}`);
       if(tieneARS) montos.push(`ARS ${fmtARS(r.total_ars)}`);
-      badge=`<div><span class="badge badge-l"><span class="dot"></span>Listo para liquidar</span>
-             ${montos.length?`<div class="monto-detalle">${montos.join(' · ')} recaudados</div>`:'<div class="monto-detalle">Sin ventas registradas aún</div>'}
-             </div>`;
+      if(!tieneUSD && !tieneARS){
+        badge=`<div><span class="badge badge-gray"><span class="dot"></span>Sin ventas aún</span></div>`;
+      } else {
+        badge=`<div><span class="badge badge-green"><span class="dot"></span>Listo para liquidar</span>
+               <div class="monto-detalle">${montos.join(' · ')} recaudados</div>
+               </div>`;
+      }
     } else {
       const alc = r.estado==='alcanzado';
       badge = alc
-        ? `<div><span class="badge badge-a"><span class="dot"></span>Mínimo alcanzado</span></div>`
-        : `<div><span class="badge badge-p"><span class="dot"></span>En acumulación</span>
+        ? `<div><span class="badge badge-purple"><span class="dot"></span>Mínimo alcanzado</span></div>`
+        : `<div><span class="badge badge-gray"><span class="dot"></span>En acumulación</span>
            <div class="monto-detalle">USD ${fmt(r.total_usd)} recaudados · faltan USD ${fmt(r.falta_usd)}</div></div>`;
     }
 
