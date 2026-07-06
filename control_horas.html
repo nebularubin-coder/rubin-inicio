@@ -409,6 +409,7 @@
   <div class="filters">
     <button class="filter-btn active" data-range="hoy">Hoy</button>
     <button class="filter-btn" data-range="semana">Esta semana</button>
+    <button class="filter-btn" data-range="semana-anterior">Semana anterior</button>
     <button class="filter-btn" data-range="mes">Este mes</button>
     <div class="filter-dates">
       <input type="date" id="filter-desde" />
@@ -816,6 +817,8 @@ $("modal-confirmar").addEventListener("click", async () => {
    PANEL ADMIN
    ============================================================ */
 let rangoActivo = "hoy";
+let ultimoDesde = null;
+let ultimoHasta = null;
 let sesionesRango = []; // sesiones del rango de fechas actual, sin filtrar por usuario
 let perfilesCache = {};
 
@@ -831,11 +834,25 @@ function calcularRango(tipo){
     const diaSemana = (inicio.getDay()+6)%7; // lunes=0
     inicio.setDate(inicio.getDate()-diaSemana);
     inicio.setHours(0,0,0,0);
+  } else if(tipo === "semana-anterior"){
+    const diaSemana = (inicio.getDay()+6)%7;
+    // fin = el domingo de la semana pasada
+    fin.setDate(fin.getDate()-diaSemana-1);
+    fin.setHours(23,59,59,999);
+    // inicio = el lunes de la semana pasada
+    inicio.setDate(fin.getDate()-6);
+    inicio.setHours(0,0,0,0);
   } else if(tipo === "mes"){
     inicio.setDate(1);
     inicio.setHours(0,0,0,0);
   }
   return { desde: inicio, hasta: fin };
+}
+
+function recargarAdmin(){
+  if(ultimoDesde && ultimoHasta){
+    cargarYRenderizarAdmin(ultimoDesde, ultimoHasta);
+  }
 }
 
 document.querySelectorAll(".filter-btn[data-range]").forEach(btn => {
@@ -1016,6 +1033,8 @@ function reconstruirSesiones(eventosOrdenados){
 }
 
 async function cargarYRenderizarAdmin(desde, hasta){
+  ultimoDesde = desde;
+  ultimoHasta = hasta;
   $("admin-table-wrap").innerHTML = '<div class="loading-text">Cargando registros…</div>';
 
   const { data: eventos, error } = await sb
@@ -1207,13 +1226,7 @@ $("nueva-confirmar").addEventListener("click", async () => {
   }
 
   hide($("modal-nueva"));
-  renderAdminConFiltros(); // refrescar desde cache (o recargar si hace falta)
-  // Recargar desde Supabase para que aparezca la entrada nueva
-  const activeBtn = document.querySelector(".filter-btn[data-range].active");
-  if(activeBtn){
-    const { desde, hasta } = calcularRango(activeBtn.dataset.range);
-    cargarYRenderizarAdmin(desde, hasta);
-  }
+  recargarAdmin();
 });
 
 /* ============================================================
@@ -1277,11 +1290,7 @@ $("editar-confirmar").addEventListener("click", async () => {
   }
 
   hide($("modal-editar"));
-  const activeBtn = document.querySelector(".filter-btn[data-range].active");
-  if(activeBtn){
-    const { desde, hasta } = calcularRango(activeBtn.dataset.range);
-    cargarYRenderizarAdmin(desde, hasta);
-  }
+  recargarAdmin();
 });
 
 /* ============================================================
