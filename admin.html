@@ -591,6 +591,17 @@ function $(id){ return document.getElementById(id); }
 function fmt(n){ return parseFloat(n||0).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function fmtARS(n){ return parseFloat(n||0).toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:0}); }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function estadoIndividual(l){
+  var semsConVentas=new Set();
+  (l.reg.items||[]).forEach(function(it){
+    var usd=parseFloat(it.total_regalias_usd)||0, ars=parseFloat(it.total_regalias_ars)||0;
+    if(usd>0||ars>0) semsConVentas.add(it.semestre);
+  });
+  if(semsConVentas.size===0) return'<span class="badge b-gray">Sin ventas</span>';
+  var pendiente=false;
+  semsConVentas.forEach(function(s){ if(!l.semsPaid.has(s)) pendiente=true; });
+  return pendiente?'<span class="badge b-green">Listo</span>':'<span class="badge b-yellow">Liquidado</span>';
+}
 function val(id){ var el=$(id); return el?el.value:''; }
 function setVal(id,v){ var el=$(id); if(el) el.value=v||''; }
 function toast(msg,tipo){
@@ -833,7 +844,7 @@ function renderDashboard(){
     return'<tr data-open-libro="'+l.id+'" style="cursor:pointer"><td>'+esc(l.nombre_libro)+'</td><td style="font-size:12px;color:var(--text3)">'+esc(aut)+'</td>'+
       '<td style="font-size:12px">'+(l.reg.usd>0?'$'+fmt(l.reg.usd):'—')+'</td>'+
       '<td style="font-size:12px">'+(l.reg.ars>0?fmtARS(l.reg.ars):'—')+'</td>'+
-      '<td>'+(l.liqs.length?'<span class="badge b-yellow">Liquidado</span>':'<span class="badge b-green">Listo</span>')+'</td></tr>';
+      '<td>'+estadoIndividual(l)+'</td></tr>';
   }).join(''):'<tr><td colspan="5" class="empty">Sin datos</td></tr>';
 }
 
@@ -845,7 +856,7 @@ function renderLibros(){
            (obras===''||(obras==='0'&&l.obras===0)||(obras==='1'&&l.obras>0));
   });
   $('lib-tb').innerHTML=f.length?f.map(function(l){
-    var est=l.tipo==='individual'?(l.liqs.length?'<span class="badge b-yellow">Liquidado</span>':(l.reg.usd>0||l.reg.ars>0)?'<span class="badge b-green">Listo</span>':'<span class="badge b-gray">Sin ventas</span>'):
+    var est=l.tipo==='individual'?estadoIndividual(l):
       l.reg.usd>=500?'<span class="badge b-purple">Min. alcanzado</span>':l.reg.usd>0?'<span class="badge b-yellow">$'+fmt(l.reg.usd)+'/500</span>':'<span class="badge b-gray">Sin ventas</span>';
     return'<tr data-open-libro="'+l.id+'" style="cursor:pointer">'+
       '<td style="font-weight:500">'+esc(l.nombre_libro)+'</td>'+
@@ -1704,7 +1715,7 @@ async function doBuscar(){
     html+='<div class="card" style="margin-bottom:12px"><div class="card-head"><div><div class="card-title">'+esc(a.nombre)+'</div><div style="font-size:12px;color:var(--text3)">'+esc(a.email)+'</div></div><button class="btn btn-secondary btn-sm" data-open-autor="'+a.id+'">Ver perfil</button></div>'+
       '<div class="card-body"><table><thead><tr><th>LIBRO</th><th>TIPO</th><th>ESTADO</th><th>USD</th><th>ARS</th></tr></thead><tbody>'+
       librosA.map(function(l){
-        var est=l.tipo==='individual'?(l.liqs.length?'<span class="badge b-yellow">Liquidado</span>':(l.reg.usd>0||l.reg.ars>0)?'<span class="badge b-green">Listo</span>':'<span class="badge b-gray">Sin ventas</span>'):l.reg.usd>=500?'<span class="badge b-purple">Alcanzado</span>':l.reg.usd>0?'<span class="badge b-yellow">$'+fmt(l.reg.usd)+'/500</span>':'<span class="badge b-gray">Sin ventas</span>';
+        var est=l.tipo==='individual'?estadoIndividual(l):l.reg.usd>=500?'<span class="badge b-purple">Alcanzado</span>':l.reg.usd>0?'<span class="badge b-yellow">$'+fmt(l.reg.usd)+'/500</span>':'<span class="badge b-gray">Sin ventas</span>';
         return'<tr data-open-libro="'+l.id+'" style="cursor:pointer"><td style="font-weight:500">'+esc(l.nombre_libro)+'</td><td>'+(l.tipo==='individual'?'<span class="badge b-blue">Ind.</span>':'<span class="badge b-gray">Ant.</span>')+'</td><td>'+est+'</td><td style="font-size:12px">'+(l.reg.usd>0?'$'+fmt(l.reg.usd):'—')+'</td><td style="font-size:12px;color:var(--text3)">'+(l.reg.ars>0?fmtARS(l.reg.ars):'—')+'</td></tr>';
       }).join('')+
       '</tbody></table></div></div>';
