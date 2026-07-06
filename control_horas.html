@@ -766,30 +766,114 @@ function aplicarEstadoTimer(estado){
 }
 
 /* ============================================================
-   PRESENCIA EN TIEMPO REAL (Supabase Realtime Presence)
+   PRESENCIA EN TIEMPO REAL
+   - Usuarios trabajando: Realtime Presence (session-based, correcto para timer)
+   - Admin disponible: persistido en DB, actualizado via postgres_changes
    ============================================================ */
 let presenciaChannel = null;
+let dbChannel = null;
 let adminDisponible = false;
+let presenciaStateActual = {}; // estado de presencia de usuarios trabajando
+let autoDesactivarInterval = null;
 
-function iniciarPresencia(){
+// Hora de auto-desactivación: 23:00
+const HORA_DESACTIVACION = 23;
+
+async function iniciarPresencia(){
+  // --- Canal de Presence para usuarios con timer activo ---
   presenciaChannel = sb.channel("presencia-rubin", {
     config: { presence: { key: currentUser.id } }
   });
 
   presenciaChannel.on("presence", { event: "sync" }, () => {
-    renderPresencia(presenciaChannel.presenceState());
+    presenciaStateActual = presenciaChannel.presenceState();
+    renderPresencia();
   });
 
-  presenciaChannel.subscribe(async (status) => {
-    if(status === "SUBSCRIBED"){
-      // Al conectar, no anunciamos nada todavía — el estado
-      // lo emite aplicarEstadoTimer o el botón de admin.
-    }
-  });
+  presenciaChannel.subscribe();
+
+  // --- Canal de postgres_changes para el estado del admin ---
+  dbChannel = sb.channel("admin-status-changes")
+    .on("postgres_changes", {
+      event: "UPDATE",
+      schema: "public",
+      table: "timer_perfiles",
+      filter: `is_admin=eq.true`
+    }, (payload) => {
+      // Otro usuario (o la misma sesión) cambió el estado del admin → re-render
+      renderPresencia();
+    })
+    .subscribe();
+
+  // --- Cargar estado inicial del admin desde DB ---
+  await cargarEstadoAdminDB();
+
+  // --- Si es admin: arrancar el chequeador de 23:00 ---
+  if(currentPerfil.is_admin){
+    autoDesactivarInterval = setInterval(chequear23, 60 * 1000);
+    chequear23(); // revisar inmediatamente al entrar
+  }
+}
+
+async function cargarEstadoAdminDB(){
+  const { data } = await sb.rpc("get_admin_status");
+  if(!data || data.length === 0) return;
+
+  const { disponible, disponible_hasta } = data[0];
+  const ahora = new Date();
+  const hasta = disponible_hasta ? new Date(disponible_hasta) : null;
+
+  // Si expiró (pasó las 23:00 del día en que se activó), desactivar en DB
+  if(disponible && hasta && ahora > hasta){
+    await desactivarAdminEnDB();
+    adminDisponible = false;
+  } else {
+    adminDisponible = disponible || false;
+  }
+
+  actualizarBtnDisponible();
+  renderPresencia();
+}
+
+async function activarAdminEnDB(){
+  const hoy = new Date();
+  hoy.setHours(HORA_DESACTIVACION, 0, 0, 0);
+  await sb.from("timer_perfiles")
+    .update({ admin_disponible: true, admin_disponible_hasta: hoy.toISOString() })
+    .eq("id", currentUser.id);
+}
+
+async function desactivarAdminEnDB(){
+  await sb.from("timer_perfiles")
+    .update({ admin_disponible: false, admin_disponible_hasta: null })
+    .eq("id", currentUser.id);
+}
+
+function chequear23(){
+  if(!adminDisponible) return;
+  const ahora = new Date();
+  if(ahora.getHours() >= HORA_DESACTIVACION){
+    adminDisponible = false;
+    desactivarAdminEnDB();
+    actualizarBtnDisponible();
+    renderPresencia();
+  }
+}
+
+function actualizarBtnDisponible(){
+  const btn = $("btn-disponible");
+  if(!btn) return;
+  if(adminDisponible){
+    btn.textContent = "Disponible";
+    btn.className = "btn-disponible activo";
+  } else {
+    btn.textContent = "No disponible";
+    btn.className = "btn-disponible inactivo";
+  }
 }
 
 async function trackPresencia(estado){
-  // estado: "running" | "paused" | "available" | null (para desaparecer)
+  // Solo para usuarios con timer (running / paused / null)
   if(!presenciaChannel) return;
   if(estado === null){
     await presenciaChannel.untrack();
@@ -797,32 +881,50 @@ async function trackPresencia(estado){
     await presenciaChannel.track({
       nombre: currentPerfil.nombre,
       sello: currentPerfil.sello,
-      estado,
-      is_admin: currentPerfil.is_admin
+      estado
     });
   }
 }
 
-function renderPresencia(state){
+async function renderPresencia(){
+  // Usuarios con timer activo (desde Presence)
   const presencias = [];
-  for(const userId in state){
-    const [info] = state[userId]; // presencia puede tener múltiples tabs; tomamos la primera
-    if(info) presencias.push(info);
+  for(const userId in presenciaStateActual){
+    const [info] = presenciaStateActual[userId];
+    if(info && ["running","paused"].includes(info.estado)) presencias.push(info);
   }
 
-  // Ordenar: primero running, luego paused, luego admin available
+  // Estado del admin desde DB (si está disponible)
+  let adminItem = null;
+  if(!currentPerfil.is_admin){
+    // Usuarios no-admin leen el estado actual de DB
+    const { data } = await sb.rpc("get_admin_status");
+    if(data && data[0]){
+      const { disponible, disponible_hasta } = data[0];
+      const hasta = disponible_hasta ? new Date(disponible_hasta) : null;
+      if(disponible && (!hasta || new Date() < hasta)){
+        // Buscar el nombre del admin desde los perfiles
+        const adminPerfil = Object.values(perfilesCache).find(p => p.is_admin) || { nombre: "Ignacio" };
+        adminItem = { nombre: adminPerfil.nombre || "Admin", estado: "available" };
+      }
+    }
+  } else if(adminDisponible){
+    adminItem = { nombre: currentPerfil.nombre, estado: "available" };
+  }
+
+  // Ordenar: running → paused → admin
   presencias.sort((a,b) => {
-    const orden = { running: 0, paused: 1, available: 2 };
+    const orden = { running: 0, paused: 1 };
     return (orden[a.estado] ?? 9) - (orden[b.estado] ?? 9);
   });
 
-  const activos = presencias.filter(p => ["running","paused","available"].includes(p.estado));
+  const items = [...presencias, ...(adminItem ? [adminItem] : [])];
 
-  const html = activos.length === 0
+  const html = items.length === 0
     ? '<div class="presencia-vacio">Nadie trabajando en este momento.</div>'
-    : activos.map(p => {
-        const dotClass = p.estado === "paused" ? "paused" : p.is_admin ? "admin" : "";
-        const label = p.is_admin
+    : items.map(p => {
+        const dotClass = p.estado === "paused" ? "paused" : p.estado === "available" ? "admin" : "";
+        const label = p.estado === "available"
           ? `${p.nombre} · disponible`
           : p.estado === "paused"
             ? `${p.nombre} · en pausa`
@@ -841,16 +943,13 @@ function renderPresencia(state){
    ============================================================ */
 $("btn-disponible").addEventListener("click", async () => {
   adminDisponible = !adminDisponible;
-  const btn = $("btn-disponible");
+  actualizarBtnDisponible();
   if(adminDisponible){
-    btn.textContent = "Disponible";
-    btn.className = "btn-disponible activo";
-    await trackPresencia("available");
+    await activarAdminEnDB();
   } else {
-    btn.textContent = "No disponible";
-    btn.className = "btn-disponible inactivo";
-    await trackPresencia(null);
+    await desactivarAdminEnDB();
   }
+  renderPresencia();
 });
 
 /* ============================================================
@@ -903,7 +1002,7 @@ async function despuesDeLogin(user){
   $("topbar-nombre").textContent = `${perfil.nombre} · ${perfil.sello}`;
 
   // Arrancar presencia para cualquier tipo de usuario
-  iniciarPresencia();
+  await iniciarPresencia();
 
   if(perfil.is_admin){
     show($("view-admin"));
@@ -1105,7 +1204,7 @@ function generarPDF(){
 }
 
 async function iniciarPanelAdmin(){
-  const { data: perfiles } = await sb.from("timer_perfiles").select("id, nombre, sello").eq("is_admin", false);
+  const { data: perfiles } = await sb.from("timer_perfiles").select("id, nombre, sello, is_admin");
   perfilesCache = {};
   (perfiles || []).forEach(p => perfilesCache[p.id] = p);
 
