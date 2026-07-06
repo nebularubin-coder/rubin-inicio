@@ -319,6 +319,59 @@
     display:flex;gap:10px;margin-top:14px;
   }
   .modal-actions .btn-control{flex:1;}
+
+  /* ---------- PRESENCIA EN TIEMPO REAL ---------- */
+  .presencia-wrap{
+    width:100%;
+    max-width:340px;
+    margin-top:24px;
+  }
+  .presencia-titulo{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--paper-dim);
+    margin-bottom:10px;
+  }
+  .presencia-lista{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .presencia-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+  }
+  .presencia-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--ok);
+    flex-shrink:0;
+    box-shadow:0 0 6px var(--ok);
+  }
+  .presencia-dot.paused{background:#C47B2A;box-shadow:0 0 6px #C47B2A;}
+  .presencia-dot.admin{background:var(--gold);box-shadow:0 0 6px var(--gold);}
+  .presencia-vacio{
+    font-size:12px;color:var(--paper-dim);font-style:italic;
+  }
+
+  /* botón disponible/no disponible admin */
+  .btn-disponible{
+    padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;
+    cursor:pointer;border:1px solid var(--ok);color:var(--ok);background:transparent;
+    transition:all .2s ease;font-family:'Inter',sans-serif;
+  }
+  .btn-disponible.activo{
+    background:var(--ok);color:#0E1A12;
+  }
+  .btn-disponible.inactivo{
+    border-color:var(--paper-dim);color:var(--paper-dim);
+  }
 </style>
 </head>
 <body>
@@ -380,6 +433,13 @@
   <div class="alarm-banner hidden" id="alarm-banner">
     Llegaste a 3:30 hs de trabajo activo en esta jornada.
   </div>
+
+  <div class="presencia-wrap">
+    <div class="presencia-titulo">Trabajando ahora</div>
+    <div class="presencia-lista" id="presencia-lista-timer">
+      <div class="presencia-vacio">Nadie trabajando en este momento.</div>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL: tareas realizadas (obligatorio al detener) -->
@@ -400,16 +460,23 @@
 <div class="container wide hidden" id="view-admin">
   <div class="admin-header">
     <h1>Panel de horas</h1>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <button class="btn-disponible inactivo" id="btn-disponible">Disponible</button>
       <button class="filter-btn" id="btn-nueva-entrada" style="border-color:var(--ok);color:var(--ok);font-weight:600;">+ Nueva entrada</button>
       <button class="filter-btn" id="btn-pdf" style="border-color:var(--gold);color:var(--gold);font-weight:600;">⬇ Descargar PDF</button>
+    </div>
+  </div>
+
+  <div class="presencia-wrap" style="max-width:100%;margin-bottom:18px;margin-top:0;">
+    <div class="presencia-titulo">Trabajando ahora</div>
+    <div class="presencia-lista" id="presencia-lista-admin" style="flex-direction:row;flex-wrap:wrap;gap:8px;">
+      <div class="presencia-vacio">Nadie trabajando en este momento.</div>
     </div>
   </div>
 
   <div class="filters">
     <button class="filter-btn active" data-range="hoy">Hoy</button>
     <button class="filter-btn" data-range="semana">Esta semana</button>
-    <button class="filter-btn" data-range="semana-anterior">Semana anterior</button>
     <button class="filter-btn" data-range="mes">Este mes</button>
     <div class="filter-dates">
       <input type="date" id="filter-desde" />
@@ -683,17 +750,108 @@ function aplicarEstadoTimer(estado){
     $("stamp-status").textContent = "Detenido";
     $("stamp-status").className = "stamp-status";
     hide($("alarm-banner"));
+    trackPresencia(null); // desaparecer de la lista
   } else if(estado.status === "running"){
     show($("controls-running"));
     $("stamp-status").textContent = "En curso";
     $("stamp-status").className = "stamp-status running";
     tickInterval = setInterval(pintar, 1000);
+    trackPresencia("running"); // aparecer en verde
   } else if(estado.status === "paused"){
     show($("controls-paused"));
     $("stamp-status").textContent = "Pausado";
     $("stamp-status").className = "stamp-status paused";
+    trackPresencia("paused"); // aparecer en naranja
   }
 }
+
+/* ============================================================
+   PRESENCIA EN TIEMPO REAL (Supabase Realtime Presence)
+   ============================================================ */
+let presenciaChannel = null;
+let adminDisponible = false;
+
+function iniciarPresencia(){
+  presenciaChannel = sb.channel("presencia-rubin", {
+    config: { presence: { key: currentUser.id } }
+  });
+
+  presenciaChannel.on("presence", { event: "sync" }, () => {
+    renderPresencia(presenciaChannel.presenceState());
+  });
+
+  presenciaChannel.subscribe(async (status) => {
+    if(status === "SUBSCRIBED"){
+      // Al conectar, no anunciamos nada todavía — el estado
+      // lo emite aplicarEstadoTimer o el botón de admin.
+    }
+  });
+}
+
+async function trackPresencia(estado){
+  // estado: "running" | "paused" | "available" | null (para desaparecer)
+  if(!presenciaChannel) return;
+  if(estado === null){
+    await presenciaChannel.untrack();
+  } else {
+    await presenciaChannel.track({
+      nombre: currentPerfil.nombre,
+      sello: currentPerfil.sello,
+      estado,
+      is_admin: currentPerfil.is_admin
+    });
+  }
+}
+
+function renderPresencia(state){
+  const presencias = [];
+  for(const userId in state){
+    const [info] = state[userId]; // presencia puede tener múltiples tabs; tomamos la primera
+    if(info) presencias.push(info);
+  }
+
+  // Ordenar: primero running, luego paused, luego admin available
+  presencias.sort((a,b) => {
+    const orden = { running: 0, paused: 1, available: 2 };
+    return (orden[a.estado] ?? 9) - (orden[b.estado] ?? 9);
+  });
+
+  const activos = presencias.filter(p => ["running","paused","available"].includes(p.estado));
+
+  const html = activos.length === 0
+    ? '<div class="presencia-vacio">Nadie trabajando en este momento.</div>'
+    : activos.map(p => {
+        const dotClass = p.estado === "paused" ? "paused" : p.is_admin ? "admin" : "";
+        const label = p.is_admin
+          ? `${p.nombre} · disponible`
+          : p.estado === "paused"
+            ? `${p.nombre} · en pausa`
+            : p.nombre;
+        return `<div class="presencia-item"><span class="presencia-dot ${dotClass}"></span>${label}</div>`;
+      }).join("");
+
+  const listaTimer = $("presencia-lista-timer");
+  const listaAdmin = $("presencia-lista-admin");
+  if(listaTimer) listaTimer.innerHTML = html;
+  if(listaAdmin) listaAdmin.innerHTML = html;
+}
+
+/* ============================================================
+   BOTÓN DISPONIBLE / NO DISPONIBLE (solo admin)
+   ============================================================ */
+$("btn-disponible").addEventListener("click", async () => {
+  adminDisponible = !adminDisponible;
+  const btn = $("btn-disponible");
+  if(adminDisponible){
+    btn.textContent = "Disponible";
+    btn.className = "btn-disponible activo";
+    await trackPresencia("available");
+  } else {
+    btn.textContent = "No disponible";
+    btn.className = "btn-disponible inactivo";
+    await trackPresencia(null);
+  }
+});
 
 /* ============================================================
    LOGIN / LOGOUT
@@ -743,6 +901,9 @@ async function despuesDeLogin(user){
   hide($("view-login"));
   show($("topbar"));
   $("topbar-nombre").textContent = `${perfil.nombre} · ${perfil.sello}`;
+
+  // Arrancar presencia para cualquier tipo de usuario
+  iniciarPresencia();
 
   if(perfil.is_admin){
     show($("view-admin"));
@@ -817,8 +978,6 @@ $("modal-confirmar").addEventListener("click", async () => {
    PANEL ADMIN
    ============================================================ */
 let rangoActivo = "hoy";
-let ultimoDesde = null;
-let ultimoHasta = null;
 let sesionesRango = []; // sesiones del rango de fechas actual, sin filtrar por usuario
 let perfilesCache = {};
 
@@ -834,25 +993,11 @@ function calcularRango(tipo){
     const diaSemana = (inicio.getDay()+6)%7; // lunes=0
     inicio.setDate(inicio.getDate()-diaSemana);
     inicio.setHours(0,0,0,0);
-  } else if(tipo === "semana-anterior"){
-    const diaSemana = (inicio.getDay()+6)%7;
-    // fin = el domingo de la semana pasada
-    fin.setDate(fin.getDate()-diaSemana-1);
-    fin.setHours(23,59,59,999);
-    // inicio = el lunes de la semana pasada
-    inicio.setDate(fin.getDate()-6);
-    inicio.setHours(0,0,0,0);
   } else if(tipo === "mes"){
     inicio.setDate(1);
     inicio.setHours(0,0,0,0);
   }
   return { desde: inicio, hasta: fin };
-}
-
-function recargarAdmin(){
-  if(ultimoDesde && ultimoHasta){
-    cargarYRenderizarAdmin(ultimoDesde, ultimoHasta);
-  }
 }
 
 document.querySelectorAll(".filter-btn[data-range]").forEach(btn => {
@@ -1033,8 +1178,6 @@ function reconstruirSesiones(eventosOrdenados){
 }
 
 async function cargarYRenderizarAdmin(desde, hasta){
-  ultimoDesde = desde;
-  ultimoHasta = hasta;
   $("admin-table-wrap").innerHTML = '<div class="loading-text">Cargando registros…</div>';
 
   const { data: eventos, error } = await sb
@@ -1226,7 +1369,13 @@ $("nueva-confirmar").addEventListener("click", async () => {
   }
 
   hide($("modal-nueva"));
-  recargarAdmin();
+  renderAdminConFiltros(); // refrescar desde cache (o recargar si hace falta)
+  // Recargar desde Supabase para que aparezca la entrada nueva
+  const activeBtn = document.querySelector(".filter-btn[data-range].active");
+  if(activeBtn){
+    const { desde, hasta } = calcularRango(activeBtn.dataset.range);
+    cargarYRenderizarAdmin(desde, hasta);
+  }
 });
 
 /* ============================================================
@@ -1290,7 +1439,11 @@ $("editar-confirmar").addEventListener("click", async () => {
   }
 
   hide($("modal-editar"));
-  recargarAdmin();
+  const activeBtn = document.querySelector(".filter-btn[data-range].active");
+  if(activeBtn){
+    const { desde, hasta } = calcularRango(activeBtn.dataset.range);
+    cargarYRenderizarAdmin(desde, hasta);
+  }
 });
 
 /* ============================================================
