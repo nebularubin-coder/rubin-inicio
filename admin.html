@@ -6,6 +6,8 @@
 <title>Admin — Rubin Editorial</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -279,9 +281,12 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 
     <!-- PAGOS -->
     <div class="page" id="page-pagos">
-      <div class="page-head">
-        <div class="page-title">Pagos de regalías</div>
-        <div class="page-sub">Historial de liquidaciones realizadas. Para registrar un nuevo pago, abrí el detalle del libro correspondiente.</div>
+      <div class="page-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="page-title">Pagos de regalías</div>
+          <div class="page-sub">Historial de liquidaciones realizadas. Para registrar un nuevo pago, abrí el detalle del libro correspondiente.</div>
+        </div>
+        <button class="btn btn-secondary" id="pag-pdf-btn">📄 Descargar PDF</button>
       </div>
       <div class="card">
         <div class="filter-bar">
@@ -679,6 +684,7 @@ function globalClickHandler(e){
   else if(t.id==='btn-nuevo-autor-autores') abrirNuevoAutor();
   else if(t.id==='na-save') guardarNuevoAutor();
   else if(t.id==='bus-btn') doBuscar();
+  else if(t.id==='pag-pdf-btn') downloadPagosPDF();
   else if(t.closest('[data-open-libro]')) abrirLibro(t.closest('[data-open-libro]').dataset.openLibro);
   else if(t.closest('[data-open-autor]')) abrirAutor(t.closest('[data-open-autor]').dataset.openAutor);
   else if(t.closest('[data-toggle-obras]')){ var d=$(t.closest('[data-toggle-obras]').dataset.toggleObras); if(d){var o=d.style.display==='block';d.style.display=o?'none':'block';t.closest('[data-toggle-obras]').textContent=o?'Ver obras':'Ocultar obras';} }
@@ -839,7 +845,7 @@ function renderLibros(){
            (obras===''||(obras==='0'&&l.obras===0)||(obras==='1'&&l.obras>0));
   });
   $('lib-tb').innerHTML=f.length?f.map(function(l){
-    var est=l.tipo==='individual'?(l.liqs.length?'<span class="badge b-yellow">Liquidado</span>':'<span class="badge b-green">Listo</span>'):
+    var est=l.tipo==='individual'?(l.liqs.length?'<span class="badge b-yellow">Liquidado</span>':(l.reg.usd>0||l.reg.ars>0)?'<span class="badge b-green">Listo</span>':'<span class="badge b-gray">Sin ventas</span>'):
       l.reg.usd>=500?'<span class="badge b-purple">Min. alcanzado</span>':l.reg.usd>0?'<span class="badge b-yellow">$'+fmt(l.reg.usd)+'/500</span>':'<span class="badge b-gray">Sin ventas</span>';
     return'<tr data-open-libro="'+l.id+'" style="cursor:pointer">'+
       '<td style="font-weight:500">'+esc(l.nombre_libro)+'</td>'+
@@ -1626,6 +1632,62 @@ async function deletePago(){
   if(STATE.currentLibroId){var l=STATE.libros.find(function(x){return String(x.id)===String(STATE.currentLibroId);});if(l){renderDrawerRoyalties(l);renderSemestresCheck(l);renderDrawerHistorial(l);}}
 }
 
+function downloadPagosPDF(){
+  if(!window.jspdf||!window.jspdf.jsPDF){toast('No se pudo cargar el generador de PDF','err');return;}
+  var q=(val('pag-q')||'').toLowerCase();
+  var f=STATE.pagos.filter(function(p){return!q||(p.convocatorias&&p.convocatorias.nombre_libro&&p.convocatorias.nombre_libro.toLowerCase().includes(q))||(p.personas&&p.personas.nombre&&p.personas.nombre.toLowerCase().includes(q));});
+  f=f.slice().sort(function(a,b){return(a.fecha_pago||'')<(b.fecha_pago||'')?1:-1;});
+  var doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'pt',format:'a4'});
+  var pageW=doc.internal.pageSize.getWidth();
+  doc.setFillColor(28,35,64);
+  doc.rect(0,0,pageW,60,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('Rubin Editorial',40,28);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(11);
+  doc.text('Pagos de regalías',40,45);
+  var fechaHoy=new Date().toLocaleDateString('es-AR',{year:'numeric',month:'long',day:'numeric'});
+  doc.setFontSize(9);
+  doc.text('Generado el '+fechaHoy,pageW-40,28,{align:'right'});
+  doc.text('Total de pagos: '+f.length,pageW-40,42,{align:'right'});
+  var totalUSD=f.reduce(function(s,p){return s+(p.moneda==='USD'?(parseFloat(p.monto_usd)||0):0);},0);
+  var totalARS=f.reduce(function(s,p){return s+(p.moneda==='ARS'?(parseFloat(p.monto_ars)||0):0);},0);
+  doc.setTextColor(15,23,42);
+  doc.setFontSize(10);
+  doc.setFont('helvetica','bold');
+  doc.text('Total USD: $'+fmt(totalUSD)+'    Total ARS: $'+fmtARS(totalARS),40,78);
+  var rows=f.map(function(p){
+    var monto=p.moneda==='ARS'?'$'+fmtARS(p.monto_ars||0)+' ARS':'$'+fmt(p.monto_usd||0)+' USD';
+    return[
+      (p.convocatorias&&p.convocatorias.nombre_libro)||'—',
+      (p.personas&&p.personas.nombre)||'—',
+      p.moneda||'—',
+      monto,
+      p.semestres_cubiertos||'—',
+      p.metodo_pago||'—',
+      p.fecha_pago||'—'
+    ];
+  });
+  doc.autoTable({
+    startY:90,
+    head:[['Libro','Autor','Moneda','Monto','Semestres','Método','Fecha']],
+    body:rows,
+    styles:{font:'helvetica',fontSize:9,cellPadding:6,textColor:[15,23,42]},
+    headStyles:{fillColor:[99,102,241],textColor:[255,255,255],fontStyle:'bold'},
+    alternateRowStyles:{fillColor:[248,249,252]},
+    margin:{left:40,right:40},
+    didDrawPage:function(data){
+      var str='Página '+doc.internal.getNumberOfPages();
+      doc.setFontSize(8);
+      doc.setTextColor(148,163,184);
+      doc.text(str,pageW-40,doc.internal.pageSize.getHeight()-15,{align:'right'});
+    }
+  });
+  doc.save('pagos_regalias_'+new Date().toISOString().slice(0,10)+'.pdf');
+}
+
 // ── BUSCAR ──
 async function doBuscar(){
   var q=(val('bus-q')||'').trim(); if(!q)return;
@@ -1642,7 +1704,7 @@ async function doBuscar(){
     html+='<div class="card" style="margin-bottom:12px"><div class="card-head"><div><div class="card-title">'+esc(a.nombre)+'</div><div style="font-size:12px;color:var(--text3)">'+esc(a.email)+'</div></div><button class="btn btn-secondary btn-sm" data-open-autor="'+a.id+'">Ver perfil</button></div>'+
       '<div class="card-body"><table><thead><tr><th>LIBRO</th><th>TIPO</th><th>ESTADO</th><th>USD</th><th>ARS</th></tr></thead><tbody>'+
       librosA.map(function(l){
-        var est=l.tipo==='individual'?(l.liqs.length?'<span class="badge b-yellow">Liquidado</span>':'<span class="badge b-green">Listo</span>'):l.reg.usd>=500?'<span class="badge b-purple">Alcanzado</span>':l.reg.usd>0?'<span class="badge b-yellow">$'+fmt(l.reg.usd)+'/500</span>':'<span class="badge b-gray">Sin ventas</span>';
+        var est=l.tipo==='individual'?(l.liqs.length?'<span class="badge b-yellow">Liquidado</span>':(l.reg.usd>0||l.reg.ars>0)?'<span class="badge b-green">Listo</span>':'<span class="badge b-gray">Sin ventas</span>'):l.reg.usd>=500?'<span class="badge b-purple">Alcanzado</span>':l.reg.usd>0?'<span class="badge b-yellow">$'+fmt(l.reg.usd)+'/500</span>':'<span class="badge b-gray">Sin ventas</span>';
         return'<tr data-open-libro="'+l.id+'" style="cursor:pointer"><td style="font-weight:500">'+esc(l.nombre_libro)+'</td><td>'+(l.tipo==='individual'?'<span class="badge b-blue">Ind.</span>':'<span class="badge b-gray">Ant.</span>')+'</td><td>'+est+'</td><td style="font-size:12px">'+(l.reg.usd>0?'$'+fmt(l.reg.usd):'—')+'</td><td style="font-size:12px;color:var(--text3)">'+(l.reg.ars>0?fmtARS(l.reg.ars):'—')+'</td></tr>';
       }).join('')+
       '</tbody></table></div></div>';
