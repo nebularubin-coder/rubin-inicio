@@ -2106,7 +2106,10 @@ $("pendiente-confirmar").addEventListener("click", async () => {
   $("pendiente-confirmar").disabled = true;
   $("pendiente-confirmar").textContent = "Guardando…";
 
-  const { error } = await sb.from("timer_eventos").update({ detalle: texto }).eq("id", pendienteStopId);
+  const { error } = await sb.rpc("completar_descripcion_pendiente", {
+    evento_id: pendienteStopId,
+    texto: texto
+  });
 
   $("pendiente-confirmar").disabled = false;
   $("pendiente-confirmar").textContent = "Guardar y continuar";
