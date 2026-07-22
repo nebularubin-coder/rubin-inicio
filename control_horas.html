@@ -1035,18 +1035,18 @@ function aplicarEstadoTimer(estado){
     $("stamp-status").textContent = "Detenido";
     $("stamp-status").className = "stamp-status";
     hide($("alarm-banner"));
-    trackPresencia(null); // desaparecer de la lista
+    if(currentUser) cargarQuienEstaTrabajando(); // desaparecer de la lista al toque
   } else if(estado.status === "running"){
     show($("controls-running"));
     $("stamp-status").textContent = "En curso";
     $("stamp-status").className = "stamp-status running";
     tickInterval = setInterval(pintar, 1000);
-    trackPresencia("running"); // aparecer en verde
+    if(currentUser) cargarQuienEstaTrabajando(); // aparecer en verde al toque
   } else if(estado.status === "paused"){
     show($("controls-paused"));
     $("stamp-status").textContent = "Pausado";
     $("stamp-status").className = "stamp-status paused";
-    trackPresencia("paused"); // aparecer en naranja
+    if(currentUser) cargarQuienEstaTrabajando(); // aparecer en naranja al toque
 
     // Auto-detener si lleva pausado más del límite (probable olvido de reanudar/cerrar)
     const chequearPausa = () => {
@@ -1086,30 +1086,31 @@ async function autoDetenerPorInactividad(motivo){
 
 /* ============================================================
    PRESENCIA EN TIEMPO REAL
-   - Usuarios trabajando: Realtime Presence (session-based, correcto para timer)
+   - Usuarios trabajando: se consulta directo a la base (v_estado_actual_usuarios),
+     así se ve gente aunque haya cerrado la pestaña sin detener el timer.
    - Admin disponible: persistido en DB, actualizado via postgres_changes
    ============================================================ */
-let presenciaChannel = null;
 let dbChannel = null;
 let adminDisponible = false;
-let presenciaStateActual = {}; // estado de presencia de usuarios trabajando
+let presenciaTrabajando = []; // [{user_id, estado, nombre, sello}] desde la vista de la base
+let presenciaPollInterval = null;
 let autoDesactivarInterval = null;
 
 // Hora de auto-desactivación: 23:00
 const HORA_DESACTIVACION = 23;
 
+async function cargarQuienEstaTrabajando(){
+  const { data, error } = await sb.from("v_estado_actual_usuarios").select("*");
+  if(error){ console.error(error); return; }
+  presenciaTrabajando = (data || []).filter(r => r.estado === "running" || r.estado === "paused");
+  renderPresencia();
+}
+
 async function iniciarPresencia(){
-  // --- Canal de Presence para usuarios con timer activo ---
-  presenciaChannel = sb.channel("presencia-rubin", {
-    config: { presence: { key: currentUser.id } }
-  });
-
-  presenciaChannel.on("presence", { event: "sync" }, () => {
-    presenciaStateActual = presenciaChannel.presenceState();
-    renderPresencia();
-  });
-
-  presenciaChannel.subscribe();
+  // --- Estado de quién está trabajando, leído directo de la base ---
+  await cargarQuienEstaTrabajando();
+  if(presenciaPollInterval) clearInterval(presenciaPollInterval);
+  presenciaPollInterval = setInterval(cargarQuienEstaTrabajando, 20 * 1000);
 
   // --- Canal de postgres_changes para el estado del admin ---
   dbChannel = sb.channel("admin-status-changes")
@@ -1191,35 +1192,12 @@ function actualizarBtnDisponible(){
   }
 }
 
-async function trackPresencia(estado){
-  // Solo para usuarios con timer (running / paused / null)
-  if(!presenciaChannel) return;
-  if(estado === null){
-    await presenciaChannel.untrack();
-  } else {
-    await presenciaChannel.track({
-      nombre: currentPerfil.nombre,
-      sello: currentPerfil.sello,
-      estado
-    });
-  }
-}
-
-// Al cerrar la pestaña o cambiar a otra app, avisamos que dejamos de estar presentes,
-// para no dejar conexiones "fantasma" en la lista de presencia.
-window.addEventListener("beforeunload", () => {
-  if(presenciaChannel) presenciaChannel.untrack();
-});
-
+// (trackPresencia y el hook de beforeunload ya no son necesarios: la lista de
+// "quién está trabajando" ahora se lee directo de la base, no de una conexión en vivo)
 
 async function renderPresencia(){
-  // Usuarios con timer activo (desde Presence)
-  const presencias = [];
-  for(const userId in presenciaStateActual){
- const arr = presenciaStateActual[userId];
- const info = arr[arr.length - 1]; // la conexión más reciente, no la primera (evita fantasmas de sesiones viejas)
-    if(info && ["running","paused"].includes(info.estado)) presencias.push(info);
-  }
+  // Usuarios con timer activo (leído directo de la base, no de una conexión en vivo)
+  const presencias = presenciaTrabajando.map(r => ({ nombre: r.nombre, sello: r.sello, estado: r.estado }));
 
   // Estado del admin desde DB (si está disponible)
   let adminItem = null;
