@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Control de Horas — Rubin Editorial</title>
+<title>Control de Horas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -23,6 +23,48 @@
     --line:#2E3A48;
     --radius:14px;
   }
+[data-theme="sepia"]{
+  --ink:#2B2118; --surface:#3A2E22; --surface-2:#463829;
+  --paper:#F0E4C8; --paper-dim:#B8A888;
+  --gold:#C48A3D; --gold-dim:#8F6529;
+  --stamp:#8C3B2A; --ok:#6E8F5C; --line:#4A3B29;
+}
+[data-theme="azul"]{
+  --ink:#0D1420; --surface:#141F30; --surface-2:#1C2B40;
+  --paper:#DCE6F0; --paper-dim:#8FA0B8;
+  --gold:#7FB3D5; --gold-dim:#5A85A0;
+  --stamp:#B5495B; --ok:#5C9A8A; --line:#243350;
+}
+[data-theme="bosque"]{
+  --ink:#10190F; --surface:#18241A; --surface-2:#213022;
+  --paper:#E4E8D8; --paper-dim:#9CAA8E;
+  --gold:#A9B84C; --gold-dim:#7C8C38;
+  --stamp:#B5622E; --ok:#5C8568; --line:#2A3B28;
+}
+[data-theme="rosa"]{
+  --ink:#1F0F17; --surface:#2B1620; --surface-2:#3A1E2B;
+  --paper:#F2DCE6; --paper-dim:#B98CA0;
+  --gold:#E0779E; --gold-dim:#B5567A;
+  --stamp:#C23B5A; --ok:#6E8F5C; --line:#4A2536;
+}
+[data-theme="rojo"]{
+  --ink:#1A0E0C; --surface:#2A1512; --surface-2:#391D18;
+  --paper:#F0DCD4; --paper-dim:#B98F84;
+  --gold:#D9542E; --gold-dim:#A83F22;
+  --stamp:#8C2A1A; --ok:#5C8568; --line:#42221C;
+}
+
+body{ transition: background 0.35s ease, color 0.35s ease; }
+
+.theme-switcher{ display:flex; gap:6px; align-items:center; margin-right:4px; }
+.theme-dot{
+  width:16px; height:16px; border-radius:50%;
+  border:2px solid var(--line); cursor:pointer; padding:0;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.theme-dot:hover{ transform: scale(1.2); }
+.theme-dot.activo{ border-color: var(--paper); }
+
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
@@ -247,6 +289,81 @@
   .filter-dates{display:flex;gap:8px;align-items:center;}
   .filter-dates input{margin-bottom:0;width:140px;}
 
+  .admin-tabs{
+    display:flex;
+    gap:28px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:22px;
+  }
+  .admin-tab-btn{
+    background:none;
+    border:none;
+    border-bottom:2px solid transparent;
+    color:var(--paper-dim);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:0 0 12px;
+    cursor:pointer;
+    transition:color 0.15s ease, border-color 0.15s ease;
+  }
+  .admin-tab-btn:hover{ color:var(--paper); }
+  .admin-tab-btn.active{
+    color:var(--gold);
+    border-bottom-color:var(--gold);
+  }
+  .tab-panel.hidden{ display:none; }
+
+  .rte-toolbar{ display:flex; gap:6px; align-items:center; margin-bottom:6px; }
+  .rte-btn{
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    color:var(--paper);
+    width:32px; height:32px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:13px;
+  }
+  .rte-btn:hover{ border-color:var(--gold); }
+  .rte-color{
+    width:32px; height:32px; padding:2px;
+    border:1px solid var(--line); border-radius:6px;
+    background:none; cursor:pointer;
+  }
+  .rte-editable{
+    width:100%; min-height:90px;
+    background:var(--ink); border:1px solid var(--line); border-radius:8px;
+    padding:10px 12px; color:var(--paper); font-size:14px;
+    margin-bottom:8px; white-space:pre-wrap; line-height:1.5;
+  }
+  .rte-editable:focus{ outline:none; border-color:var(--gold); }
+  .rte-editable:empty:before{ content: attr(data-placeholder); color:var(--paper-dim); }
+
+  .stat-chart{
+    display:flex; align-items:flex-end; gap:14px;
+    height:200px; padding:10px 4px 0;
+    border-bottom:1px solid var(--line);
+    overflow-x:auto;
+  }
+  .stat-bar-wrap{
+    flex:1; min-width:48px;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+    height:100%;
+  }
+  .stat-bar{
+    width:100%; max-width:56px;
+    border-radius:6px 6px 0 0;
+    transition:height 0.5s ease;
+  }
+  .stat-bar-valor{
+    font-family:'Space Mono',monospace; font-size:11px; color:var(--paper);
+    margin-bottom:4px; white-space:nowrap;
+  }
+  .stat-bar-label{
+    font-size:11px; color:var(--paper-dim); margin-top:8px; text-align:center;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px;
+  }
+
   table{width:100%;border-collapse:collapse;font-size:13px;}
   thead th{
     text-align:left;
@@ -377,8 +494,16 @@
 <body>
 
 <div class="topbar hidden" id="topbar">
-  <div class="brand"><span class="dot"></span> Control de Horas · Rubin Editorial</div>
+  <div class="brand"><span class="dot"></span> Control de Horas</div>
   <div class="topbar-right">
+    <div class="theme-switcher" id="theme-switcher">
+  <button class="theme-dot" data-theme-value="tinta" style="background:#C7A24A" title="Tinta"></button>
+  <button class="theme-dot" data-theme-value="sepia" style="background:#C48A3D" title="Archivo"></button>
+  <button class="theme-dot" data-theme-value="azul" style="background:#7FB3D5" title="Nocturno"></button>
+  <button class="theme-dot" data-theme-value="bosque" style="background:#A9B84C" title="Bosque"></button>
+  <button class="theme-dot" data-theme-value="rosa" style="background:#E0779E" title="Rosa"></button>
+  <button class="theme-dot" data-theme-value="rojo" style="background:#D9542E" title="Rojo"></button>
+</div>
     <span id="topbar-nombre"></span>
     <button class="btn-link" id="btn-logout">Cerrar sesión</button>
   </div>
@@ -434,11 +559,22 @@
     Llegaste a 3:30 hs de trabajo activo en esta jornada.
   </div>
 
-  <div class="presencia-wrap">
+ <div class="presencia-wrap">
     <div class="presencia-titulo">Trabajando ahora</div>
     <div class="presencia-lista" id="presencia-lista-timer">
       <div class="presencia-vacio">Nadie trabajando en este momento.</div>
     </div>
+  </div>
+
+  <div class="noticias-usuario-wrap hidden" id="noticias-usuario-wrap" style="width:100%;max-width:480px;margin-top:24px;">
+    <div class="presencia-titulo">Noticias</div>
+    <div id="noticias-lista-usuario"></div>
+  </div>
+
+  <div class="semana-usuario-wrap" style="width:100%;max-width:480px;margin-top:24px;">
+    <div class="presencia-titulo">Esta semana</div>
+    <div class="resumen-hoy" id="resumen-semana" style="margin-bottom:10px;">Acumulado: 0h 00m</div>
+    <div id="semana-lista-usuario"><div class="loading-text">Cargando…</div></div>
   </div>
 </div>
 
@@ -452,6 +588,31 @@
     <div class="modal-actions">
       <button class="btn-control btn-pause" id="modal-cancelar">Cancelar</button>
       <button class="btn-control btn-stop" id="modal-confirmar">Confirmar y detener</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: sesión auto-detenida pendiente de describir (sin botón de cancelar, es obligatorio) -->
+<div class="modal-overlay hidden" id="modal-pendiente">
+  <div class="modal-card">
+    <h2>Una jornada quedó sin describir</h2>
+    <p class="sub" id="pendiente-motivo">Parece que te olvidaste el contador prendido y se detuvo solo. No pasa nada — contanos brevemente qué estuviste haciendo en esa sesión y seguís con tu día normalmente.</p>
+    <textarea id="pendiente-texto" rows="6" placeholder="Ej:&#10;Respondí correos de convocatoria&#10;Armé y envié presupuestos de libros"></textarea>
+    <div class="error-msg hidden" id="pendiente-error">Tenés que describir al menos una tarea para poder continuar.</div>
+    <div class="modal-actions">
+      <button class="btn-control btn-start" id="pendiente-confirmar" style="width:100%;">Guardar y continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: confirmar borrado de entrada (admin) -->
+<div class="modal-overlay hidden" id="modal-borrar">
+  <div class="modal-card" style="max-width:420px;">
+    <h2 id="borrar-titulo">¿Eliminar esta entrada?</h2>
+    <p class="sub" id="borrar-mensaje">Esta acción no se puede deshacer.</p>
+    <div class="modal-actions">
+      <button class="btn-control btn-pause" id="borrar-cancelar">Cancelar</button>
+      <button class="btn-control btn-stop" id="borrar-confirmar">Eliminar</button>
     </div>
   </div>
 </div>
@@ -474,25 +635,74 @@
     </div>
   </div>
 
-  <div class="filters">
-    <button class="filter-btn active" data-range="hoy">Hoy</button>
-    <button class="filter-btn" data-range="semana">Esta semana</button>
-    <button class="filter-btn" data-range="mes">Este mes</button>
-    <div class="filter-dates">
-      <input type="date" id="filter-desde" />
-      <span style="color:var(--paper-dim);font-size:13px;">a</span>
-      <input type="date" id="filter-hasta" />
-      <button class="filter-btn" id="filter-custom">Aplicar</button>
-    </div>
-    <select id="filter-usuario" class="filter-btn" style="cursor:pointer;">
-      <option value="todos">Todos los responsables</option>
-    </select>
+  <div class="admin-tabs">
+    <button class="admin-tab-btn active" data-tab="horas">Panel de horas</button>
+    <button class="admin-tab-btn" data-tab="noticias">Noticias</button>
+    <button class="admin-tab-btn" data-tab="estadisticas">Estadísticas</button>
   </div>
 
-  <div class="summary-row" id="summary-row"></div>
+  <div class="tab-panel" id="tab-horas">
+    <div class="filters">
+      <button class="filter-btn active" data-range="hoy">Hoy</button>
+      <button class="filter-btn" data-range="semana">Esta semana</button>
+      <button class="filter-btn" data-range="mes">Este mes</button>
+      <div class="filter-dates">
+        <input type="date" id="filter-desde" />
+        <span style="color:var(--paper-dim);font-size:13px;">a</span>
+        <input type="date" id="filter-hasta" />
+        <button class="filter-btn" id="filter-custom">Aplicar</button>
+      </div>
+      <select id="filter-usuario" class="filter-btn" style="cursor:pointer;">
+        <option value="todos">Todos los responsables</option>
+      </select>
+    </div>
 
-  <div id="admin-table-wrap">
-    <div class="loading-text">Cargando registros…</div>
+    <div class="summary-row" id="summary-row"></div>
+
+    <div id="admin-table-wrap">
+      <div class="loading-text">Cargando registros…</div>
+    </div>
+  </div>
+
+  <div class="tab-panel hidden" id="tab-noticias">
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--paper-dim);cursor:pointer;margin-bottom:16px;">
+      <input type="checkbox" id="noticias-toggle-general" />
+      Mostrar sección a todos
+    </label>
+
+    <div style="margin-bottom:16px;">
+      <input type="text" id="noticia-titulo" placeholder="Título"
+        style="width:100%;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--paper);font-size:14px;margin-bottom:8px;" />
+      <div class="rte-toolbar">
+        <button type="button" class="rte-btn" data-cmd="bold" style="font-weight:700;" title="Negrita">N</button>
+        <button type="button" class="rte-btn" data-cmd="italic" style="font-style:italic;" title="Cursiva">I</button>
+        <button type="button" class="rte-btn" data-cmd="underline" style="text-decoration:underline;" title="Subrayado">S</button>
+        <input type="color" id="noticia-color" class="rte-color" value="#EDE6D6" title="Color de texto" />
+      </div>
+      <div id="noticia-mensaje" class="rte-editable" contenteditable="true" data-placeholder="Mensaje…"></div>
+      <button class="filter-btn" id="btn-noticia-publicar" style="border-color:var(--ok);color:var(--ok);font-weight:600;">+ Publicar noticia</button>
+    </div>
+
+    <div id="noticias-lista-admin"></div>
+  </div>
+
+  <div class="tab-panel hidden" id="tab-estadisticas">
+    <div class="filters" style="margin-bottom:28px;">
+      <button class="filter-btn active" data-stat-range="mes">Este mes</button>
+      <button class="filter-btn" data-stat-range="semana">Esta semana</button>
+      <button class="filter-btn" data-stat-range="anio">Este año</button>
+      <button class="filter-btn" data-stat-range="todo">Todo el historial</button>
+    </div>
+
+    <div class="presencia-titulo" style="margin-bottom:12px;">Horas por persona</div>
+    <div id="stat-personas-chart" style="margin-bottom:40px;"><div class="loading-text">Cargando…</div></div>
+
+    <div class="presencia-titulo" style="margin-bottom:12px;">Horas por sello</div>
+    <div id="stat-sellos-chart" style="margin-bottom:40px;"><div class="loading-text">Cargando…</div></div>
+
+    <div class="presencia-titulo" style="margin-bottom:4px;">Qué día de la semana se trabaja más</div>
+    <p class="sub" style="margin:0 0 12px;font-size:12px;">Promedio de horas activas por sesión, según el día de la semana — histórico completo, no cambia con el filtro de arriba.</p>
+    <div id="stat-diasemana-chart"><div class="loading-text">Cargando…</div></div>
   </div>
 </div>
 
@@ -508,11 +718,15 @@
     <div style="display:flex;gap:12px;">
       <div style="flex:1;">
         <label>Hora inicio</label>
-        <input type="time" id="nueva-inicio" style="margin-bottom:18px;" />
+        <input type="text" id="nueva-inicio" placeholder="HH:MM" pattern="^([01]?[0-9]|2[0-3]):[0-5][0-9]$" maxlength="5" inputmode="numeric" style="margin-bottom:18px;font-family:'Space Mono',monospace;" />
       </div>
       <div style="flex:1;">
         <label>Hora fin</label>
-        <input type="time" id="nueva-fin" style="margin-bottom:18px;" />
+        <input type="text" id="nueva-fin" placeholder="HH:MM" pattern="^([01]?[0-9]|2[0-3]):[0-5][0-9]$" maxlength="5" inputmode="numeric" style="margin-bottom:8px;font-family:'Space Mono',monospace;" />
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--paper-dim);cursor:pointer;font-weight:400;margin-bottom:18px;">
+          <input type="checkbox" id="nueva-cruza-medianoche" style="width:auto;" />
+          Termina al día siguiente
+        </label>
       </div>
     </div>
     <label>Tareas realizadas</label>
@@ -537,15 +751,22 @@
     <div style="display:flex;gap:12px;">
       <div style="flex:1;">
         <label>Hora inicio</label>
-        <input type="time" id="editar-inicio" style="margin-bottom:18px;" />
+        <input type="text" id="editar-inicio" placeholder="HH:MM" pattern="^([01]?[0-9]|2[0-3]):[0-5][0-9]$" maxlength="5" inputmode="numeric" style="margin-bottom:18px;font-family:'Space Mono',monospace;" />
       </div>
       <div style="flex:1;">
         <label>Hora fin</label>
-        <input type="time" id="editar-fin" style="margin-bottom:18px;" />
+        <input type="text" id="editar-fin" placeholder="HH:MM" pattern="^([01]?[0-9]|2[0-3]):[0-5][0-9]$" maxlength="5" inputmode="numeric" style="margin-bottom:8px;font-family:'Space Mono',monospace;" />
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--paper-dim);cursor:pointer;font-weight:400;margin-bottom:18px;">
+          <input type="checkbox" id="editar-cruza-medianoche" style="width:auto;" />
+          Termina al día siguiente
+        </label>
       </div>
     </div>
     <label>Tareas realizadas</label>
     <textarea id="editar-tareas" rows="4" style="width:100%;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:11px 12px;color:var(--paper);font-size:14px;resize:vertical;margin-bottom:8px;"></textarea>
+    <label>Ajuste manual de horas activas (minutos)</label>
+    <input type="number" id="editar-ajuste" placeholder="0" style="width:100%;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:11px 12px;color:var(--paper);font-size:14px;margin-bottom:6px;" />
+    <p class="sub" style="margin:0 0 18px;font-size:12px;">Sumá minutos si quedó tiempo sin contabilizar (ej: alguien quedó en pausa por error). Usá negativos para restar. No toca el horario de inicio/fin, solo el total de horas activas calculado.</p>
     <div class="error-msg hidden" id="editar-error"></div>
     <div class="modal-actions" style="margin-top:14px;">
       <button class="btn-control btn-pause" id="editar-cancelar">Cancelar</button>
@@ -561,6 +782,8 @@
 const SUPABASE_URL = "https://wpidayovldtnpkininvz.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndwaWRheW92bGR0bnBraW5pbnZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MzAxMjUsImV4cCI6MjA5ODMwNjEyNX0.qibS79kRazKcQw8YsXNtGxTsyhyDy_N_PXSn6Gu8Q-c";
 const META_ALARMA_SEGUNDOS = 3.5 * 60 * 60; // 3:30 hs
+const LIMITE_CORRIENDO_MS = 4 * 60 * 60 * 1000;  // 4hs corriendo sin pausar → auto-stop
+const LIMITE_PAUSADO_MS = 1 * 60 * 60 * 1000;    // 1h pausado → auto-stop
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
@@ -574,6 +797,22 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 const $ = (id) => document.getElementById(id);
 const show = (el) => el.classList.remove("hidden");
 const hide = (el) => el.classList.add("hidden");
+const RE_HORA = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+function horaValida(str){ return RE_HORA.test((str || "").trim()); }
+
+
+/* ---------- selector de tema ---------- */
+function aplicarTema(tema){
+  document.documentElement.setAttribute("data-theme", tema);
+  document.querySelectorAll(".theme-dot").forEach(d => {
+    d.classList.toggle("activo", d.dataset.themeValue === tema);
+  });
+  localStorage.setItem("rubin-tema", tema);
+}
+document.querySelectorAll(".theme-dot").forEach(d => {
+  d.addEventListener("click", () => aplicarTema(d.dataset.themeValue));
+});
+aplicarTema(localStorage.getItem("rubin-tema") || "tinta");
 
 function fmtHMS(totalSeconds){
   totalSeconds = Math.max(0, Math.floor(totalSeconds));
@@ -610,6 +849,7 @@ function beep(){
 let currentUser = null;
 let currentPerfil = null;
 let tickInterval = null;
+let pausaCheckInterval = null;
 let alarmDisparada = false;
 
 /* Reconstruye, a partir de los eventos del usuario, el estado de la
@@ -628,9 +868,11 @@ function calcularEstadoActual(eventos){
 
   let acumulado = 0;
   let corriendoDesde = null;
+  let ultimoTs = null;
 
   for(const ev of sesion){
     const t = new Date(ev.creado_en).getTime();
+    ultimoTs = t;
     if(ev.tipo === "start" || ev.tipo === "resume"){
       corriendoDesde = t;
     } else if(ev.tipo === "pause"){
@@ -644,7 +886,7 @@ function calcularEstadoActual(eventos){
   if(corriendoDesde !== null){
     return { status: "running", acumulado, desde: corriendoDesde };
   } else {
-    return { status: "paused", acumulado, desde: null };
+    return { status: "paused", acumulado, desde: ultimoTs }; // "desde" = momento en que se pausó
   }
 }
 
@@ -681,12 +923,49 @@ async function insertarEvento(tipo, detalle, momentoExacto){
   const payload = { user_id: currentUser.id, tipo };
   if(detalle) payload.detalle = detalle;
   if(momentoExacto) payload.creado_en = momentoExacto.toISOString();
-  const { error } = await sb.from("timer_eventos").insert(payload);
-  if(error){
-    alert("No se pudo registrar el evento: " + error.message);
+
+  // Carrera contra un timeout: si Supabase no responde en 10s, avisamos
+  // en vez de quedar colgados esperando para siempre.
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("TIMEOUT")), 10000)
+  );
+
+  try{
+    const { error } = await Promise.race([
+      sb.from("timer_eventos").insert(payload),
+      timeoutPromise
+    ]);
+    if(error){
+      alert("No se pudo registrar el evento: " + error.message);
+      return false;
+    }
+    return true;
+  }catch(e){
+    if(e.message === "TIMEOUT"){
+      alert("La conexión con la base de datos está tardando demasiado. Revisá tu internet e intentá de nuevo. Si el problema persiste, NO sigas tocando el botón: puede haberse registrado igual.");
+    }else{
+      alert("Error de conexión al registrar el evento: " + e.message);
+    }
     return false;
   }
-  return true;
+}
+
+/* Envuelve un botón para que, mientras su acción async está en curso,
+   quede deshabilitado y muestre "Guardando…". Evita el bug de doble
+   clic que generaba eventos duplicados o cruzados. */
+function conBloqueo(boton, fn){
+  return async () => {
+    if(boton.disabled) return; // ya hay una acción en curso, ignoramos el clic
+    const textoOriginal = boton.textContent;
+    boton.disabled = true;
+    boton.textContent = "Guardando…";
+    try{
+      await fn();
+    }finally{
+      boton.disabled = false;
+      boton.textContent = textoOriginal;
+    }
+  };
 }
 
 let todosEventosCache = [];
@@ -738,12 +1017,18 @@ function aplicarEstadoTimer(estado){
     }
 
     const totalHoy = calcularTotalHoy(todosEventosCache);
-    $("resumen-hoy").textContent = `Hoy trabajaste: ${fmtHM(totalHoy)}`;
+    $("resumen-hoy").textContent = `Hoy trabajaste: ${fmtHMS(totalHoy)}`;
+
+    // Auto-detener si lleva corriendo más del límite sin pausar (probable olvido)
+    if(estado.status === "running" && estado.desde && (Date.now() - estado.desde) > LIMITE_CORRIENDO_MS){
+      autoDetenerPorInactividad("running");
+    }
   };
 
   pintar();
 
   hide($("controls-idle")); hide($("controls-running")); hide($("controls-paused"));
+  if(pausaCheckInterval){ clearInterval(pausaCheckInterval); pausaCheckInterval = null; }
 
   if(estado.status === "idle"){
     show($("controls-idle"));
@@ -762,6 +1047,40 @@ function aplicarEstadoTimer(estado){
     $("stamp-status").textContent = "Pausado";
     $("stamp-status").className = "stamp-status paused";
     trackPresencia("paused"); // aparecer en naranja
+
+    // Auto-detener si lleva pausado más del límite (probable olvido de reanudar/cerrar)
+    const chequearPausa = () => {
+      if(estado.desde && (Date.now() - estado.desde) > LIMITE_PAUSADO_MS){
+        autoDetenerPorInactividad("pausa");
+      }
+    };
+    chequearPausa();
+    pausaCheckInterval = setInterval(chequearPausa, 60 * 1000);
+  }
+}
+
+/* Autodetiene la jornada actual cuando pasó demasiado tiempo corriendo (4hs)
+   o pausada (1h) sin que la persona haga nada. Guarda el "stop" sin tareas
+   (detalle=null), lo que lo marca como "pendiente de describir" — la próxima
+   vez que la persona entre, se le va a pedir que complete qué hizo antes de
+   poder seguir usando el timer. */
+let autoDeteniendo = false;
+async function autoDetenerPorInactividad(motivo){
+  if(autoDeteniendo) return;
+  autoDeteniendo = true;
+
+  if(tickInterval){ clearInterval(tickInterval); tickInterval = null; }
+  if(pausaCheckInterval){ clearInterval(pausaCheckInterval); pausaCheckInterval = null; }
+
+  const ok = await insertarEvento("stop", null, new Date());
+  autoDeteniendo = false;
+
+  if(ok){
+    const mensaje = motivo === "pausa"
+      ? "Che, quedaste en pausa hace más de una hora, así que paramos el contador solos."
+      : "Che, el contador llevaba más de 4 horas corriendo seguidas, así que lo paramos solos.";
+    alert(mensaje + "\n\nLa próxima vez que entres te vamos a pedir que cuentes brevemente qué hiciste en esa sesión, y listo, seguís tranquilo.");
+    await refrescarEstadoTimer();
   }
 }
 
@@ -886,11 +1205,19 @@ async function trackPresencia(estado){
   }
 }
 
+// Al cerrar la pestaña o cambiar a otra app, avisamos que dejamos de estar presentes,
+// para no dejar conexiones "fantasma" en la lista de presencia.
+window.addEventListener("beforeunload", () => {
+  if(presenciaChannel) presenciaChannel.untrack();
+});
+
+
 async function renderPresencia(){
   // Usuarios con timer activo (desde Presence)
   const presencias = [];
   for(const userId in presenciaStateActual){
-    const [info] = presenciaStateActual[userId];
+ const arr = presenciaStateActual[userId];
+ const info = arr[arr.length - 1]; // la conexión más reciente, no la primera (evita fantasmas de sesiones viejas)
     if(info && ["running","paused"].includes(info.estado)) presencias.push(info);
   }
 
@@ -1012,25 +1339,28 @@ async function despuesDeLogin(user){
     $("timer-nombre").textContent = perfil.nombre;
     $("timer-sello").textContent = perfil.sello;
     await refrescarEstadoTimer();
+    cargarNoticiasUsuario();
+    cargarResumenSemana();
+    await chequearSesionPendiente();
   }
 }
 
 /* ============================================================
    BOTONES DEL TIMER
    ============================================================ */
-$("btn-start").addEventListener("click", async () => {
-  if(await insertarEvento("start")) await refrescarEstadoTimer();
-});
-$("btn-pause").addEventListener("click", async () => {
-  if(await insertarEvento("pause")) await refrescarEstadoTimer();
-});
-$("btn-resume").addEventListener("click", async () => {
-  if(await insertarEvento("resume")) await refrescarEstadoTimer();
-});
+$("btn-start").addEventListener("click", conBloqueo($("btn-start"), async () => {
+  if(await insertarEvento("start", null, new Date())) await refrescarEstadoTimer();
+}));
+$("btn-pause").addEventListener("click", conBloqueo($("btn-pause"), async () => {
+  if(await insertarEvento("pause", null, new Date())) await refrescarEstadoTimer();
+}));
+$("btn-resume").addEventListener("click", conBloqueo($("btn-resume"), async () => {
+  if(await insertarEvento("resume", null, new Date())) await refrescarEstadoTimer();
+}));
 let momentoDetener = null;
 
-$("btn-stop").addEventListener("click", congelarYAbrirModal);
-$("btn-stop-2").addEventListener("click", congelarYAbrirModal);
+$("btn-stop").addEventListener("click", conBloqueo($("btn-stop"), congelarYAbrirModal));
+$("btn-stop-2").addEventListener("click", conBloqueo($("btn-stop-2"), congelarYAbrirModal));
 
 function congelarYAbrirModal(){
   momentoDetener = new Date();
@@ -1049,6 +1379,51 @@ $("modal-cancelar").addEventListener("click", async () => {
   hide($("modal-tareas"));
   momentoDetener = null;
   await refrescarEstadoTimer(); // no se guardó nada: retoma el conteo real desde donde iba
+});
+
+/* ============================================================
+   MODAL: confirmar borrado (doble paso, sin usar confirm() nativo)
+   ============================================================ */
+let borrarPendiente = null;
+let pasoBorrado = 0;
+
+$("borrar-cancelar").addEventListener("click", () => {
+  hide($("modal-borrar"));
+  borrarPendiente = null;
+  pasoBorrado = 0;
+});
+
+$("borrar-confirmar").addEventListener("click", async () => {
+  if(pasoBorrado === 1){
+    pasoBorrado = 2;
+    $("borrar-titulo").textContent = "¿Estás completamente seguro?";
+    $("borrar-mensaje").textContent = "Se van a borrar el inicio, las pausas y el fin de esta jornada completa. No hay forma de recuperarla.";
+    $("borrar-confirmar").textContent = "Sí, eliminar definitivamente";
+    return;
+  }
+
+  if(!borrarPendiente) return;
+
+  $("borrar-confirmar").disabled = true;
+  $("borrar-confirmar").textContent = "Eliminando…";
+
+  const { error } = await sb.from("timer_eventos")
+    .delete()
+    .eq("user_id", borrarPendiente.userId)
+    .gte("creado_en", borrarPendiente.inicio)
+    .lte("creado_en", borrarPendiente.fin);
+
+  $("borrar-confirmar").disabled = false;
+  hide($("modal-borrar"));
+  borrarPendiente = null;
+  pasoBorrado = 0;
+
+  if(error){
+    alert("No se pudo borrar: " + error.message);
+    return;
+  }
+  const { desde, hasta } = calcularRango(rangoActivo);
+  cargarYRenderizarAdmin(desde, hasta);
 });
 
 $("modal-confirmar").addEventListener("click", async () => {
@@ -1099,6 +1474,26 @@ function calcularRango(tipo){
   return { desde: inicio, hasta: fin };
 }
 
+/* ============================================================
+   PESTAÑAS DEL PANEL ADMIN
+   ============================================================ */
+let estadisticasCargadas = false;
+
+document.querySelectorAll(".admin-tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => hide(p));
+    btn.classList.add("active");
+    show($(`tab-${btn.dataset.tab}`));
+
+    if(btn.dataset.tab === "estadisticas" && !estadisticasCargadas){
+      estadisticasCargadas = true;
+      cargarEstadisticas();
+      cargarEstadisticaDiaSemana();
+    }
+  });
+});
+
 document.querySelectorAll(".filter-btn[data-range]").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".filter-btn[data-range]").forEach(b=>b.classList.remove("active"));
@@ -1148,7 +1543,7 @@ function generarPDF(){
   }
 
   doc.setFontSize(16);
-  doc.text("Control de Horas — Rubin Editorial", 14, 18);
+  doc.text("Control de Horas", 14, 18);
   doc.setFontSize(10);
   doc.setTextColor(100);
   doc.text(`Período: ${rangoTexto}    ·    Filtro: ${nombreFiltro}`, 14, 25);
@@ -1220,6 +1615,8 @@ async function iniciarPanelAdmin(){
 
   const { desde, hasta } = calcularRango("hoy");
   cargarYRenderizarAdmin(desde, hasta);
+  cargarConfigGeneral();
+  cargarNoticiasAdmin();
 }
 
 /* Reconstruye, a partir de eventos ordenados por fecha, una lista de
@@ -1259,6 +1656,8 @@ function reconstruirSesiones(eventosOrdenados){
           actual.stopId = ev.id;
           actual.enCurso = false;
           actual.tareas = ev.detalle || "";
+          actual.ajusteSegundos = ev.ajuste_segundos || 0;
+          actual.segundosActivos += actual.ajusteSegundos;
           sesiones.push(actual);
           actual = null;
         }
@@ -1276,12 +1675,183 @@ function reconstruirSesiones(eventosOrdenados){
   return sesiones;
 }
 
+/* ============================================================
+   NOTICIAS — panel admin
+   ============================================================ */
+
+// Barra de herramientas del editor (negrita, cursiva, subrayado, color)
+// Forzamos que el navegador use <span style="color:..."> en vez de <font color="...">,
+// que es una etiqueta vieja que nuestro sanitizador no reconoce (por eso se perdía el color).
+document.execCommand("styleWithCSS", false, true);
+
+document.querySelectorAll(".rte-toolbar .rte-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    $("noticia-mensaje").focus();
+    document.execCommand("styleWithCSS", false, true);
+    document.execCommand(btn.dataset.cmd, false, null);
+  });
+});
+$("noticia-color").addEventListener("input", (e) => {
+  $("noticia-mensaje").focus();
+  document.execCommand("styleWithCSS", false, true);
+  document.execCommand("foreColor", false, e.target.value);
+});
+
+/* Limpia el HTML del editor antes de guardarlo o mostrarlo: solo deja pasar
+   negrita/cursiva/subrayado/color y saltos de línea. Cualquier otra etiqueta
+   (script, imágenes, links, etc) se saca, dejando el texto de adentro intacto. */
+function sanitizarHtmlNoticia(html){
+  const permitidas = new Set(["B","STRONG","I","EM","U","BR","DIV","P","SPAN"]);
+  const contenedor = document.createElement("div");
+  contenedor.innerHTML = html || "";
+
+  function limpiar(nodo){
+    [...nodo.childNodes].forEach(hijo => {
+      if(hijo.nodeType === 1){
+        if(!permitidas.has(hijo.tagName)){
+          while(hijo.firstChild) hijo.parentNode.insertBefore(hijo.firstChild, hijo);
+          hijo.parentNode.removeChild(hijo);
+          return;
+        }
+        const colorStyle = hijo.style && hijo.style.color ? `color:${hijo.style.color}` : "";
+        [...hijo.attributes].forEach(attr => hijo.removeAttribute(attr.name));
+        if(colorStyle) hijo.setAttribute("style", colorStyle);
+        limpiar(hijo);
+      } else if(hijo.nodeType !== 3){
+        hijo.parentNode.removeChild(hijo);
+      }
+    });
+  }
+  limpiar(contenedor);
+  return contenedor.innerHTML;
+}
+
+async function cargarConfigGeneral(){
+  const { data, error } = await sb.from("config_general").select("*").eq("id", 1).single();
+  if(error || !data) return;
+  $("noticias-toggle-general").checked = data.noticias_activas;
+}
+
+$("noticias-toggle-general").addEventListener("change", async (e) => {
+  const activo = e.target.checked;
+  const { error } = await sb.from("config_general").update({ noticias_activas: activo }).eq("id", 1);
+  if(error){
+    alert("No se pudo actualizar: " + error.message);
+    e.target.checked = !activo;
+  }
+});
+
+async function cargarNoticiasAdmin(){
+  const { data, error } = await sb.from("noticias").select("*").order("creado_en", { ascending: false });
+  const cont = $("noticias-lista-admin");
+  if(error){
+    cont.innerHTML = `<div class="loading-text">Error al cargar noticias.</div>`;
+    return;
+  }
+  if(!data || data.length === 0){
+    cont.innerHTML = `<div class="loading-text">Todavía no hay noticias cargadas.</div>`;
+    return;
+  }
+  cont.innerHTML = data.map(n => `
+    <div class="noticia-admin-item" data-id="${n.id}" data-titulo="${escapeAttr(n.titulo)}" data-mensaje-b64="${btoa(unescape(encodeURIComponent(n.mensaje || "")))}" style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);">
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:14px;">${escapeHtml(n.titulo)}</div>
+        <div style="font-size:13px;color:var(--paper-dim);white-space:pre-wrap;line-height:1.5;">${sanitizarHtmlNoticia(n.mensaje)}</div>
+      </div>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--paper-dim);cursor:pointer;white-space:nowrap;">
+        <input type="checkbox" class="noticia-activa-check" ${n.activa ? "checked" : ""} />
+        activa
+      </label>
+      <button class="btn-link noticia-editar" style="color:var(--gold);">Editar</button>
+      <button class="btn-link noticia-borrar" style="color:var(--stamp);">Borrar</button>
+    </div>
+  `).join("");
+}
+
+let noticiaEditandoId = null;
+
+$("btn-noticia-publicar").addEventListener("click", async () => {
+  const titulo = $("noticia-titulo").value.trim();
+  const mensajeTexto = $("noticia-mensaje").textContent.trim();
+  const mensajeHtml = sanitizarHtmlNoticia($("noticia-mensaje").innerHTML);
+  if(!titulo || !mensajeTexto){
+    alert("Completá título y mensaje.");
+    return;
+  }
+  const boton = $("btn-noticia-publicar");
+  boton.disabled = true;
+  boton.textContent = noticiaEditandoId ? "Guardando…" : "Publicando…";
+
+  const { error } = noticiaEditandoId
+    ? await sb.from("noticias").update({ titulo, mensaje: mensajeHtml }).eq("id", noticiaEditandoId)
+    : await sb.from("noticias").insert({ titulo, mensaje: mensajeHtml, activa: true });
+
+  boton.disabled = false;
+
+  if(error){
+    alert("No se pudo guardar: " + error.message);
+    boton.textContent = noticiaEditandoId ? "Guardar cambios" : "+ Publicar noticia";
+    return;
+  }
+
+  noticiaEditandoId = null;
+  boton.textContent = "+ Publicar noticia";
+  boton.style.borderColor = "var(--ok)";
+  boton.style.color = "var(--ok)";
+  $("noticia-titulo").value = "";
+  $("noticia-mensaje").innerHTML = "";
+  cargarNoticiasAdmin();
+});
+
+$("noticias-lista-admin").addEventListener("change", async (e) => {
+  if(!e.target.classList.contains("noticia-activa-check")) return;
+  const item = e.target.closest(".noticia-admin-item");
+  const id = item.dataset.id;
+  const { error } = await sb.from("noticias").update({ activa: e.target.checked }).eq("id", id);
+  if(error){
+    alert("No se pudo actualizar: " + error.message);
+    e.target.checked = !e.target.checked;
+  }
+});
+
+$("noticias-lista-admin").addEventListener("click", async (e) => {
+  if(e.target.classList.contains("noticia-editar")){
+    const item = e.target.closest(".noticia-admin-item");
+    noticiaEditandoId = item.dataset.id;
+    $("noticia-titulo").value = item.dataset.titulo;
+    $("noticia-mensaje").innerHTML = decodeURIComponent(escape(atob(item.dataset.mensajeB64)));
+    const boton = $("btn-noticia-publicar");
+    boton.textContent = "Guardar cambios";
+    boton.style.borderColor = "var(--gold)";
+    boton.style.color = "var(--gold)";
+    $("noticia-titulo").scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+
+  if(!e.target.classList.contains("noticia-borrar")) return;
+  const item = e.target.closest(".noticia-admin-item");
+  const id = item.dataset.id;
+  if(!confirm("¿Borrar esta noticia? No se puede deshacer.")) return;
+  const { error } = await sb.from("noticias").delete().eq("id", id);
+  if(error){
+    alert("No se pudo borrar: " + error.message);
+    return;
+  }
+  if(noticiaEditandoId === id){
+    noticiaEditandoId = null;
+    $("noticia-titulo").value = "";
+    $("noticia-mensaje").innerHTML = "";
+    $("btn-noticia-publicar").textContent = "+ Publicar noticia";
+  }
+  cargarNoticiasAdmin();
+});
+
 async function cargarYRenderizarAdmin(desde, hasta){
   $("admin-table-wrap").innerHTML = '<div class="loading-text">Cargando registros…</div>';
 
   const { data: eventos, error } = await sb
     .from("timer_eventos")
-    .select("id, user_id, tipo, creado_en, detalle")
+    .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos")
     .gte("creado_en", desde.toISOString())
     .lte("creado_en", hasta.toISOString())
     .order("creado_en", { ascending: true });
@@ -1305,6 +1875,124 @@ function renderAdminConFiltros(){
   renderTablaAdmin(sesiones);
 }
 
+/* ============================================================
+   ESTADÍSTICAS — panel admin
+   ============================================================ */
+
+/* Dibuja un gráfico de barras simple con CSS, sin librerías externas.
+   datos: [{label, valorSegundos}] */
+function renderStatChart(contenedorId, datos, colorCss){
+  const cont = $(contenedorId);
+  if(!datos || datos.length === 0){
+    cont.innerHTML = `<div class="loading-text">No hay datos para este período.</div>`;
+    return;
+  }
+  const max = Math.max(...datos.map(d => d.valorSegundos), 1);
+  cont.innerHTML = `<div class="stat-chart">` + datos.map(d => {
+    const alturaPct = Math.max(3, (d.valorSegundos / max) * 100);
+    return `
+      <div class="stat-bar-wrap">
+        <div class="stat-bar-valor">${fmtHM(d.valorSegundos)}</div>
+        <div class="stat-bar" style="height:${alturaPct}%;background:${colorCss};"></div>
+        <div class="stat-bar-label">${escapeHtml(d.label)}</div>
+      </div>`;
+  }).join("") + `</div>`;
+}
+
+let statRangoActivo = "mes";
+
+function calcularRangoStat(tipo){
+  if(tipo === "anio"){
+    const inicio = new Date(); inicio.setMonth(0,1); inicio.setHours(0,0,0,0);
+    const fin = new Date(); fin.setHours(23,59,59,999);
+    return { desde: inicio, hasta: fin };
+  }
+  if(tipo === "todo"){
+    return { desde: new Date(2000,0,1), hasta: new Date(2100,0,1) };
+  }
+  return calcularRango(tipo); // "mes" o "semana", ya existe
+}
+
+document.querySelectorAll(".filter-btn[data-stat-range]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn[data-stat-range]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    statRangoActivo = btn.dataset.statRange;
+    cargarEstadisticas();
+  });
+});
+
+async function cargarEstadisticas(){
+  const { desde, hasta } = calcularRangoStat(statRangoActivo);
+
+  const { data: eventos, error } = await sb
+    .from("timer_eventos")
+    .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos")
+    .gte("creado_en", desde.toISOString())
+    .lte("creado_en", hasta.toISOString())
+    .order("creado_en", { ascending: true });
+
+  if(error){
+    $("stat-personas-chart").innerHTML = `<div class="loading-text">Error al cargar.</div>`;
+    $("stat-sellos-chart").innerHTML = "";
+    return;
+  }
+
+  const sesiones = reconstruirSesiones(eventos || []);
+
+  const porPersona = {};
+  const porSello = {};
+  sesiones.forEach(s => {
+    const perfil = perfilesCache[s.userId];
+    const nombre = perfil?.nombre || "(perfil eliminado)";
+    const sello = perfil?.sello || "—";
+    porPersona[nombre] = (porPersona[nombre] || 0) + s.segundosActivos;
+    porSello[sello] = (porSello[sello] || 0) + s.segundosActivos;
+  });
+
+  const datosPersona = Object.entries(porPersona)
+    .map(([label, valorSegundos]) => ({ label, valorSegundos }))
+    .sort((a, b) => b.valorSegundos - a.valorSegundos);
+  const datosSello = Object.entries(porSello)
+    .map(([label, valorSegundos]) => ({ label, valorSegundos }))
+    .sort((a, b) => b.valorSegundos - a.valorSegundos);
+
+  renderStatChart("stat-personas-chart", datosPersona, "var(--gold)");
+  renderStatChart("stat-sellos-chart", datosSello, "var(--ok)");
+}
+
+async function cargarEstadisticaDiaSemana(){
+  const { data: eventos, error } = await sb
+    .from("timer_eventos")
+    .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos")
+    .order("creado_en", { ascending: true });
+
+  if(error){
+    $("stat-diasemana-chart").innerHTML = `<div class="loading-text">Error al cargar.</div>`;
+    return;
+  }
+
+  const sesiones = reconstruirSesiones(eventos || []);
+
+  const nombresDias = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+  const totalPorDia = [0,0,0,0,0,0,0];
+  const cantPorDia = [0,0,0,0,0,0,0];
+
+  sesiones.forEach(s => {
+    const dia = new Date(s.horaInicio).getDay(); // 0=domingo … 6=sábado
+    totalPorDia[dia] += s.segundosActivos;
+    cantPorDia[dia] += 1;
+  });
+
+  const orden = [1,2,3,4,5,6,0]; // mostrar Lunes a Domingo
+  const datos = orden.map(i => ({
+    label: nombresDias[i],
+    valorSegundos: cantPorDia[i] > 0 ? totalPorDia[i] / cantPorDia[i] : 0
+  }));
+
+  renderStatChart("stat-diasemana-chart", datos, "var(--stamp)");
+}
+
 function fmtFecha(iso){
   const d = new Date(iso);
   return d.toLocaleDateString("es-AR", { day:"2-digit", month:"2-digit", year:"numeric" });
@@ -1314,6 +2002,130 @@ function fmtHora(iso){
   const d = new Date(iso);
   return d.toLocaleTimeString("es-AR", { hour:"2-digit", minute:"2-digit" });
 }
+/* ============================================================
+   NOTICIAS Y RESUMEN SEMANAL — vista del usuario
+   ============================================================ */
+async function cargarNoticiasUsuario(){
+  const wrap = $("noticias-usuario-wrap");
+  const { data: config } = await sb.from("config_general").select("noticias_activas").eq("id", 1).single();
+  if(!config || !config.noticias_activas){
+    hide(wrap);
+    return;
+  }
+
+  const { data: noticias, error } = await sb
+    .from("noticias")
+    .select("*")
+    .eq("activa", true)
+    .order("creado_en", { ascending: false });
+
+  if(error || !noticias || noticias.length === 0){
+    hide(wrap);
+    return;
+  }
+
+  $("noticias-lista-usuario").innerHTML = noticias.map(n => `
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;">
+      <div style="font-weight:600;font-size:14px;color:var(--gold);margin-bottom:4px;">${escapeHtml(n.titulo)}</div>
+      <div style="font-size:13px;color:var(--paper-dim);line-height:1.5;white-space:pre-wrap;">${sanitizarHtmlNoticia(n.mensaje)}</div>
+    </div>
+  `).join("");
+  show(wrap);
+}
+
+async function cargarResumenSemana(){
+  const { desde, hasta } = calcularRango("semana");
+  const { data: eventos, error } = await sb
+    .from("timer_eventos")
+    .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos")
+    .eq("user_id", currentUser.id)
+    .gte("creado_en", desde.toISOString())
+    .lte("creado_en", hasta.toISOString())
+    .order("creado_en", { ascending: true });
+
+  const cont = $("semana-lista-usuario");
+  if(error){
+    cont.innerHTML = `<div class="loading-text">Error al cargar.</div>`;
+    return;
+  }
+
+  const sesiones = reconstruirSesiones(eventos || []);
+  const totalSemana = sesiones.reduce((acc, s) => acc + s.segundosActivos, 0);
+  $("resumen-semana").textContent = `Acumulado: ${fmtHM(totalSemana)}`;
+
+  if(sesiones.length === 0){
+    cont.innerHTML = `<div class="loading-text">Todavía no hay registros esta semana.</div>`;
+    return;
+  }
+
+  const ordenadas = [...sesiones].sort((a,b) => new Date(b.horaInicio) - new Date(a.horaInicio));
+  cont.innerHTML = ordenadas.map(s => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;">
+      <div>
+        <div style="color:var(--paper);">${fmtFecha(s.horaInicio)}</div>
+        <div style="color:var(--paper-dim);font-size:12px;">${fmtHora(s.horaInicio)} — ${s.enCurso ? "en curso" : fmtHora(s.horaFin)}</div>
+      </div>
+      <div style="font-family:'Space Mono',monospace;color:var(--gold);">${fmtHMS(s.segundosActivos)}</div>
+    </div>
+  `).join("");
+}
+
+/* ============================================================
+   SESIÓN PENDIENTE DE DESCRIBIR (auto-detenida por 4hs corriendo o 1h pausado)
+   ============================================================ */
+let pendienteStopId = null;
+
+async function chequearSesionPendiente(){
+  const { data, error } = await sb
+    .from("timer_eventos")
+    .select("id, creado_en")
+    .eq("user_id", currentUser.id)
+    .eq("tipo", "stop")
+    .is("detalle", null)
+    .order("creado_en", { ascending: false })
+    .limit(1);
+
+  if(error || !data || data.length === 0) return false;
+
+  pendienteStopId = data[0].id;
+  hide($("controls-idle")); hide($("controls-running")); hide($("controls-paused"));
+  $("pendiente-texto").value = "";
+  hide($("pendiente-error"));
+  show($("modal-pendiente"));
+  return true;
+}
+
+$("pendiente-confirmar").addEventListener("click", async () => {
+  const texto = $("pendiente-texto").value.trim();
+  if(texto.length === 0){
+    show($("pendiente-error"));
+    return;
+  }
+  if(!pendienteStopId) return;
+
+  $("pendiente-confirmar").disabled = true;
+  $("pendiente-confirmar").textContent = "Guardando…";
+
+  const { error } = await sb.from("timer_eventos").update({ detalle: texto }).eq("id", pendienteStopId);
+
+  $("pendiente-confirmar").disabled = false;
+  $("pendiente-confirmar").textContent = "Guardar y continuar";
+
+  if(error){
+    $("pendiente-error").textContent = "No se pudo guardar: " + error.message;
+    show($("pendiente-error"));
+    return;
+  }
+
+  pendienteStopId = null;
+  hide($("modal-pendiente"));
+
+  // Por si quedó más de una sesión pendiente (varios días sin entrar), revisamos de nuevo.
+  const haySiguiente = await chequearSesionPendiente();
+  if(!haySiguiente){
+    await refrescarEstadoTimer();
+  }
+});
 
 function renderResumen(sesiones){
   const totalPorSello = {};
@@ -1339,13 +2151,16 @@ function renderTablaAdmin(sesiones){
 
   const ordenadas = [...sesiones].sort((a,b) => new Date(b.horaInicio) - new Date(a.horaInicio));
 
-  let html = `<table><thead><tr>
-    <th>Fecha</th><th>Responsable</th><th>Sello</th><th>Inicio</th><th>Fin</th><th>Pausas</th><th>Horas activas</th><th>Tareas realizadas</th><th></th>
+let html = `<table><thead><tr>
+    <th>Fecha</th><th>Responsable</th><th>Sello</th><th>Inicio</th><th>Fin</th><th>Pausas</th><th>Horas activas</th><th>Tareas realizadas</th><th></th><th></th>
   </tr></thead><tbody>`;
   for(const s of ordenadas){
     const perfil = perfilesCache[s.userId];
-    const editBtn = (!s.enCurso && s.stopId && s.startId)
-      ? `<button class="filter-btn btn-editar" data-stop="${s.stopId}" data-start="${s.startId}" data-inicio="${s.horaInicio}" data-fin="${s.horaFin}" data-tareas="${escapeAttr(s.tareas)}" style="font-size:11px;padding:4px 10px;white-space:nowrap;">Editar</button>`
+  const editBtn = (!s.enCurso && s.stopId && s.startId)
+      ? `<button class="filter-btn btn-editar" data-stop="${s.stopId}" data-start="${s.startId}" data-inicio="${s.horaInicio}" data-fin="${s.horaFin}" data-tareas="${escapeAttr(s.tareas)}" data-ajuste="${s.ajusteSegundos || 0}" style="font-size:11px;padding:4px 10px;white-space:nowrap;">Editar</button>`
+      : "—";
+    const borrarBtn = (!s.enCurso && s.stopId && s.startId)
+      ? `<button class="filter-btn btn-borrar" data-userid="${s.userId}" data-inicio="${s.horaInicio}" data-fin="${s.horaFin}" style="font-size:11px;padding:4px 10px;white-space:nowrap;border-color:var(--stamp);color:var(--stamp);">Borrar</button>`
       : "—";
     html += `<tr>
       <td>${fmtFecha(s.horaInicio)}</td>
@@ -1355,15 +2170,16 @@ function renderTablaAdmin(sesiones){
       <td class="hrs">${s.enCurso ? "En curso" : fmtHora(s.horaFin)}</td>
       <td>${s.pausas > 0 ? s.pausas : "—"}</td>
       <td class="hrs">${fmtHMS(s.segundosActivos)}</td>
-      <td style="white-space:pre-wrap;max-width:220px;">${s.enCurso ? "—" : escapeHtml(s.tareas || "—")}</td>
+  <td style="white-space:pre-wrap;max-width:220px;">${s.enCurso ? "—" : escapeHtml(s.tareas || "—")}</td>
       <td>${editBtn}</td>
+      <td>${borrarBtn}</td>
     </tr>`;
   }
   html += "</tbody></table>";
   $("admin-table-wrap").innerHTML = html;
 
   // Conectar los botones de editar que acaban de renderizarse
-  document.querySelectorAll(".btn-editar").forEach(btn => {
+ document.querySelectorAll(".btn-editar").forEach(btn => {
     btn.addEventListener("click", () => {
       const inicio = new Date(btn.dataset.inicio);
       const fin = new Date(btn.dataset.fin);
@@ -1373,8 +2189,20 @@ function renderTablaAdmin(sesiones){
       $("editar-inicio").value = inicio.toTimeString().slice(0, 5);
       $("editar-fin").value = fin.toTimeString().slice(0, 5);
       $("editar-tareas").value = btn.dataset.tareas;
+      $("editar-ajuste").value = Math.round((Number(btn.dataset.ajuste) || 0) / 60);
       hide($("editar-error"));
       show($("modal-editar"));
+    });
+  });
+
+document.querySelectorAll(".btn-borrar").forEach(btn => {
+    btn.addEventListener("click", () => {
+      borrarPendiente = { userId: btn.dataset.userid, inicio: btn.dataset.inicio, fin: btn.dataset.fin };
+      pasoBorrado = 1;
+      $("borrar-titulo").textContent = "¿Eliminar esta entrada?";
+      $("borrar-mensaje").textContent = "Esta acción no se puede deshacer.";
+      $("borrar-confirmar").textContent = "Eliminar";
+      show($("modal-borrar"));
     });
   });
 }
@@ -1428,11 +2256,22 @@ $("nueva-confirmar").addEventListener("click", async () => {
     return;
   }
 
+  if(!horaValida(inicio) || !horaValida(fin)){
+    $("nueva-error").textContent = "Las horas deben tener formato HH:MM (24hs), por ejemplo 09:30 o 17:45.";
+    show($("nueva-error"));
+    return;
+  }
+
   const tsInicio = new Date(`${fecha}T${inicio}:00`);
   const tsFin = new Date(`${fecha}T${fin}:00`);
+  if($("nueva-cruza-medianoche").checked){
+    tsFin.setDate(tsFin.getDate() + 1);
+  }
 
   if(tsFin <= tsInicio){
-    $("nueva-error").textContent = "La hora de fin debe ser posterior a la de inicio.";
+    $("nueva-error").textContent = $("nueva-cruza-medianoche").checked
+      ? "Revisá los horarios: incluso cruzando la medianoche, el fin debe ser posterior al inicio."
+      : "La hora de fin debe ser posterior a la de inicio. Si la jornada cruza la medianoche, tildá esa opción.";
     show($("nueva-error"));
     return;
   }
@@ -1489,9 +2328,17 @@ $("editar-confirmar").addEventListener("click", async () => {
   const inicio = $("editar-inicio").value;
   const fin = $("editar-fin").value;
   const tareas = $("editar-tareas").value.trim();
+  const ajusteMinutos = parseInt($("editar-ajuste").value, 10) || 0;
+  const ajusteSegundos = ajusteMinutos * 60;
 
   if(!fecha || !inicio || !fin || !tareas){
     $("editar-error").textContent = "Completá todos los campos.";
+    show($("editar-error"));
+    return;
+  }
+
+  if(!horaValida(inicio) || !horaValida(fin)){
+    $("editar-error").textContent = "Las horas deben tener formato HH:MM (24hs), por ejemplo 09:30 o 17:45.";
     show($("editar-error"));
     return;
   }
@@ -1525,7 +2372,7 @@ $("editar-confirmar").addEventListener("click", async () => {
   // Actualizar el evento stop
   const { error: errStop } = await sb
     .from("timer_eventos")
-    .update({ creado_en: tsFin.toISOString(), detalle: tareas })
+    .update({ creado_en: tsFin.toISOString(), detalle: tareas, ajuste_segundos: ajusteSegundos })
     .eq("id", stopId);
 
   $("editar-confirmar").disabled = false;
