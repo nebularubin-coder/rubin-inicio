@@ -136,9 +136,9 @@ select.fi option{background:var(--surface);color:var(--text)}
 /* ── DRAWER ── */
 .drawer-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.4);z-index:200;backdrop-filter:blur(2px)}
 .drawer-bg.open{display:block}
-.drawer{position:fixed;top:0;right:-700px;width:680px;max-width:95vw;height:100vh;background:var(--surface);box-shadow:-4px 0 24px rgba(0,0,0,0.12);z-index:201;display:flex;flex-direction:column;transition:right .25s cubic-bezier(.4,0,.2,1);overflow:hidden}
-.drawer.open{right:0}
-.drawer-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.drawer{position:fixed;top:50%;left:50%;width:680px;max-width:95vw;height:88vh;max-height:860px;background:var(--surface);box-shadow:0 20px 60px rgba(0,0,0,0.25);z-index:201;display:flex;flex-direction:column;border-radius:14px;overflow:hidden;transform:translate(-50%,-50%) scale(.96);opacity:0;visibility:hidden;transition:transform .18s cubic-bezier(.4,0,.2,1),opacity .18s cubic-bezier(.4,0,.2,1),visibility .18s}
+.drawer.open{transform:translate(-50%,-50%) scale(1);opacity:1;visibility:visible}
+.drawer-head{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
 .drawer-title{font-size:17px;font-weight:700;color:var(--text)}
 .drawer-sub{font-size:12px;color:var(--text3);margin-top:2px}
 .drawer-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:20px;line-height:1;padding:4px;border-radius:4px;transition:color .15s}
@@ -148,6 +148,22 @@ select.fi option{background:var(--surface);color:var(--text)}
 .drawer-section:last-child{border-bottom:none}
 .ds-title{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px}
 .drawer-foot{padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;background:var(--surface2)}
+
+/* ── DRAWER TABS ── */
+.dtabs{display:flex;gap:2px;padding:0 24px;border-bottom:1px solid var(--border);background:var(--surface2);flex-shrink:0;overflow-x:auto}
+.dtab{padding:12px 14px;font-size:12.5px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.dtab:hover{color:var(--text)}
+.dtab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.dtab-content{flex:1;overflow-y:auto}
+.dtab-panel{display:none}
+.dtab-panel.active{display:block}
+
+/* ── AUTOCOMPLETADO DE PAIS ── */
+.pais-dd{display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow-lg);max-height:220px;overflow-y:auto;z-index:60;margin-top:4px}
+.pais-dd.open{display:block}
+.pais-dd-item{padding:8px 12px;font-size:13px;cursor:pointer;color:var(--text)}
+.pais-dd-item:hover,.pais-dd-item.hi{background:var(--surface2)}
+.pais-dd-empty{padding:8px 12px;font-size:12px;color:var(--text3)}
 
 /* ── FORM ── */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -262,10 +278,22 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
 
     <!-- AUTORES -->
     <div class="page" id="page-autores">
-      <div class="page-head" style="display:flex;align-items:flex-start;justify-content:space-between">
-        <div><div class="page-title">Autores</div><div class="page-sub">Click en un autor para ver todos sus libros y montos de regalías</div></div>
-        <button class="btn btn-primary btn-sm" id="btn-nuevo-autor-autores" style="margin-top:4px">+ Nuevo autor</button>
+      <div class="page-head" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="page-title">Autores</div>
+          <div class="page-sub">Click en un autor para ver todos sus libros y montos de regalías · <span id="aut-count" style="font-weight:600;color:var(--text2)">0</span> autores cargados</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+          <button class="btn btn-secondary btn-sm" id="aut-tmpl-btn">⬇ Plantilla</button>
+          <label class="btn btn-secondary btn-sm" style="cursor:pointer">
+            📂 Importar
+            <input type="file" id="aut-import-file" accept=".csv,.xlsx,.xls" style="display:none">
+          </label>
+          <button class="btn btn-secondary btn-sm" id="aut-xls-btn">⬇ Descargar</button>
+          <button class="btn btn-primary btn-sm" id="btn-nuevo-autor-autores">+ Nuevo autor</button>
+        </div>
       </div>
+      <div id="aut-import-panel" style="display:none;margin-bottom:14px"></div>
       <div class="card">
         <div class="filter-bar">
           <input class="fi fi-search" id="aut-q" placeholder="Buscar por nombre o email...">
@@ -273,7 +301,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
           <select class="fi" id="aut-sort"><option value="alfa">A → Z</option><option value="partic">Mayor participación</option></select>
         </div>
         <div class="card-body tbl-wrap">
-          <table><thead><tr><th>NOMBRE</th><th>EMAIL</th><th>PAÍS</th><th>PARTICIPACIONES</th><th>ACCIONES</th></tr></thead>
+          <table><thead><tr><th>NOMBRE</th><th>EMAIL</th><th>SEUDÓNIMO</th><th>PAÍS</th><th>PARTICIPACIONES</th><th>ACCIONES</th></tr></thead>
           <tbody id="aut-tb"></tbody></table>
         </div>
       </div>
@@ -326,10 +354,16 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
     </div>
     <button class="drawer-close" id="dl-close">✕</button>
   </div>
-  <div class="drawer-body">
+  <div class="dtabs" id="dl-tabs">
+    <div class="dtab active" data-tab="meta">Metadatos del libro</div>
+    <div class="dtab" data-tab="parts">Participantes y obras</div>
+    <div class="dtab" data-tab="calc">Cálculo de regalías</div>
+    <div class="dtab" data-tab="pago">Registrar pago</div>
+  </div>
+  <div class="dtab-content">
     <!-- Metadatos -->
+    <div class="dtab-panel active" data-panel="meta">
     <div class="drawer-section">
-      <div class="ds-title">Metadatos del libro</div>
       <input type="hidden" id="dl-id">
       <div class="form-grid" style="margin-bottom:10px">
         <div class="fg"><label>Título del libro</label><input class="fi" id="dl-nombre" type="text"></div>
@@ -351,17 +385,9 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
         <button class="btn btn-primary btn-sm" id="dl-save-meta">Guardar cambios</button>
       </div>
     </div>
-    <!-- Regalías por semestre -->
-    <div class="drawer-section">
-      <div class="ds-title">Regalías recaudadas</div>
-      <div id="dl-royalties"></div>
-      <div id="dl-amazon-breakdown"></div>
-      <div id="dl-buscalibre-breakdown"></div>
-      <div style="margin-top:10px">
-        <button class="btn btn-secondary btn-sm" id="dl-download-report">⬇ Descargar reporte</button>
-      </div>
     </div>
     <!-- Participantes -->
+    <div class="dtab-panel" data-panel="parts">
     <div class="drawer-section">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="ds-title" style="margin-bottom:0">Participantes y obras</div><button class="btn btn-secondary btn-sm" id="dl-parts-xls" style="font-size:11px">⬇ Planilla XLS</button></div>
       <div id="dl-parts-list"></div>
@@ -379,8 +405,8 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
             <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Agregar por email (si ya existe en la base):</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
               <input class="fi" id="add-email" type="email" placeholder="Email del autor" style="flex:2;min-width:160px">
-              <input class="fi" id="add-nombre" type="text" placeholder="Nombre (si es nuevo)" style="flex:1;min-width:120px">
               <input class="fi" id="add-obra" type="text" placeholder="Título de la obra" style="flex:2;min-width:160px">
+              <input class="fi" id="add-seud" type="text" placeholder="Seudónimo (opcional)" style="flex:1;min-width:140px">
               <button class="btn btn-primary btn-sm" id="add-autor-btn">Agregar</button>
             </div>
           </div>
@@ -397,7 +423,21 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
       <div id="dl-import-preview" style="margin-top:10px"></div>
       <button class="btn btn-primary btn-sm" id="dl-import-ok" style="display:none;margin-top:8px">Confirmar importación</button>
     </div>
+    </div>
+    <!-- Cálculo de regalías -->
+    <div class="dtab-panel" data-panel="calc">
+    <div class="drawer-section">
+      <div class="ds-title">Regalías recaudadas</div>
+      <div id="dl-royalties"></div>
+      <div id="dl-amazon-breakdown"></div>
+      <div id="dl-buscalibre-breakdown"></div>
+      <div style="margin-top:10px">
+        <button class="btn btn-secondary btn-sm" id="dl-download-report">⬇ Descargar reporte</button>
+      </div>
+    </div>
+    </div>
     <!-- Registrar pago -->
+    <div class="dtab-panel" data-panel="pago">
     <div class="drawer-section">
       <div class="ds-title">Registrar pago de regalías</div>
       <div style="margin-bottom:12px">
@@ -440,6 +480,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
         <div id="pago-historial"></div>
       </div>
     </div>
+    </div>
   </div>
 </div>
 
@@ -452,27 +493,39 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
     </div>
     <button class="drawer-close" id="da-close">✕</button>
   </div>
-  <div class="drawer-body">
+  <div class="dtabs" id="da-tabs">
+    <div class="dtab active" data-tab="datos">Datos del autor</div>
+    <div class="dtab" data-tab="partic">Participaciones y regalías</div>
+  </div>
+  <div class="dtab-content">
+    <div class="dtab-panel active" data-panel="datos">
     <div class="drawer-section">
-      <div class="ds-title">Datos del autor</div>
       <input type="hidden" id="da-id">
       <div class="form-grid" style="margin-bottom:10px">
         <div class="fg"><label>Nombre completo</label><input class="fi" id="da-nombre" type="text"></div>
         <div class="fg"><label>Email</label><input class="fi" id="da-email" type="email" autocomplete="off"></div>
       </div>
+      <div class="form-grid" style="margin-bottom:10px">
+        <div class="fg"><label>Seudónimo</label><input class="fi" id="da-seud" type="text" placeholder="Opcional"></div>
+        <div class="fg" style="position:relative"><label>País de residencia</label><input class="fi" id="da-pais" type="text" autocomplete="off" placeholder="Empezá a escribir..."><div class="pais-dd" id="da-pais-dd"></div></div>
+      </div>
       <div class="form-grid">
-        <div class="fg"><label>País de residencia</label><input class="fi" id="da-pais" type="text"></div>
         <div class="fg"><label>Nacionalidad</label><input class="fi" id="da-nac" type="text"></div>
+        <div class="fg"><label>Fecha de nacimiento</label><input class="fi" id="da-dob" type="date"></div>
       </div>
       <div class="form-grid" style="margin-top:10px">
         <div class="fg"><label>CUIT / DNI / Cédula</label><input class="fi" id="da-cuit" type="text" placeholder="Ej: 20-12345678-9"></div>
-        <div class="fg"><label>Fecha de nacimiento</label><input class="fi" id="da-dob" type="date"></div>
       </div>
-      <div style="margin-top:12px"><button class="btn btn-primary btn-sm" id="da-save">Guardar cambios</button></div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn btn-primary btn-sm" id="da-save">Guardar cambios</button>
+        <button class="btn btn-danger btn-sm" id="da-delete" style="margin-left:auto">🗑 Eliminar autor</button>
+      </div>
     </div>
+    </div>
+    <div class="dtab-panel" data-panel="partic">
     <div class="drawer-section">
-      <div class="ds-title">Participaciones y regalías</div>
       <div id="da-libros"></div>
+    </div>
     </div>
   </div>
 </div>
@@ -490,7 +543,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
         <div class="fg"><label>Moneda</label>
           <select class="fg-sel" id="dp-moneda"><option value="USD">USD</option><option value="ARS">ARS</option></select>
         </div>
-        <div class="fg"><label>Monto</label><input class="fi" id="dp-monto" type="number" step="0.01"></div>
+        <div class="fg"><label>Monto</label><input class="fi" id="dp-monto" type="text" inputmode="decimal" placeholder="0,00"></div>
       </div>
       <div class="form-grid" style="margin-bottom:10px">
         <div class="fg"><label>Fecha</label><input class="fi" id="dp-fecha" type="date"></div>
@@ -502,7 +555,7 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
           </select>
         </div>
       </div>
-      <div class="fg" style="margin-bottom:10px"><label>Semestres cubiertos</label><input class="fi" id="dp-sems" type="text"></div>
+      <div class="fg" style="margin-bottom:10px"><label>Semestres cubiertos</label><input type="hidden" id="dp-sems"><div id="dp-sems-check"></div></div>
       <div class="fg" style="margin-bottom:10px"><label>Referencia</label><input class="fi" id="dp-ref" type="text"></div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-primary" id="dp-save">Guardar cambios</button>
@@ -543,17 +596,13 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div class="fg"><label>Seudónimo</label><input class="fi" id="na-seud" type="text" placeholder="Opcional"></div>
-      <div class="fg"><label>País de residencia</label><input class="fi" id="na-pais" type="text" placeholder="Argentina"></div>
+      <div class="fg" style="position:relative"><label>País de residencia</label><input class="fi" id="na-pais" type="text" autocomplete="off" placeholder="Empezá a escribir..."><div class="pais-dd" id="na-pais-dd"></div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div class="fg"><label>Nacionalidad</label><input class="fi" id="na-nac" type="text" placeholder="Argentina"></div>
       <div class="fg"><label>Fecha de nacimiento</label><input class="fi" id="na-dob" type="date"></div>
     </div>
     <div class="fg" style="margin-bottom:16px"><label>CUIT / DNI / Cédula</label><input class="fi" id="na-cuit" type="text" placeholder="Ej: 20-12345678-9"></div>
-    <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
-      <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Título de la obra en este libro (dejar vacío si solo querés registrar al autor)</div>
-      <div class="fg"><label>Título de la obra</label><input class="fi" id="na-obra" type="text" placeholder="Solo si participa en el libro actual"></div>
-    </div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-secondary" onclick="closeModal('modal-nuevo-autor')">Cancelar</button>
       <button class="btn btn-primary" id="na-save">Crear autor</button>
@@ -578,13 +627,46 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:16px 0}
   </div>
 </div>
 
+<!-- MODAL: ELIMINAR AUTOR - PASO 1 (advertencia con detalle) -->
+<div id="modal-del-autor-1" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:500;align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--surface);border-radius:12px;padding:24px;width:100%;max-width:480px;box-shadow:var(--shadow-lg)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div style="font-size:22px">⚠️</div>
+      <div style="font-size:16px;font-weight:700;color:var(--red)">Eliminar autor definitivamente</div>
+    </div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:10px">Estás por eliminar a <b id="del1-nombre">—</b> (<span id="del1-email">—</span>) de la base de datos. Esta acción es <b>irreversible</b> y va a borrar:</div>
+    <ul id="del1-detalle" style="font-size:13px;color:var(--text2);margin:0 0 16px 18px;padding:0;line-height:1.7"></ul>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="closeModal('modal-del-autor-1')">Cancelar</button>
+      <button class="btn btn-danger" id="del1-continuar">Entiendo, continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ELIMINAR AUTOR - PASO 2 (confirmacion escrita) -->
+<div id="modal-del-autor-2" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:500;align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--surface);border-radius:12px;padding:24px;width:100%;max-width:480px;box-shadow:var(--shadow-lg)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div style="font-size:22px">🗑️</div>
+      <div style="font-size:16px;font-weight:700;color:var(--red)">Confirmación final</div>
+    </div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Para confirmar, escribí el nombre completo del autor tal como aparece:</div>
+    <div style="font-size:13px;font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:12px" id="del2-nombre-target">—</div>
+    <input class="fi" id="del2-input" placeholder="Escribí el nombre aquí" style="margin-bottom:16px" autocomplete="off">
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="closeModal('modal-del-autor-2')">Cancelar</button>
+      <button class="btn btn-danger" id="del2-eliminar" disabled>Eliminar para siempre</button>
+    </div>
+  </div>
+</div>
+
 </body>
 <script>
 var SUPA_URL = 'https://cozhoziafbpjguqgadhl.supabase.co';
 var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvemhvemlhZmJwamd1cWdhZGhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExOTE5MjAsImV4cCI6MjA5Njc2NzkyMH0.RQabp0tsfdtOK-vBVpxV_Y6iLeyEWNeu0xB8HO7BiqI';
 var db = supabase.createClient(SUPA_URL, KEY, {auth:{persistSession:true,autoRefreshToken:true}});
 
-var STATE = { sellos:[], libros:[], autores:[], pagos:[], regalias:[], participaciones:[], currentLibroId:null, importData:[], importLibroId:null, selAutorSel:new Set() };
+var STATE = { sellos:[], libros:[], autores:[], pagos:[], regalias:[], participaciones:[], currentLibroId:null, importData:[], importLibroId:null, importAutoresData:[], selAutorSel:new Set() };
 
 // ── UTILS ──
 function $(id){ return document.getElementById(id); }
@@ -604,6 +686,58 @@ function estadoIndividual(l){
 }
 function val(id){ var el=$(id); return el?el.value:''; }
 function setVal(id,v){ var el=$(id); if(el) el.value=v||''; }
+function normalizeCuit(v){ return String(v||'').replace(/[^0-9]/g,'')||null; }
+
+// ── FORMATO DE MONTO CON SEPARADOR DE MILES ──
+function formatMontoMiles(n){ return parseFloat(n||0).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function parseMontoMiles(s){ if(!s)return 0; var clean=String(s).trim().replace(/\./g,'').replace(',','.'); return parseFloat(clean)||0; }
+function attachMilesFormatter(id){
+  var el=$(id); if(!el||el.dataset.milesBound)return; el.dataset.milesBound='1';
+  el.addEventListener('input',function(){
+    var cleaned=el.value.replace(/[^\d,]/g,'');
+    var firstComma=cleaned.indexOf(',');
+    if(firstComma>-1) cleaned=cleaned.slice(0,firstComma+1)+cleaned.slice(firstComma+1).replace(/,/g,'');
+    var parts=cleaned.split(',');
+    var intPart=parts[0].replace(/^0+(?=\d)/,'');
+    var decPart=parts.length>1?parts[1].slice(0,2):null;
+    var withDots=intPart.replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+    el.value=withDots+(decPart!==null?','+decPart:(cleaned.indexOf(',')>-1?',':''));
+  });
+}
+
+// ── AUTOCOMPLETADO DE PAIS ──
+var PAISES_LISTA = ['Afganistán','Albania','Alemania','Andorra','Angola','Antigua y Barbuda','Arabia Saudita','Argelia','Argentina','Armenia','Australia','Austria','Azerbaiyán','Bahamas','Bangladés','Barbados','Baréin','Bélgica','Belice','Benín','Bielorrusia','Birmania','Bolivia','Bosnia y Herzegovina','Botsuana','Brasil','Brunéi','Bulgaria','Burkina Faso','Burundi','Bután','Cabo Verde','Camboya','Camerún','Canadá','Catar','Chad','Chile','China','Chipre','Ciudad del Vaticano','Colombia','Comoras','Corea del Norte','Corea del Sur','Costa de Marfil','Costa Rica','Croacia','Cuba','Dinamarca','Dominica','Ecuador','Egipto','El Salvador','Emiratos Árabes Unidos','Eritrea','Eslovaquia','Eslovenia','España','Estados Unidos','Estonia','Esuatini','Etiopía','Filipinas','Finlandia','Fiyi','Francia','Gabón','Gambia','Georgia','Ghana','Granada','Grecia','Guatemala','Guinea','Guinea-Bisáu','Guinea Ecuatorial','Guyana','Haití','Honduras','Hungría','India','Indonesia','Irak','Irán','Irlanda','Islandia','Islas Marshall','Islas Salomón','Israel','Italia','Jamaica','Japón','Jordania','Kazajistán','Kenia','Kirguistán','Kiribati','Kosovo','Kuwait','Laos','Lesoto','Letonia','Líbano','Liberia','Libia','Liechtenstein','Lituania','Luxemburgo','Madagascar','Malasia','Malaui','Maldivas','Malí','Malta','Marruecos','Mauricio','Mauritania','México','Micronesia','Moldavia','Mónaco','Mongolia','Montenegro','Mozambique','Namibia','Nauru','Nepal','Nicaragua','Níger','Nigeria','Noruega','Nueva Zelanda','Omán','Países Bajos','Pakistán','Palaos','Palestina','Panamá','Papúa Nueva Guinea','Paraguay','Perú','Polonia','Portugal','Puerto Rico','Reino Unido','República Centroafricana','República Checa','República del Congo','República Democrática del Congo','República Dominicana','Ruanda','Rumania','Rusia','Samoa','San Cristóbal y Nieves','San Marino','San Vicente y las Granadinas','Santa Lucía','Santo Tomé y Príncipe','Senegal','Serbia','Seychelles','Sierra Leona','Singapur','Siria','Somalia','Sri Lanka','Sudáfrica','Sudán','Sudán del Sur','Suecia','Suiza','Surinam','Tailandia','Tanzania','Tayikistán','Timor Oriental','Togo','Tonga','Trinidad y Tobago','Túnez','Turkmenistán','Turquía','Tuvalu','Ucrania','Uganda','Uruguay','Uzbekistán','Vanuatu','Venezuela','Vietnam','Yemen','Yibuti','Zambia','Zimbabue'].sort();
+function setupPaisAutocomplete(inputId,ddId){
+  var inp=$(inputId), dd=$(ddId);
+  if(!inp||!dd)return;
+  function filtrar(){
+    var q=inp.value.trim().toLowerCase();
+    var m=q?PAISES_LISTA.filter(function(p){return p.toLowerCase().indexOf(q)===0;}):PAISES_LISTA;
+    if(!m.length){dd.innerHTML='<div class="pais-dd-empty">Sin coincidencias</div>';dd.classList.add('open');return;}
+    dd.innerHTML=m.slice(0,60).map(function(p){return'<div class="pais-dd-item" data-val="'+esc(p)+'">'+esc(p)+'</div>';}).join('');
+    dd.classList.add('open');
+  }
+  inp.addEventListener('input',filtrar);
+  inp.addEventListener('focus',filtrar);
+  inp.addEventListener('blur',function(){setTimeout(function(){dd.classList.remove('open');},150);});
+  dd.addEventListener('mousedown',function(e){
+    var it=e.target.closest('.pais-dd-item'); if(!it)return;
+    inp.value=it.dataset.val;
+    dd.classList.remove('open');
+  });
+}
+function normalizeFecha(v){
+  if(!v) return null;
+  if(v instanceof Date && !isNaN(v)){
+    var y=v.getFullYear(),m=String(v.getMonth()+1).padStart(2,'0'),d=String(v.getDate()).padStart(2,'0');
+    return y+'-'+m+'-'+d;
+  }
+  var s=String(v).trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  var m1=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if(m1) return m1[3]+'-'+m1[2].padStart(2,'0')+'-'+m1[1].padStart(2,'0');
+  return null;
+}
 function toast(msg,tipo){
   var t=$('toast'); if(!t)return;
   t.textContent=msg; t.style.background=tipo==='err'?'#dc2626':'#1e293b';
@@ -612,9 +746,33 @@ function toast(msg,tipo){
 function confirm2(msg){ return confirm(msg); }
 
 // ── DRAWERS ──
-function openDrawer(id){ $('drawer-bg').classList.add('open'); $(id).classList.add('open'); }
+function openDrawer(id){ ['drawer-libro','drawer-autor','drawer-pago'].forEach(function(d){if(d!==id){var el=$(d);if(el)el.classList.remove('open');}}); $('drawer-bg').classList.add('open'); $(id).classList.add('open'); resetDrawerTabs(id); }
 function closeDrawer(id){ $(id).classList.remove('open'); }
 function closeAllDrawers(){ $('drawer-bg').classList.remove('open'); ['drawer-libro','drawer-autor','drawer-pago'].forEach(function(d){var el=$(d);if(el)el.classList.remove('open');}); }
+
+// ── DRAWER TABS ──
+function resetDrawerTabs(drawerId){
+  var drawer=$(drawerId); if(!drawer)return;
+  var tabs=drawer.querySelectorAll('.dtab'); var panels=drawer.querySelectorAll('.dtab-panel');
+  if(!tabs.length)return;
+  tabs.forEach(function(t,i){t.classList.toggle('active',i===0);});
+  panels.forEach(function(p,i){p.classList.toggle('active',i===0);});
+  var content=drawer.querySelector('.dtab-content'); if(content) content.scrollTop=0;
+}
+function initDrawerTabs(){
+  document.querySelectorAll('.dtabs').forEach(function(tabBar){
+    tabBar.addEventListener('click',function(e){
+      var tab=e.target.closest('.dtab'); if(!tab)return;
+      var drawer=tabBar.closest('.drawer'); if(!drawer)return;
+      drawer.querySelectorAll('.dtab').forEach(function(t){t.classList.remove('active');});
+      drawer.querySelectorAll('.dtab-panel').forEach(function(p){p.classList.remove('active');});
+      tab.classList.add('active');
+      var panel=drawer.querySelector('.dtab-panel[data-panel="'+tab.dataset.tab+'"]');
+      if(panel) panel.classList.add('active');
+      var content=drawer.querySelector('.dtab-content'); if(content) content.scrollTop=0;
+    });
+  });
+}
 
 // ── MODALS ──
 function openModal(id){ var m=$(id); if(m) m.style.display='flex'; }
@@ -657,8 +815,14 @@ function iniciarApp(){
   // Drawer closes
   $('drawer-bg').addEventListener('click',closeAllDrawers);
   ['dl-close','da-close','dp-close'].forEach(function(id){var el=$(id);if(el)el.addEventListener('click',closeAllDrawers);});
+  // Drawer tabs
+  initDrawerTabs();
+  // Autocompletado de pais
+  setupPaisAutocomplete('da-pais','da-pais-dd');
+  setupPaisAutocomplete('na-pais','na-pais-dd');
   // File input
   var fi=$('dl-import-file'); if(fi && typeof leerImport==='function') fi.addEventListener('change',leerImport);
+  var fia=$('aut-import-file'); if(fia && typeof leerImportAutores==='function') fia.addEventListener('change',leerImportAutores);
   // Auth
   var lo=$('btn-logout');
   if(lo && !lo.dataset.bound){
@@ -685,6 +849,9 @@ function globalClickHandler(e){
   else if(t.id==='dl-parts-xls') downloadPartsXLS();
   else if(t.id==='pago-registrar-btn') registrarPago();
   else if(t.id==='da-save') saveAutor();
+  else if(t.id==='da-delete') abrirEliminarAutor();
+  else if(t.id==='del1-continuar') pasarAPaso2Eliminar();
+  else if(t.id==='del2-eliminar') ejecutarEliminarAutor();
   else if(t.id==='dp-save') savePago();
   else if(t.id==='dp-del') deletePago();
   else if(t.id==='eo-save') saveObra();
@@ -696,6 +863,10 @@ function globalClickHandler(e){
   else if(t.id==='na-save') guardarNuevoAutor();
   else if(t.id==='bus-btn') doBuscar();
   else if(t.id==='pag-pdf-btn') downloadPagosPDF();
+  else if(t.id==='aut-tmpl-btn') descargarTemplateAutores();
+  else if(t.id==='aut-xls-btn') downloadAutoresXLS();
+  else if(t.id==='aut-import-ok') ejecutarImportAutores();
+  else if(t.id==='aut-import-cancel') cancelarImportAutores();
   else if(t.closest('[data-open-libro]')) abrirLibro(t.closest('[data-open-libro]').dataset.openLibro);
   else if(t.closest('[data-open-autor]')) abrirAutor(t.closest('[data-open-autor]').dataset.openAutor);
   else if(t.closest('[data-toggle-obras]')){ var d=$(t.closest('[data-toggle-obras]').dataset.toggleObras); if(d){var o=d.style.display==='block';d.style.display=o?'none':'block';t.closest('[data-toggle-obras]').textContent=o?'Ver obras':'Ocultar obras';} }
@@ -715,6 +886,7 @@ function globalChangeHandler(e){
   else if(id==='pago-moneda'){onPagoMonedaChange();calcPagoTotal();}
   else if(id==='sel-autor-q') renderSelAutorList(e.target.value);
   else if(e.target.classList.contains('sem-chk')) calcPagoTotal();
+  else if(e.target.classList.contains('dp-sem-chk')) actualizarDpSemsHidden();
   else if(e.target.dataset.selId){ var pid=parseInt(e.target.dataset.selId); if(e.target.checked) STATE.selAutorSel.add(pid); else STATE.selAutorSel.delete(pid); }
 }
 
@@ -724,6 +896,10 @@ function globalInputHandler(e){
   else if(id==='aut-q') renderAutores();
   else if(id==='pag-q') renderPagos();
   else if(id==='sel-autor-q') renderSelAutorList(e.target.value);
+  else if(id==='del2-input'){
+    var ok=DEL_AUTOR_PENDIENTE && e.target.value.trim()===DEL_AUTOR_PENDIENTE.nombre.trim();
+    var b=$('del2-eliminar'); if(b) b.disabled=!ok;
+  }
   else if(id==='bus-q'){} // handled by keydown
 }
 
@@ -812,7 +988,7 @@ async function loadAll(){
     });
     var dlS=$('dl-sello');
     if(dlS) dlS.innerHTML=STATE.sellos.map(function(s){return'<option value="'+s.id+'">'+esc(s.nombre)+'</option>';}).join('');
-    var paises=[...new Set(STATE.autores.filter(function(a){return a.partic>0;}).map(function(a){return a.pais_residencia||'';}).filter(Boolean))].sort();
+    var paises=[...new Set(STATE.autores.map(function(a){return a.pais_residencia||'';}).filter(Boolean))].sort();
     var apS=$('aut-pais');
     if(apS){while(apS.options.length>1)apS.remove(1);paises.forEach(function(p){var o=document.createElement('option');o.value=p;o.textContent=p;apS.appendChild(o);});}
 
@@ -822,7 +998,7 @@ async function loadAll(){
 
 // ── DASHBOARD ──
 function renderDashboard(){
-  var tL=STATE.libros.length, tA=STATE.autores.filter(function(a){return a.partic>0;}).length;
+  var tL=STATE.libros.length, tA=STATE.autores.length;
   var tU=STATE.regalias.reduce(function(s,r){return s+(parseFloat(r.total_regalias_usd)||0);},0);
   var tP=STATE.pagos.reduce(function(s,p){return s+(parseFloat(p.monto_usd)||0);},0);
   $('kpi-grid').innerHTML=
@@ -888,7 +1064,7 @@ async function abrirLibro(id){
   renderDrawerParts(l);
   renderDrawerPago(l); // primero con los datos que ya tiene, para no bloquear la apertura
   renderDrawerHistorial(l);
-  setVal('add-email',''); setVal('add-nombre',''); setVal('add-obra','');
+  setVal('add-email',''); setVal('add-obra',''); setVal('add-seud','');
   var ap=$('add-autor-panel'); if(ap) ap.style.display='none';
   var ic=$('toggle-add-icon'); if(ic) ic.textContent='▼';
   $('dl-import-preview').innerHTML=''; $('dl-import-ok').style.display='none';
@@ -1004,21 +1180,15 @@ function toggleAddAutor(){
 }
 
 async function addAutorDesdeForm(){
-  var email=val('add-email').trim(), nombre=val('add-nombre').trim(), obra=val('add-obra').trim();
+  var email=val('add-email').trim(), obra=val('add-obra').trim(), seud=val('add-seud').trim();
   var libroId=STATE.currentLibroId;
   if(!email||!obra){toast('Email y titulo de obra son obligatorios','err');return;}
   var rp=await db.from('personas').select('id').ilike('email',email).maybeSingle();
-  var personaId;
-  if(rp.data){personaId=rp.data.id;}
-  else{
-    if(!nombre){toast('Autor no encontrado. Ingresa el nombre para crearlo.','err');return;}
-    var rc=await db.from('personas').insert({email:email.toLowerCase(),nombre:nombre}).select('id').single();
-    if(rc.error){toast('Error creando autor: '+rc.error.message,'err');return;}
-    personaId=rc.data.id;
-  }
-  var ri=await db.from('participaciones').insert({persona_id:personaId,convocatoria_id:libroId,nombre_cuento:obra,estado:'confirmado'});
+  if(!rp.data){toast('Autor no encontrado. Usa "+ Nuevo autor" para crearlo primero.','err');return;}
+  var personaId=rp.data.id;
+  var ri=await db.from('participaciones').insert({persona_id:personaId,convocatoria_id:libroId,nombre_cuento:obra,seudonimo:seud||null,estado:'confirmado'});
   if(ri.error){toast('Error: '+ri.error.message,'err');return;}
-  toast('Autor agregado');setVal('add-email','');setVal('add-nombre','');setVal('add-obra','');
+  toast('Autor agregado');setVal('add-email','');setVal('add-obra','');setVal('add-seud','');
   await loadAll();
   var l=STATE.libros.find(function(x){return String(x.id)===String(libroId);});
   if(l){renderDrawerParts(l);renderDrawerPago(l);}
@@ -1026,29 +1196,21 @@ async function addAutorDesdeForm(){
 
 // ── NUEVO AUTOR MODAL ──
 function abrirNuevoAutor(){
-  ['na-nombre','na-email','na-seud','na-pais','na-nac','na-cuit','na-dob','na-obra'].forEach(function(id){setVal(id,'');});
+  ['na-nombre','na-email','na-seud','na-pais','na-nac','na-cuit','na-dob'].forEach(function(id){setVal(id,'');});
   openModal('modal-nuevo-autor');
 }
 async function guardarNuevoAutor(){
-  var email=val('na-email').trim(), nombre=val('na-nombre').trim(), obra=val('na-obra').trim();
+  var email=val('na-email').trim(), nombre=val('na-nombre').trim();
   if(!email||!nombre){toast('Nombre y email son obligatorios','err');return;}
   // Check duplicate
   var rcheck=await db.from('personas').select('id').ilike('email',email).maybeSingle();
   if(rcheck.data){toast('Este email ya esta registrado en la base de autores.','err');return;}
-  var payload={email:email.toLowerCase(),nombre:nombre,pais_residencia:val('na-pais').trim()||null,nacionalidad:val('na-nac').trim()||null,cuit:val('na-cuit').trim()||null,fecha_nacimiento:val('na-dob')||null};
+  var payload={email:email.toLowerCase(),nombre:nombre,seudonimo:val('na-seud').trim()||null,pais_residencia:val('na-pais').trim()||null,nacionalidad:val('na-nac').trim()||null,cuit:normalizeCuit(val('na-cuit')),fecha_nacimiento:val('na-dob')||null};
   var rp=await db.from('personas').insert(payload).select('id').single();
   if(rp.error){toast('Error: '+rp.error.message,'err');return;}
-  // If adding from libro context, also create participacion
-  if(STATE.currentLibroId&&obra){
-    await db.from('participaciones').insert({persona_id:rp.data.id,convocatoria_id:STATE.currentLibroId,nombre_cuento:obra,estado:'confirmado'});
-  }
-  toast('Autor creado'+(obra?' y agregado al libro':''));
+  toast('Autor creado');
   closeModal('modal-nuevo-autor');
   await loadAll();
-  if(STATE.currentLibroId){
-    var l=STATE.libros.find(function(x){return String(x.id)===String(STATE.currentLibroId);});
-    if(l){renderDrawerParts(l);renderDrawerPago(l);}
-  }
   renderAutores();
 }
 
@@ -1065,7 +1227,7 @@ function renderSelAutorList(q){
   var libro=STATE.libros.find(function(l){return String(l.id)===String(libroId);});
   var yaEnLibro=new Set((libro?libro.parts:[]).map(function(p){return p.persona_id;}));
   var f=STATE.autores.filter(function(a){
-    return a.partic>0&&(!ql||a.nombre&&a.nombre.toLowerCase().includes(ql)||a.email&&a.email.toLowerCase().includes(ql));
+    return(!ql||a.nombre&&a.nombre.toLowerCase().includes(ql)||a.email&&a.email.toLowerCase().includes(ql));
   });
   var cont=$('sel-autor-list');
   if(!cont)return;
@@ -1527,16 +1689,114 @@ async function downloadReport(){
   toast('Reporte descargado');
 }
 
+// ── PLANILLA XLS DE PARTICIPANTES (por libro) ──
+function downloadPartsXLS(){
+  var l=STATE.libros.find(function(x){return String(x.id)===String(STATE.currentLibroId);});
+  if(!l){toast('No se pudo identificar el libro','err');return;}
+  if(!l.parts.length){toast('Este libro no tiene participantes cargados','err');return;}
+  var autorById={};STATE.autores.forEach(function(a){autorById[a.id]=a;});
+  var rows=[['Nombre','Email','Obra','Seudonimo','Pais','CUIT/Documento']];
+  l.parts.forEach(function(p){
+    var a=autorById[p.persona_id]||{};
+    rows.push([a.nombre||'—',a.email||'—',p.nombre_cuento||'—',p.seudonimo||'—',a.pais_residencia||'—',a.cuit||'—']);
+  });
+  var wb=XLSX.utils.book_new();
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:24},{wch:26},{wch:30},{wch:20},{wch:16},{wch:18}];
+  XLSX.utils.book_append_sheet(wb,ws,'Participantes');
+  XLSX.writeFile(wb,'participantes_'+l.nombre_libro.replace(/[^a-z0-9]/gi,'_')+'.xlsx');
+  toast('Planilla descargada');
+}
+
+// ── PLANTILLA CSV DE IMPORTACION ──
+function descargarTemplate(){
+  var rows=[
+    ['Nombre','Email','Obra','Seudonimo','Pais','CUIT/Documento'],
+    ['Juan Pérez','juan.perez@email.com','El último viaje','J. P. Rivas','Argentina','20-12345678-9']
+  ];
+  var wb=XLSX.utils.book_new();
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:20},{wch:26},{wch:28},{wch:20},{wch:16},{wch:18}];
+  XLSX.utils.book_append_sheet(wb,ws,'Plantilla');
+  XLSX.writeFile(wb,'plantilla_participantes.xlsx');
+  toast('Plantilla descargada');
+}
+
+// ── IMPORTAR CSV/XLS ──
+function leerImport(e){
+  var file=e.target.files&&e.target.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      var wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array',cellDates:true});
+      var ws=wb.Sheets[wb.SheetNames[0]];
+      var rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+      var norm=function(s){return String(s||'').toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'');};
+      var getField=function(row,keys){
+        var rowKeys=Object.keys(row);
+        for(var i=0;i<keys.length;i++){
+          for(var j=0;j<rowKeys.length;j++){
+            if(norm(rowKeys[j])===keys[i]) return String(row[rowKeys[j]]).trim();
+          }
+        }
+        return '';
+      };
+      var mapped=rows.map(function(r){
+        return{
+          nombre:getField(r,['nombre','nombre completo','autor']),
+          email:getField(r,['email','correo','mail']),
+          seudonimo:getField(r,['seudonimo','pseudonimo','seudonimo publicado']),
+          nombre_obra:getField(r,['obra','titulo de la obra','titulo','nombre_cuento','cuento']),
+          pais:getField(r,['pais','pais de residencia']),
+          cuit_documento:getField(r,['cuit/documento','cuit','dni','documento','cuit/dni'])
+        };
+      }).filter(function(r){return r.email&&r.nombre_obra;});
+      if(!mapped.length){toast('El archivo no tiene filas validas (se requiere al menos Email y Obra)','err');$('dl-import-preview').innerHTML='';$('dl-import-ok').style.display='none';return;}
+      STATE.importData=mapped;
+      STATE.importLibroId=STATE.currentLibroId;
+      renderImportPreview(mapped);
+      $('dl-import-ok').style.display='inline-flex';
+    }catch(ex){
+      toast('Error al leer el archivo: '+ex.message,'err');
+      STATE.importData=[];$('dl-import-preview').innerHTML='';$('dl-import-ok').style.display='none';
+    }
+  };
+  reader.onerror=function(){toast('No se pudo leer el archivo','err');};
+  reader.readAsArrayBuffer(file);
+}
+function renderImportPreview(rows){
+  var html='<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:8px"><table><thead><tr><th>Nombre</th><th>Email</th><th>Obra</th><th>Seudónimo</th></tr></thead><tbody>'+
+    rows.map(function(r){
+      return'<tr><td>'+esc(r.nombre||(r.email?'(existente)':'—'))+'</td><td style="font-size:12px;color:var(--text3)">'+esc(r.email)+'</td><td>'+esc(r.nombre_obra)+'</td><td>'+esc(r.seudonimo||'—')+'</td></tr>';
+    }).join('')+
+    '</tbody></table></div><div style="font-size:12px;color:var(--text3)">'+rows.length+' fila(s) lista(s) para importar. Autores nuevos se crean con estos datos; en autores existentes solo se completa el CUIT si no lo tenían cargado (nombre y país no se modifican).</div>';
+  $('dl-import-preview').innerHTML=html;
+}
+
 async function ejecutarImport(){
   if(!STATE.importData.length)return;
   var btn=$('dl-import-ok'); btn.disabled=true; btn.textContent='Importando...';
   var ok=0,err=0;
   for(var i=0;i<STATE.importData.length;i++){
     var r=STATE.importData[i];
-    var rp=await db.from('personas').upsert({email:r.email.toLowerCase(),nombre:r.nombre,pais_residencia:r.pais||null,cuit:r.cuit_documento||r.cuit||null},{onConflict:'email'}).select('id').single();
-    if(rp.error){err++;continue;}
+    var cuitLimpio=normalizeCuit(r.cuit_documento||r.cuit);
+    var rp=await db.from('personas').select('id,nombre,cuit').ilike('email',r.email).maybeSingle();
+    var personaId;
+    if(rp.data){
+      personaId=rp.data.id;
+      // Autor existente: nunca pisamos nombre ni pais; el cuit solo se completa si estaba vacio
+      if(!rp.data.cuit && cuitLimpio){
+        await db.from('personas').update({cuit:cuitLimpio}).eq('id',personaId);
+      }
+    } else {
+      if(!r.nombre){err++;continue;}
+      var rc=await db.from('personas').insert({email:r.email.toLowerCase(),nombre:r.nombre,pais_residencia:r.pais||null,cuit:cuitLimpio}).select('id').single();
+      if(rc.error){err++;continue;}
+      personaId=rc.data.id;
+    }
     var obra=r.nombre_obra||r.nombre_cuento||r.nombre;
-    var ri=await db.from('participaciones').upsert({persona_id:rp.data.id,convocatoria_id:STATE.importLibroId,nombre_cuento:obra,seudonimo:r.seudonimo||null,estado:'confirmado'},{onConflict:'persona_id,convocatoria_id,nombre_cuento',ignoreDuplicates:true});
+    var ri=await db.from('participaciones').upsert({persona_id:personaId,convocatoria_id:STATE.importLibroId,nombre_cuento:obra,seudonimo:r.seudonimo||null,estado:'confirmado'},{onConflict:'persona_id,convocatoria_id,nombre_cuento',ignoreDuplicates:true});
     if(ri.error)err++;else ok++;
   }
   btn.disabled=false;btn.textContent='Confirmar importacion';
@@ -1549,19 +1809,214 @@ async function ejecutarImport(){
 }
 
 // ── AUTORES LIST ──
-function renderAutores(){
+function filteredAutores(){
   var q=(val('aut-q')||'').toLowerCase(), pais=val('aut-pais'), sort=val('aut-sort');
-  var f=STATE.autores.filter(function(a){return a.partic>0&&(!q||a.nombre&&a.nombre.toLowerCase().includes(q)||a.email&&a.email.toLowerCase().includes(q))&&(!pais||a.pais_residencia===pais);});
+  var f=STATE.autores.filter(function(a){return(!q||a.nombre&&a.nombre.toLowerCase().includes(q)||a.email&&a.email.toLowerCase().includes(q))&&(!pais||a.pais_residencia===pais);});
   if(sort==='partic') f.sort(function(a,b){return b.partic-a.partic;});
   else f.sort(function(a,b){return(a.nombre||'').localeCompare(b.nombre||'');});
+  return f;
+}
+function renderAutores(){
+  var f=filteredAutores();
+  var ac=$('aut-count'); if(ac) ac.textContent=f.length;
   $('aut-tb').innerHTML=f.length?f.map(function(a){
     return'<tr data-open-autor="'+a.id+'" style="cursor:pointer">'+
       '<td style="font-weight:500">'+esc(a.nombre)+'</td>'+
       '<td style="font-size:12px;color:var(--text3)">'+esc(a.email)+'</td>'+
+      '<td style="font-size:12px;color:var(--text3)">'+esc(a.seudonimo||'—')+'</td>'+
       '<td style="font-size:12px;color:var(--text3)">'+esc(a.pais_residencia||'—')+'</td>'+
       '<td style="text-align:center;font-weight:600">'+a.partic+'</td>'+
       '<td><button class="btn btn-secondary btn-sm">Ver detalle</button></td></tr>';
-  }).join(''):'<tr><td colspan="5" class="empty">Sin resultados</td></tr>';
+  }).join(''):'<tr><td colspan="6" class="empty">Sin resultados</td></tr>';
+}
+
+// ── EXPORTAR AUTORES (vista actual, con filtros aplicados) ──
+function downloadAutoresXLS(){
+  var f=filteredAutores();
+  if(!f.length){toast('No hay autores para exportar con los filtros actuales','err');return;}
+  var rows=[['Nombre completo','Email','Seudónimo','País de residencia','Nacionalidad','Fecha de nacimiento','CUIT/DNI/Cédula']];
+  f.forEach(function(a){
+    rows.push([a.nombre||'—',a.email||'—',a.seudonimo||'—',a.pais_residencia||'—',a.nacionalidad||'—',a.fecha_nacimiento||'—',a.cuit||'—']);
+  });
+  var wb=XLSX.utils.book_new();
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:24},{wch:26},{wch:20},{wch:16},{wch:16},{wch:14},{wch:18}];
+  XLSX.utils.book_append_sheet(wb,ws,'Autores');
+  XLSX.writeFile(wb,'autores.xlsx');
+  toast('Planilla descargada');
+}
+
+// ── PLANTILLA CSV DE AUTORES ──
+function descargarTemplateAutores(){
+  var rows=[
+    ['Nombre completo','Email','Seudónimo','País de residencia','Nacionalidad','Fecha de nacimiento','CUIT/DNI/Cédula'],
+    ['Juan Pérez','juan.perez@email.com','J. P. Rivas','Argentina','Argentina','1990-05-20','20-12345678-9']
+  ];
+  var wb=XLSX.utils.book_new();
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:24},{wch:26},{wch:20},{wch:16},{wch:16},{wch:14},{wch:18}];
+  XLSX.utils.book_append_sheet(wb,ws,'Plantilla');
+  XLSX.writeFile(wb,'plantilla_autores.xlsx');
+  toast('Plantilla descargada');
+}
+
+// ── IMPORTAR AUTORES MASIVAMENTE ──
+function leerImportAutores(e){
+  var file=e.target.files&&e.target.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      var wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array',cellDates:true});
+      var ws=wb.Sheets[wb.SheetNames[0]];
+      var rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+      var norm=function(s){return String(s||'').toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'');};
+      var getField=function(row,keys){
+        var rowKeys=Object.keys(row);
+        for(var i=0;i<keys.length;i++){
+          for(var j=0;j<rowKeys.length;j++){
+            if(norm(rowKeys[j])===keys[i]){
+              var raw=row[rowKeys[j]];
+              return(raw instanceof Date)?raw:String(raw).trim();
+            }
+          }
+        }
+        return '';
+      };
+      var mapped=rows.map(function(r){
+        return{
+          nombre:getField(r,['nombre completo','nombre','autor']),
+          email:getField(r,['email','correo','mail']),
+          seudonimo:getField(r,['seudonimo','pseudonimo']),
+          pais_residencia:getField(r,['pais de residencia','pais']),
+          nacionalidad:getField(r,['nacionalidad']),
+          fecha_nacimiento:normalizeFecha(getField(r,['fecha de nacimiento','nacimiento'])),
+          cuit:normalizeCuit(getField(r,['cuit/dni/cedula','cuit','dni','cedula','documento']))
+        };
+      }).filter(function(r){return r.email&&r.nombre;});
+      console.log('Import autores: '+rows.length+' filas leidas del archivo, '+mapped.length+' filas validas (con nombre+email)',mapped);
+      if(!mapped.length){toast('El archivo no tiene filas validas (se requiere al menos Nombre y Email)','err');return;}
+      STATE.importAutoresData=mapped;
+      renderImportAutoresPreview(mapped);
+    }catch(ex){
+      toast('Error al leer el archivo: '+ex.message,'err');
+      STATE.importAutoresData=[];$('aut-import-panel').style.display='none';$('aut-import-panel').innerHTML='';
+    }
+  };
+  reader.onerror=function(){toast('No se pudo leer el archivo','err');};
+  reader.readAsArrayBuffer(file);
+}
+function renderImportAutoresPreview(rows){
+  var panel=$('aut-import-panel');
+  var html='<div class="card" style="padding:16px">';
+  html+='<div style="font-size:13px;font-weight:600;margin-bottom:8px">Vista previa de importación ('+rows.length+' fila'+(rows.length!==1?'s':'')+')</div>';
+  html+='<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:12px;max-height:260px;overflow-y:auto"><table><thead><tr><th>Nombre</th><th>Email</th><th>Seudónimo</th><th>País</th><th>CUIT/DNI</th></tr></thead><tbody>'+
+    rows.map(function(r){
+      return'<tr><td>'+esc(r.nombre)+'</td><td style="font-size:12px;color:var(--text3)">'+esc(r.email)+'</td><td>'+esc(r.seudonimo||'—')+'</td><td>'+esc(r.pais_residencia||'—')+'</td><td>'+esc(r.cuit||'—')+'</td></tr>';
+    }).join('')+
+    '</tbody></table></div>';
+  html+='<label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text2);margin-bottom:8px;cursor:pointer"><input type="checkbox" id="aut-import-overwrite"> Sobrescribir datos existentes (para autores que ya están en la base, vinculados por email)</label>';
+  html+='<div id="aut-import-warning" style="display:none;font-size:12px;color:var(--red);background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.25);border-radius:8px;padding:8px 12px;margin-bottom:12px">⚠ Con esta opción activada, se van a pisar nombre, seudónimo, país, nacionalidad, fecha de nacimiento y CUIT de los autores existentes que coincidan por email. Esta acción no se puede deshacer.</div>';
+  html+='<div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-secondary btn-sm" id="aut-import-cancel">Cancelar</button><button class="btn btn-primary btn-sm" id="aut-import-ok">Confirmar importación</button></div>';
+  html+='</div>';
+  panel.innerHTML=html;
+  panel.style.display='block';
+  var cb=$('aut-import-overwrite');
+  if(cb) cb.addEventListener('change',function(){$('aut-import-warning').style.display=cb.checked?'block':'none';});
+}
+function cancelarImportAutores(){
+  STATE.importAutoresData=[];
+  var panel=$('aut-import-panel'); panel.style.display='none'; panel.innerHTML='';
+  var fi=$('aut-import-file'); if(fi) fi.value='';
+}
+async function ejecutarImportAutores(){
+  var rows=STATE.importAutoresData||[];
+  if(!rows.length){toast('No hay datos para importar','err');return;}
+  var overwrite=$('aut-import-overwrite')&&$('aut-import-overwrite').checked;
+  if(overwrite && !confirm2('Vas a sobrescribir los datos de los autores existentes que coincidan por email. Esta accion no se puede deshacer. ¿Confirmas?')) return;
+  var btn=$('aut-import-ok'); if(btn){btn.disabled=true;btn.textContent='Importando...';}
+  var ok=0,err=0;
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i];
+    var rp=await db.from('personas').select('id,nombre,seudonimo,pais_residencia,nacionalidad,fecha_nacimiento,cuit').ilike('email',r.email).maybeSingle();
+    if(rp.error){ console.error('Import autores - error buscando',r.email,rp.error); err++; continue; }
+    if(rp.data){
+      var payload;
+      if(overwrite){
+        payload={nombre:r.nombre||rp.data.nombre,seudonimo:r.seudonimo||null,pais_residencia:r.pais_residencia||null,nacionalidad:r.nacionalidad||null,fecha_nacimiento:r.fecha_nacimiento||null,cuit:r.cuit||null};
+      } else {
+        payload={};
+        if(!rp.data.seudonimo && r.seudonimo) payload.seudonimo=r.seudonimo;
+        if(!rp.data.pais_residencia && r.pais_residencia) payload.pais_residencia=r.pais_residencia;
+        if(!rp.data.nacionalidad && r.nacionalidad) payload.nacionalidad=r.nacionalidad;
+        if(!rp.data.fecha_nacimiento && r.fecha_nacimiento) payload.fecha_nacimiento=r.fecha_nacimiento;
+        if(!rp.data.cuit && r.cuit) payload.cuit=r.cuit;
+      }
+      if(Object.keys(payload).length){
+        var ru=await db.from('personas').update(payload).eq('id',rp.data.id);
+        if(ru.error){ console.error('Import autores - error actualizando',r.email,ru.error); err++; continue; }
+      }
+      ok++;
+    } else {
+      var rc=await db.from('personas').insert({email:r.email.toLowerCase(),nombre:r.nombre,seudonimo:r.seudonimo||null,pais_residencia:r.pais_residencia||null,nacionalidad:r.nacionalidad||null,fecha_nacimiento:r.fecha_nacimiento||null,cuit:r.cuit||null});
+      if(rc.error){ console.error('Import autores - error creando',r.email,rc.error); err++; continue; }
+      ok++;
+    }
+  }
+  if(btn){btn.disabled=false;btn.textContent='Confirmar importación';}
+  toast(ok+' autores procesados'+(err>0?', '+err+' errores':''));
+  cancelarImportAutores();
+  await loadAll();
+  renderAutores();
+}
+// ── ELIMINAR AUTOR (doble confirmacion, borrado en cascada) ──
+var DEL_AUTOR_PENDIENTE=null;
+function abrirEliminarAutor(){
+  var id=val('da-id');
+  var a=STATE.autores.find(function(x){return String(x.id)===String(id);});
+  if(!a){toast('No se pudo identificar el autor','err');return;}
+  var nPartic=a.parts?a.parts.length:0;
+  var nLibros=[...new Set((a.parts||[]).map(function(p){return p.convocatoria_id;}))].length;
+  var nPagos=STATE.pagos.filter(function(p){return String(p.persona_id)===String(id);}).length;
+  DEL_AUTOR_PENDIENTE={id:id,nombre:a.nombre,email:a.email};
+  $('del1-nombre').textContent=a.nombre;
+  $('del1-email').textContent=a.email;
+  var items=['La ficha completa del autor (datos personales, seudónimo, CUIT/DNI, etc.)'];
+  if(nPartic>0) items.push(nPartic+' participación'+(nPartic!==1?'es':'')+' / obra'+(nPartic!==1?'s':'')+' en '+nLibros+' libro'+(nLibros!==1?'s':''));
+  if(nPagos>0) items.push(nPagos+' registro'+(nPagos!==1?'s':'')+' de pago de regalías ya liquidados');
+  $('del1-detalle').innerHTML=items.map(function(i){return'<li>'+esc(i)+'</li>';}).join('');
+  openModal('modal-del-autor-1');
+}
+function pasarAPaso2Eliminar(){
+  closeModal('modal-del-autor-1');
+  if(!DEL_AUTOR_PENDIENTE)return;
+  $('del2-nombre-target').textContent=DEL_AUTOR_PENDIENTE.nombre;
+  setVal('del2-input','');
+  $('del2-eliminar').disabled=true;
+  openModal('modal-del-autor-2');
+  setTimeout(function(){var i=$('del2-input');if(i)i.focus();},50);
+}
+async function ejecutarEliminarAutor(){
+  if(!DEL_AUTOR_PENDIENTE)return;
+  var id=DEL_AUTOR_PENDIENTE.id;
+  var btn=$('del2-eliminar'); btn.disabled=true; btn.textContent='Eliminando...';
+  try{
+    var r1=await db.from('liquidaciones').delete().eq('persona_id',id);
+    if(r1.error) throw r1.error;
+    var r2=await db.from('participaciones').delete().eq('persona_id',id);
+    if(r2.error) throw r2.error;
+    var r3=await db.from('personas').delete().eq('id',id);
+    if(r3.error) throw r3.error;
+    toast('Autor eliminado definitivamente');
+    closeModal('modal-del-autor-2');
+    DEL_AUTOR_PENDIENTE=null;
+    closeAllDrawers();
+    await loadAll();
+  }catch(ex){
+    console.error('Error eliminando autor:',ex);
+    toast('Error al eliminar: '+(ex.message||'ver consola'),'err');
+    btn.disabled=false; btn.textContent='Eliminar para siempre';
+  }
 }
 function abrirAutor(id){
   var a=STATE.autores.find(function(x){return String(x.id)===String(id);});
@@ -1569,7 +2024,7 @@ function abrirAutor(id){
   setVal('da-id',id);setVal('da-titulo',a.nombre);
   $('da-titulo').textContent=a.nombre;
   $('da-sub').textContent=a.email+(a.pais_residencia?' · '+a.pais_residencia:'');
-  setVal('da-nombre',a.nombre);setVal('da-email',a.email);
+  setVal('da-nombre',a.nombre);setVal('da-email',a.email);setVal('da-seud',a.seudonimo||'');
   setVal('da-pais',a.pais_residencia||'');setVal('da-nac',a.nacionalidad||'');
   setVal('da-cuit',a.cuit||'');setVal('da-dob',a.fecha_nacimiento||'');
   // Participaciones y regalías
@@ -1594,7 +2049,7 @@ function abrirAutor(id){
 }
 async function saveAutor(){
   var id=val('da-id');
-  var res=await db.from('personas').update({nombre:val('da-nombre').trim(),email:val('da-email').trim(),pais_residencia:val('da-pais').trim()||null,nacionalidad:val('da-nac').trim()||null,cuit:val('da-cuit').trim()||null,fecha_nacimiento:val('da-dob')||null}).eq('id',id);
+  var res=await db.from('personas').update({nombre:val('da-nombre').trim(),email:val('da-email').trim(),seudonimo:val('da-seud').trim()||null,pais_residencia:val('da-pais').trim()||null,nacionalidad:val('da-nac').trim()||null,cuit:normalizeCuit(val('da-cuit')),fecha_nacimiento:val('da-dob')||null}).eq('id',id);
   if(res.error){toast('Error: '+res.error.message,'err');return;}
   toast('Autor actualizado');await loadAll();renderAutores();
   $('da-titulo').textContent=val('da-nombre');
@@ -1621,13 +2076,40 @@ function abrirEditarPago(id){
   var p=STATE.pagos.find(function(x){return String(x.id)===String(id);});
   if(!p)return;
   setVal('dp-id',id);setVal('dp-moneda',p.moneda||'USD');
-  setVal('dp-monto',p.moneda==='ARS'?(p.monto_ars||0):(p.monto_usd||0));
+  setVal('dp-monto',formatMontoMiles(p.moneda==='ARS'?(p.monto_ars||0):(p.monto_usd||0)));
+  attachMilesFormatter('dp-monto');
   setVal('dp-fecha',p.fecha_pago);setVal('dp-metodo',p.metodo_pago||'paypal');
   setVal('dp-sems',p.semestres_cubiertos||'');setVal('dp-ref',p.referencia||'');
+  renderDpSemsCheck(p);
   openDrawer('drawer-pago');
 }
+function renderDpSemsCheck(p){
+  var l=STATE.libros.find(function(x){return String(x.id)===String(p.convocatoria_id);});
+  var cont=$('dp-sems-check');
+  if(!cont)return;
+  if(!l||!l.reg.items.length){cont.innerHTML='<div style="color:var(--text3);font-size:12px">Sin semestres con regalías registradas para este libro</div>';return;}
+  var propias=new Set((p.semestres_cubiertos||'').split(',').map(function(s){return s.trim();}).filter(Boolean));
+  var items=l.reg.items.slice().sort(function(a,b){return a.semestre.localeCompare(b.semestre);});
+  cont.innerHTML=items.map(function(r){
+    var esPropio=propias.has(r.semestre);
+    var pagadoPorOtro=l.semsPaid.has(r.semestre)&&!esPropio;
+    var usd=parseFloat(r.total_regalias_usd||0), ars=parseFloat(r.total_regalias_ars||0);
+    return'<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:6px;cursor:'+(pagadoPorOtro?'default':'pointer')+';background:'+(pagadoPorOtro?'var(--surface2)':'var(--surface)')+'">'+
+      '<input type="checkbox" class="dp-sem-chk" value="'+esc(r.semestre)+'"'+((esPropio||pagadoPorOtro)?' checked':'')+(pagadoPorOtro?' disabled':'')+'>'+
+      '<div style="flex:1"><div style="font-size:12px;font-weight:600">'+esc(r.semestre)+' <span class="chip" style="font-size:10px">'+esc(r.fuente)+'</span></div>'+
+      '<div style="font-size:11px;color:var(--text3)">'+(usd>0?'USD $'+fmt(usd):'')+' '+(ars>0?'ARS $'+fmtARS(ars):'')+'</div></div>'+
+      (pagadoPorOtro?'<span class="badge b-green" style="font-size:10px">Pagado (otro pago)</span>':'')+
+    '</label>';
+  }).join('');
+  actualizarDpSemsHidden();
+}
+function actualizarDpSemsHidden(){
+  var vals=[];
+  document.querySelectorAll('.dp-sem-chk:checked').forEach(function(cb){vals.push(cb.value);});
+  setVal('dp-sems',vals.join(', '));
+}
 async function savePago(){
-  var id=val('dp-id'), moneda=val('dp-moneda'), monto=parseFloat(val('dp-monto'));
+  var id=val('dp-id'), moneda=val('dp-moneda'), monto=parseMontoMiles(val('dp-monto'));
   var payload={moneda:moneda,fecha_pago:val('dp-fecha'),metodo_pago:val('dp-metodo'),semestres_cubiertos:val('dp-sems')||null,referencia:val('dp-ref')||null};
   if(moneda==='USD'){payload.monto_usd=monto;payload.monto_ars=null;}else{payload.monto_ars=monto;payload.monto_usd=0;}
   var res=await db.from('liquidaciones').update(payload).eq('id',id);
