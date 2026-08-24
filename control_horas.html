@@ -714,7 +714,7 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
     <div class="user-month-kpis">
       <div class="user-month-kpi"><div class="label">Horas trabajadas</div><div class="value" id="resumen-mes-horas">—</div></div>
       <div class="user-month-kpi highlight"><div class="label">Objetivo</div><div class="value" id="resumen-usuario-objetivo">—</div></div>
-      <div class="user-month-kpi"><div class="label">Cumplimiento</div><div class="value" id="resumen-usuario-cumplimiento">—</div></div>
+      <div class="user-month-kpi"><div class="label">Avance del objetivo</div><div class="value" id="resumen-usuario-cumplimiento">—</div></div>
       <div class="user-month-kpi"><div class="label">Días con actividad</div><div class="value" id="resumen-mes-dias">—</div></div>
     </div>
     <div class="presencia-titulo" style="margin-bottom:9px;">Actividad de esta semana</div>
@@ -965,7 +965,7 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
       <div class="stat-panel"><div class="stat-panel-head"><div><div class="stat-panel-title">Horas por sello</div><div class="stat-panel-note">Distribución del esfuerzo entre sellos.</div></div></div><div id="stat-sellos-chart"><div class="loading-text">Cargando…</div></div></div>
       <div class="stat-panel full"><div class="stat-panel-head"><div><div class="stat-panel-title">Evolución frente al objetivo</div><div class="stat-panel-note">Trabajo real y referencia laboral. Fines de semana y feriados registrados tienen objetivo cero.</div></div></div><div id="stat-tendencia-chart"><div class="loading-text">Cargando…</div></div></div>
       <div class="stat-panel full"><div class="stat-panel-head"><div><div class="stat-panel-title">Franja horaria más utilizada</div><div class="stat-panel-note">Distribución del tiempo activo real en el período seleccionado.</div></div><div class="stat-highlight" id="stat-franja-destacada">—</div></div><div id="stat-horas-chart"><div class="loading-text">Cargando…</div></div></div>
-      <div class="stat-panel full"><div class="stat-panel-head"><div><div class="stat-panel-title">Promedio por día de la semana</div><div class="stat-panel-note">Horas activas promedio por jornada, usando el histórico completo. Este gráfico refleja la duración media de una jornada trabajada, no el cumplimiento del objetivo ni las ausencias.</div></div></div><div id="stat-diasemana-chart"><div class="loading-text">Cargando…</div></div></div>
+      <div class="stat-panel full"><div class="stat-panel-head"><div><div class="stat-panel-title">Promedio por día de la semana</div><div class="stat-panel-note">Horas activas promedio por jornada, usando el histórico completo. Este gráfico refleja la duración media de una jornada trabajada, no el avance hacia el objetivo ni las ausencias.</div></div></div><div id="stat-diasemana-chart"><div class="loading-text">Cargando…</div></div></div>
     </div>
   </div>
 </div>
@@ -2886,7 +2886,7 @@ async function cargarEstadisticas(){
     <div class="stat-kpi"><div class="label">Horas trabajadas</div><div class="value">${fmtHM(total)}</div><div class="hint">Tiempo activo acumulado</div></div>
     <div class="stat-kpi"><div class="label">Objetivo al día</div><div class="value">${fmtHM(referenciaPeriodo.segundos)}</div><div class="hint">${referenciaPeriodo.diasLaborables} días hábiles, sin feriados</div></div>
     <div class="stat-kpi"><div class="label">Diferencia</div><div class="value" style="color:${claseDiferencia}">${diferencia >= 0 ? "+" : "−"}${fmtHM(Math.abs(diferencia))}</div><div class="hint">Respecto de la referencia</div></div>
-    <div class="stat-kpi"><div class="label">Cumplimiento</div><div class="value">${referenciaPeriodo.segundos > 0 ? `${cumplimiento.toFixed(0)}%` : "—"}</div><div class="hint">Trabajado / objetivo</div></div>
+    <div class="stat-kpi"><div class="label">Avance del objetivo</div><div class="value">${referenciaPeriodo.segundos > 0 ? `${cumplimiento.toFixed(0)}%` : "—"}</div><div class="hint">Horas registradas frente a la referencia</div></div>
     <div class="stat-kpi"><div class="label">Promedio por jornada</div><div class="value">${sesiones.length ? fmtHM(total/sesiones.length) : "0h 00m"}</div><div class="hint">Sin contar las pausas</div></div>
     <div class="stat-kpi"><div class="label">Jornadas sin registro</div><div class="value">${jornadasSinRegistro}</div><div class="hint">Excluye sábados, domingos y feriados</div></div>`;
 
