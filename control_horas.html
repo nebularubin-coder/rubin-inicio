@@ -1930,6 +1930,7 @@ let rangoAdminActual = null;
 let feriadosCache = [];
 let objetivosDisponibles = true;
 let inicioHistoricoEquipo = null;
+let iniciosHistoricosUsuarios = {};
 
 function calcularRango(tipo){
   const hoy = new Date();
@@ -2098,24 +2099,52 @@ function normalizarInicioHistorico(fecha){
   return d;
 }
 
-function ajustarInicioHistorico(desde){
+function inicioHistoricoDeUsuario(usuarioId){
+  return Object.prototype.hasOwnProperty.call(iniciosHistoricosUsuarios, usuarioId)
+    ? iniciosHistoricosUsuarios[usuarioId]
+    : inicioHistoricoEquipo;
+}
+
+function ajustarInicioHistorico(desde, usuarioId = "todos"){
   const inicio = new Date(desde); inicio.setHours(0,0,0,0);
-  return inicioHistoricoEquipo && inicio < inicioHistoricoEquipo ? new Date(inicioHistoricoEquipo) : inicio;
+  const referencia = usuarioId === "todos" ? inicioHistoricoEquipo : inicioHistoricoDeUsuario(usuarioId);
+  return referencia && inicio < referencia ? new Date(referencia) : inicio;
+}
+
+async function cargarIniciosHistoricosUsuarios(perfiles = []){
+  const { data, error } = await sb.rpc("get_primeros_registros_equipo");
+  if(!error && Array.isArray(data)){
+    data.forEach(fila => {
+      const inicio = normalizarInicioHistorico(fila.primer_registro);
+      if(inicio) iniciosHistoricosUsuarios[fila.user_id] = inicio;
+    });
+  }
+
+  // Compatibilidad mientras se vuelve a ejecutar SUPABASE_INICIO_HISTORICO.sql.
+  const candidatos = perfiles.length
+    ? perfiles.filter(p => !p.is_admin)
+    : (currentPerfil && !currentPerfil.is_admin ? [currentPerfil] : []);
+  await Promise.all(candidatos.filter(p => !Object.prototype.hasOwnProperty.call(iniciosHistoricosUsuarios, p.id)).map(async p => {
+    const { data: primero } = await sb.from("timer_eventos")
+      .select("creado_en")
+      .eq("user_id", p.id)
+      .order("creado_en", { ascending:true })
+      .limit(1);
+    const inicio = normalizarInicioHistorico(primero?.[0]?.creado_en);
+    iniciosHistoricosUsuarios[p.id] = inicio;
+  }));
 }
 
 async function cargarInicioHistoricoEquipo(){
   const { data, error } = await sb.rpc("get_primer_registro_equipo");
   if(!error && data){
     inicioHistoricoEquipo = normalizarInicioHistorico(data);
-    return;
   }
-  // Respaldo compatible mientras se ejecuta la migración: cada usuario usa su primer registro propio.
-  const { data: propio } = await sb.from("timer_eventos")
-    .select("creado_en")
-    .eq("user_id", currentUser.id)
-    .order("creado_en", { ascending:true })
-    .limit(1);
-  inicioHistoricoEquipo = normalizarInicioHistorico(propio?.[0]?.creado_en);
+  await cargarIniciosHistoricosUsuarios();
+  if(!inicioHistoricoEquipo){
+    const inicios = Object.values(iniciosHistoricosUsuarios).filter(Boolean);
+    inicioHistoricoEquipo = inicios.length ? new Date(Math.min(...inicios.map(d => d.getTime()))) : null;
+  }
 }
 
 async function cargarFeriadosBase(){
@@ -2146,7 +2175,7 @@ function esDiaLaborable(fecha, feriados = new Set(feriadosCache.map(f => f.fecha
 }
 
 function calcularObjetivoPeriodo(desde, hasta, usuarioId = "todos", incluirFuturo = false){
-  const inicio = ajustarInicioHistorico(desde);
+  const inicio = ajustarInicioHistorico(desde, usuarioId);
   const limiteNatural = new Date(hasta); limiteNatural.setHours(23,59,59,999);
   const hoy = new Date(); hoy.setHours(23,59,59,999);
   const limite = incluirFuturo ? limiteNatural : new Date(Math.min(limiteNatural.getTime(), hoy.getTime()));
@@ -2157,20 +2186,26 @@ function calcularObjetivoPeriodo(desde, hasta, usuarioId = "todos", incluirFutur
   let jornadasEsperadas = 0;
   for(let cursor = new Date(inicio); cursor <= limite; cursor.setDate(cursor.getDate()+1)){
     if(!esDiaLaborable(cursor, feriados)) continue;
-    diasLaborables++;
+    let huboObjetivoDia = false;
     perfiles.forEach(p => {
+      const inicioPersona = inicioHistoricoDeUsuario(p.id);
+      if(!inicioPersona || cursor < inicioPersona) return;
       segundos += horasObjetivoPerfil(p) * 3600;
       jornadasEsperadas++;
+      huboObjetivoDia = true;
     });
+    if(huboObjetivoDia) diasLaborables++;
   }
   return { segundos, diasLaborables, jornadasEsperadas, cantidadPersonas: perfiles.length };
 }
 
 function objetivoParaFecha(fecha, usuarioId = "todos"){
   const diaEvaluado = new Date(fecha); diaEvaluado.setHours(0,0,0,0);
-  if(inicioHistoricoEquipo && diaEvaluado < inicioHistoricoEquipo) return 0;
   if(!esDiaLaborable(fecha)) return 0;
-  return perfilesConObjetivo(usuarioId).reduce((total,p) => total + horasObjetivoPerfil(p) * 3600,0);
+  return perfilesConObjetivo(usuarioId).reduce((total,p) => {
+    const inicioPersona = inicioHistoricoDeUsuario(p.id);
+    return !inicioPersona || diaEvaluado < inicioPersona ? total : total + horasObjetivoPerfil(p) * 3600;
+  },0);
 }
 
 async function cargarObjetivosLaborales(){
@@ -2197,7 +2232,7 @@ function renderPanelObjetivos(){
     : "Ejecutá SUPABASE_OBJETIVOS_LABORALES.sql para activar objetivos y feriados.";
   $("feriados-chips").innerHTML = feriadosMes.length ? feriadosMes.map(f => `<span class="feriado-chip">${escapeHtml(fmtFecha(`${f.fecha}T12:00:00`))} · ${escapeHtml(f.nombre)} <button data-feriado-eliminar="${f.fecha}" aria-label="Eliminar ${escapeAttr(f.nombre)}">×</button></span>`).join("") : '<span class="objetivo-note">Sin feriados registrados para este mes.</span>';
   $("objetivos-lista").innerHTML = perfilesConObjetivo().sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => {
-    const objetivoMes = referencia.diasLaborables * horasObjetivoPerfil(p) * 3600;
+    const objetivoMes = calcularObjetivoPeriodo(desde, hasta, p.id, true).segundos;
     return `<div class="objetivo-persona" data-user-id="${p.id}"><span class="objetivo-persona-nombre" title="${escapeAttr(p.nombre)}"><strong>${escapeHtml(p.nombre)}</strong><small>${escapeHtml(p.sello || "Sin sello")}</small></span><input class="objetivo-horas" type="number" min="0" max="24" step="0.25" value="${horasObjetivoPerfil(p)}" aria-label="Horas diarias de ${escapeAttr(p.nombre)}"><span class="objetivo-persona-meta"><span>Objetivo mes</span><strong>${fmtHM(objetivoMes)}</strong></span><button class="filter-btn objetivo-guardar">Guardar</button></div>`;
   }).join("");
 }
@@ -2263,6 +2298,7 @@ async function iniciarPanelAdmin(){
   }
   perfilesCache = {};
   (perfiles || []).forEach(p => perfilesCache[p.id] = p);
+  await cargarIniciosHistoricosUsuarios(perfiles || []);
 
   const select = $("filter-usuario");
   (perfiles || [])
@@ -2807,7 +2843,7 @@ async function cargarEstadisticas(){
 
   const eventosEquipo = usuarioStat === "todos" ? (eventos || []).filter(ev => esUsuarioEquipo(ev.user_id)) : (eventos || []);
   const sesiones = reconstruirSesiones(eventosEquipo);
-  const desdeObjetivo = ajustarInicioHistorico(desde);
+  const desdeObjetivo = ajustarInicioHistorico(desde, usuarioStat);
 
   const porPersona = {};
   const porSello = {};
@@ -2856,7 +2892,7 @@ async function cargarEstadisticas(){
 
   const agruparPorMes = statRangoActivo === "anio" || statRangoActivo === "todo";
   const tendencia = {};
-  const inicioGrafico = ajustarInicioHistorico(desde);
+  const inicioGrafico = ajustarInicioHistorico(desde, usuarioStat);
   inicioGrafico.setHours(0,0,0,0);
   const finGrafico = new Date(Math.min(hasta.getTime(),Date.now())); finGrafico.setHours(23,59,59,999);
   for(let cursor = new Date(inicioGrafico); cursor <= finGrafico; cursor.setDate(cursor.getDate()+1)){
@@ -3204,7 +3240,8 @@ async function cargarResumenMes(){
   $("resumen-dias-semana").innerHTML = nombres.map((nombre,i) => {
     const fecha = new Date(inicioSemana); fecha.setDate(inicioSemana.getDate()+i);
     const trabajo = diasSemanaTrabajados.has(claveFechaLocal(fecha));
-    const fueraDeReferencia = fecha > hoy || !esDiaLaborable(fecha) || (inicioHistoricoEquipo && fecha < inicioHistoricoEquipo);
+    const inicioUsuario = inicioHistoricoDeUsuario(currentUser.id);
+    const fueraDeReferencia = fecha > hoy || !esDiaLaborable(fecha) || !inicioUsuario || fecha < inicioUsuario;
     const estado = fueraDeReferencia ? "future" : trabajo ? "worked" : "missed";
     const texto = fecha > hoy ? "Pendiente" : fueraDeReferencia ? "Fuera del objetivo" : trabajo ? "Con registro" : "Sin registro";
     return `<div class="week-day ${estado}" title="${texto}"><span>${nombre}</span><strong>${fecha.getDate()}</strong></div>`;
