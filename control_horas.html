@@ -597,7 +597,8 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   .timer-presencia{width:100%;max-width:520px;margin-top:22px;}.timer-presencia .presencia-lista{flex-direction:row;flex-wrap:wrap;}.timer-presencia .presencia-item{flex:1 1 180px;}
   .user-dashboard{width:100%;max-width:680px;display:grid;grid-template-columns:1fr;gap:16px;margin-top:18px;}
   .user-dashboard .wide-card{grid-column:1/-1;}
-  .user-month-kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 18px;}.user-month-kpi{background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:13px;}.user-month-kpi .label{font-size:10px;color:var(--paper-dim);text-transform:uppercase;letter-spacing:.06em}.user-month-kpi .value{font-family:'Space Mono',monospace;font-size:19px;margin-top:5px;}
+  .user-summary-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.user-summary-tabs{display:flex;gap:3px;padding:3px;background:var(--ink);border:1px solid var(--line);border-radius:10px}.user-summary-tab{border:0;background:transparent;color:var(--paper-dim);border-radius:7px;padding:6px 10px;font-size:10px;font-weight:600;cursor:pointer}.user-summary-tab.active{background:var(--surface-2);color:var(--paper);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .user-month-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0 18px;}.user-month-kpi{background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:13px;}.user-month-kpi .label{font-size:10px;color:var(--paper-dim);text-transform:uppercase;letter-spacing:.06em}.user-month-kpi .value{font-family:'Space Mono',monospace;font-size:19px;margin-top:5px;}.user-month-kpi.highlight{border-color:color-mix(in srgb,var(--gold) 48%,var(--line));background:color-mix(in srgb,var(--gold) 6%,var(--ink))}.user-month-kpi.highlight .value{color:var(--gold)}
   .week-days{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;}.week-day{display:flex;flex-direction:column;align-items:center;gap:5px;border:1px solid var(--line);border-radius:9px;padding:8px 3px;color:var(--paper-dim);font-size:10px;}.week-day strong{font-family:'Space Mono',monospace;font-size:12px;color:var(--paper)}.week-day.worked{background:color-mix(in srgb,var(--ok) 13%,transparent);border-color:color-mix(in srgb,var(--ok) 55%,var(--line));}.week-day.worked strong{color:var(--ok)}.week-day.missed{background:color-mix(in srgb,var(--stamp) 10%,transparent);border-color:color-mix(in srgb,var(--stamp) 45%,var(--line));}.week-day.missed strong{color:var(--stamp)}.week-day.future{opacity:.45;}
   #semana-lista-usuario{max-height:330px;overflow-y:auto;overscroll-behavior:contain;padding-right:5px;scrollbar-width:thin;scrollbar-color:var(--gold-dim) transparent;}
   #semana-lista-usuario::-webkit-scrollbar{width:7px;}#semana-lista-usuario::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:10px;}
@@ -610,7 +611,7 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   @media(max-width:760px){
     .topbar{padding:12px 14px;align-items:flex-start}.brand{font-size:15px}.topbar-right{gap:8px;flex-wrap:wrap;justify-content:flex-end}.topbar-right>span{display:none}
     .container{padding:28px 16px}.admin-tabs{width:100%;overflow-x:auto;gap:20px}.filters{gap:8px}.filter-dates{width:100%;flex-wrap:wrap}.filter-dates input{flex:1;min-width:125px}
-    .admin-header h1{font-size:28px}.admin-header{align-items:flex-start}.stat-toolbar{flex-direction:column}.chart-mode{width:100%;justify-content:flex-end}.chart-mode-label{margin-right:auto}.stat-kpis{grid-template-columns:1fr 1fr}.stat-grid,.news-editor-grid,.user-dashboard{grid-template-columns:1fr}.stat-panel.full,.user-dashboard .wide-card{grid-column:auto}.stat-panel{padding:14px}.stat-panel-head{flex-direction:column}.stat-highlight{white-space:normal}.week-days{gap:4px}.week-day{padding:7px 1px}.timer-presencia .presencia-lista{flex-direction:column}.objetivo-panel{padding:14px}.objetivo-head{flex-direction:column}.objetivo-kpis{grid-template-columns:1fr 1fr 1fr;min-width:0;width:100%}.objetivo-layout{grid-template-columns:1fr}.objetivo-persona{grid-template-columns:minmax(95px,1fr) 68px 88px}.objetivo-persona .filter-btn{grid-column:1/-1;width:100%}
+    .admin-header h1{font-size:28px}.admin-header{align-items:flex-start}.stat-toolbar{flex-direction:column}.chart-mode{width:100%;justify-content:flex-end}.chart-mode-label{margin-right:auto}.stat-kpis{grid-template-columns:1fr 1fr}.stat-grid,.news-editor-grid,.user-dashboard{grid-template-columns:1fr}.stat-panel.full,.user-dashboard .wide-card{grid-column:auto}.stat-panel{padding:14px}.stat-panel-head{flex-direction:column}.stat-highlight{white-space:normal}.week-days{gap:4px}.week-day{padding:7px 1px}.timer-presencia .presencia-lista{flex-direction:column}.objetivo-panel{padding:14px}.objetivo-head{flex-direction:column}.objetivo-kpis{grid-template-columns:1fr 1fr 1fr;min-width:0;width:100%}.objetivo-layout{grid-template-columns:1fr}.objetivo-persona{grid-template-columns:minmax(95px,1fr) 68px 88px}.objetivo-persona .filter-btn{grid-column:1/-1;width:100%}.user-month-kpis{grid-template-columns:1fr 1fr}.user-summary-head{align-items:flex-start}.user-summary-tabs{width:100%}.user-summary-tab{flex:1}
     .stamp-wrap{width:250px;height:250px}.stamp-wrap svg{width:250px;height:250px}.stamp-time{font-size:34px}
   }
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important;}}
@@ -702,9 +703,18 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   </div>
 
   <div class="section-card wide-card" id="resumen-mes-usuario">
-    <div class="presencia-titulo" id="resumen-mes-titulo">Tu mes</div>
+    <div class="user-summary-head">
+      <div class="presencia-titulo" id="resumen-mes-titulo" style="margin:0;">Tu mes</div>
+      <div class="user-summary-tabs" role="group" aria-label="Período del resumen">
+        <button class="user-summary-tab" data-user-summary="hoy">Hoy</button>
+        <button class="user-summary-tab" data-user-summary="semana">Semana</button>
+        <button class="user-summary-tab active" data-user-summary="mes">Mes</button>
+      </div>
+    </div>
     <div class="user-month-kpis">
       <div class="user-month-kpi"><div class="label">Horas trabajadas</div><div class="value" id="resumen-mes-horas">—</div></div>
+      <div class="user-month-kpi highlight"><div class="label">Objetivo</div><div class="value" id="resumen-usuario-objetivo">—</div></div>
+      <div class="user-month-kpi"><div class="label">Cumplimiento</div><div class="value" id="resumen-usuario-cumplimiento">—</div></div>
       <div class="user-month-kpi"><div class="label">Días con actividad</div><div class="value" id="resumen-mes-dias">—</div></div>
     </div>
     <div class="presencia-titulo" style="margin-bottom:9px;">Actividad de esta semana</div>
@@ -1275,19 +1285,20 @@ function conBloqueo(boton, fn){
 let todosEventosCache = [];
 
 async function refrescarEstadoTimer(){
-  const { data, error } = await sb
+  const { data, error } = await consultarPaginado((inicio, fin) => sb
     .from("timer_eventos")
-    .select("tipo, creado_en")
+    .select("id, tipo, creado_en")
     .eq("user_id", currentUser.id)
-    .order("creado_en", { ascending: false })
-    .limit(500);
+    .order("creado_en", { ascending: true })
+    .order("id", { ascending: true })
+    .range(inicio, fin));
 
   if(error){
     console.error(error);
     return;
   }
 
-  todosEventosCache = (data || []).reverse();
+  todosEventosCache = data || [];
   const estado = calcularEstadoActual(todosEventosCache);
   aplicarEstadoTimer(estado);
 }
@@ -1408,15 +1419,15 @@ let autoDesactivarInterval = null;
 const realtimeDebounces = {};
 const TAMANO_PAGINA_DB = 500;
 
-async function consultarPaginado(crearConsulta, maxFilas = 10000){
+async function consultarPaginado(crearConsulta){
   const acumulado = [];
-  for(let inicio = 0; inicio < maxFilas; inicio += TAMANO_PAGINA_DB){
-    const fin = Math.min(inicio + TAMANO_PAGINA_DB, maxFilas) - 1;
+  for(let inicio = 0; ; inicio += TAMANO_PAGINA_DB){
+    const fin = inicio + TAMANO_PAGINA_DB - 1;
     const { data, error } = await crearConsulta(inicio, fin);
     if(error) return { data: acumulado, error };
     const lote = data || [];
     acumulado.push(...lote);
-    if(lote.length < (fin - inicio + 1)) break;
+    if(lote.length < TAMANO_PAGINA_DB) break;
   }
   return { data: acumulado, error: null };
 }
@@ -1430,7 +1441,10 @@ function debounceRealtime(clave, funcion, espera = 450){
 const HORA_DESACTIVACION = 23;
 
 async function cargarQuienEstaTrabajando(){
-  const { data, error } = await sb.from("v_estado_actual_usuarios").select("user_id, estado, nombre, sello").limit(TAMANO_PAGINA_DB);
+  const { data, error } = await consultarPaginado((inicio, fin) => sb.from("v_estado_actual_usuarios")
+    .select("user_id, estado, nombre, sello")
+    .order("user_id", { ascending:true })
+    .range(inicio, fin));
   if(error){ console.error(error); return; }
   presenciaTrabajando = (data || []).filter(r => r.estado === "running" || r.estado === "paused");
   renderPresencia();
@@ -1664,6 +1678,8 @@ async function despuesDeLogin(user){
   }
 
   currentPerfil = perfil;
+  perfilesCache[perfil.id] = perfil;
+  await Promise.all([cargarInicioHistoricoEquipo(), cargarFeriadosBase()]);
   hide($("view-login"));
   show($("topbar"));
   $("topbar-nombre").textContent = `${perfil.nombre} · ${perfil.sello}`;
@@ -1673,7 +1689,7 @@ async function despuesDeLogin(user){
 
   if(perfil.is_admin){
     show($("view-admin"));
-    iniciarPanelAdmin();
+    await iniciarPanelAdmin();
   } else {
     show($("view-timer"));
     show($("btn-floating-timer"));
@@ -1913,6 +1929,7 @@ let perfilesCache = {};
 let rangoAdminActual = null;
 let feriadosCache = [];
 let objetivosDisponibles = true;
+let inicioHistoricoEquipo = null;
 
 function calcularRango(tipo){
   const hoy = new Date();
@@ -2073,6 +2090,43 @@ function fechaDesdeClave(clave){
   return new Date(`${clave}T00:00:00`);
 }
 
+function normalizarInicioHistorico(fecha){
+  if(!fecha) return null;
+  const d = new Date(fecha);
+  if(!Number.isFinite(d.getTime())) return null;
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function ajustarInicioHistorico(desde){
+  const inicio = new Date(desde); inicio.setHours(0,0,0,0);
+  return inicioHistoricoEquipo && inicio < inicioHistoricoEquipo ? new Date(inicioHistoricoEquipo) : inicio;
+}
+
+async function cargarInicioHistoricoEquipo(){
+  const { data, error } = await sb.rpc("get_primer_registro_equipo");
+  if(!error && data){
+    inicioHistoricoEquipo = normalizarInicioHistorico(data);
+    return;
+  }
+  // Respaldo compatible mientras se ejecuta la migración: cada usuario usa su primer registro propio.
+  const { data: propio } = await sb.from("timer_eventos")
+    .select("creado_en")
+    .eq("user_id", currentUser.id)
+    .order("creado_en", { ascending:true })
+    .limit(1);
+  inicioHistoricoEquipo = normalizarInicioHistorico(propio?.[0]?.creado_en);
+}
+
+async function cargarFeriadosBase(){
+  const { data, error } = await consultarPaginado((inicio, fin) => sb.from("timer_feriados")
+    .select("fecha, nombre")
+    .order("fecha", { ascending:true })
+    .range(inicio, fin));
+  if(error){ objetivosDisponibles = false; feriadosCache = []; }
+  else feriadosCache = data || [];
+}
+
 function perfilesConObjetivo(usuarioId = "todos"){
   return Object.values(perfilesCache).filter(p => !p.is_admin && (usuarioId === "todos" || p.id === usuarioId));
 }
@@ -2092,7 +2146,7 @@ function esDiaLaborable(fecha, feriados = new Set(feriadosCache.map(f => f.fecha
 }
 
 function calcularObjetivoPeriodo(desde, hasta, usuarioId = "todos", incluirFuturo = false){
-  const inicio = new Date(desde); inicio.setHours(0,0,0,0);
+  const inicio = ajustarInicioHistorico(desde);
   const limiteNatural = new Date(hasta); limiteNatural.setHours(23,59,59,999);
   const hoy = new Date(); hoy.setHours(23,59,59,999);
   const limite = incluirFuturo ? limiteNatural : new Date(Math.min(limiteNatural.getTime(), hoy.getTime()));
@@ -2113,6 +2167,8 @@ function calcularObjetivoPeriodo(desde, hasta, usuarioId = "todos", incluirFutur
 }
 
 function objetivoParaFecha(fecha, usuarioId = "todos"){
+  const diaEvaluado = new Date(fecha); diaEvaluado.setHours(0,0,0,0);
+  if(inicioHistoricoEquipo && diaEvaluado < inicioHistoricoEquipo) return 0;
   if(!esDiaLaborable(fecha)) return 0;
   return perfilesConObjetivo(usuarioId).reduce((total,p) => total + horasObjetivoPerfil(p) * 3600,0);
 }
@@ -2120,13 +2176,7 @@ function objetivoParaFecha(fecha, usuarioId = "todos"){
 async function cargarObjetivosLaborales(){
   const mesActual = claveMes(new Date());
   if(!$("objetivo-mes").value) $("objetivo-mes").value = mesActual;
-  const { data, error } = await sb.from("timer_feriados").select("fecha, nombre").order("fecha", { ascending:true }).limit(TAMANO_PAGINA_DB);
-  if(error){
-    objetivosDisponibles = false;
-    feriadosCache = [];
-  }else{
-    feriadosCache = data || [];
-  }
+  await cargarFeriadosBase();
   renderPanelObjetivos();
 }
 
@@ -2199,9 +2249,15 @@ $("objetivos-lista").addEventListener("click", async e => {
 });
 
 async function iniciarPanelAdmin(){
-  let { data: perfiles, error: errorPerfiles } = await sb.from("timer_perfiles").select("id, nombre, sello, is_admin, horas_diarias_objetivo, fecha_inicio_objetivo").limit(TAMANO_PAGINA_DB);
+  let { data: perfiles, error: errorPerfiles } = await consultarPaginado((inicio, fin) => sb.from("timer_perfiles")
+    .select("id, nombre, sello, is_admin, horas_diarias_objetivo, fecha_inicio_objetivo")
+    .order("id", { ascending:true })
+    .range(inicio, fin));
   if(errorPerfiles){
-    const respaldo = await sb.from("timer_perfiles").select("id, nombre, sello, is_admin").limit(TAMANO_PAGINA_DB);
+    const respaldo = await consultarPaginado((inicio, fin) => sb.from("timer_perfiles")
+      .select("id, nombre, sello, is_admin")
+      .order("id", { ascending:true })
+      .range(inicio, fin));
     perfiles = respaldo.data || [];
     objetivosDisponibles = false;
   }
@@ -2370,8 +2426,8 @@ let noticiasLecturasCache = [];
 
 async function cargarNoticiasAdmin(){
   const [{ data, error }, { data: lecturas, error: errorLecturas }] = await Promise.all([
-    consultarPaginado((inicio, fin) => sb.from("noticias").select("id, titulo, mensaje, activa, creado_en, prioridad").order("creado_en", { ascending: false }).range(inicio, fin), TAMANO_PAGINA_DB),
-    consultarPaginado((inicio, fin) => sb.from("noticias_lecturas").select("noticia_id, user_id, leido_en").order("leido_en", { ascending: false }).range(inicio, fin))
+    consultarPaginado((inicio, fin) => sb.from("noticias").select("id, titulo, mensaje, activa, creado_en, prioridad").order("creado_en", { ascending: false }).order("id", { ascending:false }).range(inicio, fin)),
+    consultarPaginado((inicio, fin) => sb.from("noticias_lecturas").select("noticia_id, user_id, leido_en").order("leido_en", { ascending: false }).order("noticia_id", { ascending:true }).order("user_id", { ascending:true }).range(inicio, fin))
   ]);
   const cont = $("noticias-lista-admin");
   if(error){
@@ -2553,6 +2609,7 @@ async function cargarYRenderizarAdmin(desde, hasta, silencioso = false){
     .gte("creado_en", desde.toISOString())
     .lte("creado_en", hasta.toISOString())
     .order("creado_en", { ascending: true })
+    .order("id", { ascending: true })
     .range(inicio, fin));
 
   if(error){
@@ -2736,7 +2793,7 @@ async function cargarEstadisticas(){
       .gte("creado_en", desde.toISOString())
       .lte("creado_en", hasta.toISOString());
     if(usuarioStat !== "todos") consulta = consulta.eq("user_id", usuarioStat);
-    return consulta.order("creado_en", { ascending: true }).range(inicio, fin);
+    return consulta.order("creado_en", { ascending: true }).order("id", { ascending:true }).range(inicio, fin);
   });
 
   if(error){
@@ -2750,10 +2807,7 @@ async function cargarEstadisticas(){
 
   const eventosEquipo = usuarioStat === "todos" ? (eventos || []).filter(ev => esUsuarioEquipo(ev.user_id)) : (eventos || []);
   const sesiones = reconstruirSesiones(eventosEquipo);
-  const primeraSesion = sesiones.length ? new Date(Math.min(...sesiones.map(s => new Date(s.horaInicio).getTime()))) : null;
-  const desdeObjetivo = statRangoActivo === "todo"
-    ? (primeraSesion || new Date(Date.now()+86400000))
-    : desde;
+  const desdeObjetivo = ajustarInicioHistorico(desde);
 
   const porPersona = {};
   const porSello = {};
@@ -2802,9 +2856,7 @@ async function cargarEstadisticas(){
 
   const agruparPorMes = statRangoActivo === "anio" || statRangoActivo === "todo";
   const tendencia = {};
-  const inicioSesiones = sesiones.map(s => new Date(s.horaInicio));
-  const inicioDisponible = inicioSesiones.sort((a,b)=>a-b)[0] || new Date();
-  const inicioGrafico = statRangoActivo === "todo" ? new Date(Math.max(desde.getTime(),inicioDisponible.getTime())) : new Date(desde);
+  const inicioGrafico = ajustarInicioHistorico(desde);
   inicioGrafico.setHours(0,0,0,0);
   const finGrafico = new Date(Math.min(hasta.getTime(),Date.now())); finGrafico.setHours(23,59,59,999);
   for(let cursor = new Date(inicioGrafico); cursor <= finGrafico; cursor.setDate(cursor.getDate()+1)){
@@ -2878,7 +2930,7 @@ async function cargarEstadisticaDiaSemana(){
       .from("timer_eventos")
       .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos");
     if(usuarioStat !== "todos") consulta = consulta.eq("user_id", usuarioStat);
-    return consulta.order("creado_en", { ascending: true }).range(inicio, fin);
+    return consulta.order("creado_en", { ascending: true }).order("id", { ascending:true }).range(inicio, fin);
   });
 
   if(error){
@@ -2937,8 +2989,8 @@ async function cargarNoticiasUsuario(){
   }
 
   const [{ data: noticias, error }, { data: lecturas, error: errorLecturas }] = await Promise.all([
-    sb.from("noticias").select("id, titulo, mensaje, activa, creado_en, prioridad").eq("activa", true).order("creado_en", { ascending: false }).limit(TAMANO_PAGINA_DB),
-    sb.from("noticias_lecturas").select("noticia_id, leido_en").eq("user_id", currentUser.id).limit(TAMANO_PAGINA_DB)
+    consultarPaginado((inicio, fin) => sb.from("noticias").select("id, titulo, mensaje, activa, creado_en, prioridad").eq("activa", true).order("creado_en", { ascending: false }).order("id", { ascending:false }).range(inicio, fin)),
+    consultarPaginado((inicio, fin) => sb.from("noticias_lecturas").select("noticia_id, leido_en").eq("user_id", currentUser.id).order("leido_en", { ascending: false }).order("noticia_id", { ascending:true }).range(inicio, fin))
   ]);
 
   if(error || errorLecturas || !noticias || noticias.length === 0){
@@ -3039,14 +3091,15 @@ $("urgente-marcar-leida").addEventListener("click", async () => {
 
 async function cargarResumenSemana(){
   const { desde, hasta } = calcularRango("semana");
-  const { data: eventos, error } = await sb
+  const { data: eventos, error } = await consultarPaginado((inicio, fin) => sb
     .from("timer_eventos")
     .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos")
     .eq("user_id", currentUser.id)
     .gte("creado_en", desde.toISOString())
     .lte("creado_en", hasta.toISOString())
     .order("creado_en", { ascending: true })
-    .limit(TAMANO_PAGINA_DB);
+    .order("id", { ascending: true })
+    .range(inicio, fin));
 
   const cont = $("semana-lista-usuario");
   if(error){
@@ -3080,42 +3133,80 @@ function claveFechaLocal(fecha){
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
 
+let resumenUsuarioRango = "mes";
+
+function calcularRangoResumenUsuario(tipo){
+  const ahora = new Date();
+  const desde = new Date(ahora);
+  let hastaObjetivo = new Date(ahora);
+  if(tipo === "hoy"){
+    desde.setHours(0,0,0,0);
+    hastaObjetivo.setHours(23,59,59,999);
+  }else if(tipo === "semana"){
+    desde.setDate(ahora.getDate()-((ahora.getDay()+6)%7)); desde.setHours(0,0,0,0);
+    hastaObjetivo = new Date(desde); hastaObjetivo.setDate(desde.getDate()+6); hastaObjetivo.setHours(23,59,59,999);
+  }else{
+    desde.setDate(1); desde.setHours(0,0,0,0);
+    hastaObjetivo = new Date(ahora.getFullYear(),ahora.getMonth()+1,0,23,59,59,999);
+  }
+  return { desde, hastaDatos:ahora, hastaObjetivo };
+}
+
+document.querySelectorAll(".user-summary-tab").forEach(btn => btn.addEventListener("click", () => {
+  resumenUsuarioRango = btn.dataset.userSummary;
+  document.querySelectorAll(".user-summary-tab").forEach(b => b.classList.toggle("active",b===btn));
+  cargarResumenMes();
+}));
+
 async function cargarResumenMes(){
   if(!currentUser || currentPerfil?.is_admin) return;
   const ahora = new Date();
-  const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+  const { desde, hastaDatos, hastaObjetivo } = calcularRangoResumenUsuario(resumenUsuarioRango);
   const inicioSemana = new Date(ahora);
-  inicioSemana.setDate(ahora.getDate()-((ahora.getDay()+6)%7));
-  inicioSemana.setHours(0,0,0,0);
-  const desdeConsulta = inicioSemana < inicioMes ? inicioSemana : inicioMes;
-  const { data:eventos, error } = await sb.from("timer_eventos")
+  inicioSemana.setDate(ahora.getDate()-((ahora.getDay()+6)%7)); inicioSemana.setHours(0,0,0,0);
+  const desdeConsulta = inicioSemana < desde ? inicioSemana : desde;
+  const { data:eventos, error } = await consultarPaginado((inicio, fin) => sb.from("timer_eventos")
     .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos")
     .eq("user_id", currentUser.id)
     .gte("creado_en", desdeConsulta.toISOString())
-    .lte("creado_en", ahora.toISOString())
+    .lte("creado_en", hastaDatos.toISOString())
     .order("creado_en", { ascending:true })
-    .limit(TAMANO_PAGINA_DB);
+    .order("id", { ascending:true })
+    .range(inicio, fin));
   if(error){
     $("resumen-mes-horas").textContent = "—";
+    $("resumen-usuario-objetivo").textContent = "—";
+    $("resumen-usuario-cumplimiento").textContent = "—";
     $("resumen-mes-dias").textContent = "—";
     return;
   }
   const sesiones = reconstruirSesiones(eventos || []);
-  const sesionesMes = sesiones.filter(s => new Date(s.horaInicio) >= inicioMes);
-  const totalMes = sesionesMes.reduce((acc,s) => acc+s.segundosActivos,0);
-  const diasMes = new Set(sesionesMes.map(s => claveFechaLocal(s.horaInicio)));
+  const sesionesRango = sesiones.filter(s => new Date(s.horaInicio) >= desde && new Date(s.horaInicio) <= hastaDatos);
+  const total = sesionesRango.reduce((acc,s) => acc+s.segundosActivos,0);
+  const diasActividad = new Set(sesionesRango.map(s => claveFechaLocal(s.horaInicio)));
+  const objetivo = calcularObjetivoPeriodo(desde,hastaObjetivo,currentUser.id,true).segundos;
+  const cumplimiento = objetivo > 0 ? (total/objetivo)*100 : 0;
+  const titulos = {
+    hoy:`Tu día · ${ahora.toLocaleDateString("es-AR",{day:"2-digit",month:"long"})}`,
+    semana:`Tu semana · ${desde.toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"})}–${hastaObjetivo.toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"})}`,
+    mes:`Tu mes · ${ahora.toLocaleDateString("es-AR",{month:"long",year:"numeric"})}`
+  };
+  const titulo = titulos[resumenUsuarioRango];
+  $("resumen-mes-titulo").textContent = titulo.charAt(0).toUpperCase()+titulo.slice(1);
+  $("resumen-mes-horas").textContent = fmtHM(total);
+  $("resumen-usuario-objetivo").textContent = fmtHM(objetivo);
+  $("resumen-usuario-cumplimiento").textContent = objetivo > 0 ? `${cumplimiento.toFixed(0)}%` : "—";
+  $("resumen-mes-dias").textContent = `${diasActividad.size}`;
+
   const diasSemanaTrabajados = new Set(sesiones.filter(s => new Date(s.horaInicio) >= inicioSemana).map(s => claveFechaLocal(s.horaInicio)));
-  const nombreMes = ahora.toLocaleDateString("es-AR",{month:"long",year:"numeric"});
-  $("resumen-mes-titulo").textContent = `Tu mes · ${nombreMes.charAt(0).toUpperCase()+nombreMes.slice(1)}`;
-  $("resumen-mes-horas").textContent = fmtHM(totalMes);
-  $("resumen-mes-dias").textContent = `${diasMes.size}`;
   const nombres = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
   const hoy = new Date(ahora); hoy.setHours(0,0,0,0);
   $("resumen-dias-semana").innerHTML = nombres.map((nombre,i) => {
     const fecha = new Date(inicioSemana); fecha.setDate(inicioSemana.getDate()+i);
     const trabajo = diasSemanaTrabajados.has(claveFechaLocal(fecha));
-    const estado = fecha > hoy ? "future" : trabajo ? "worked" : "missed";
-    const texto = fecha > hoy ? "Pendiente" : trabajo ? "Con registro" : "Sin registro";
+    const fueraDeReferencia = fecha > hoy || !esDiaLaborable(fecha) || (inicioHistoricoEquipo && fecha < inicioHistoricoEquipo);
+    const estado = fueraDeReferencia ? "future" : trabajo ? "worked" : "missed";
+    const texto = fecha > hoy ? "Pendiente" : fueraDeReferencia ? "Fuera del objetivo" : trabajo ? "Con registro" : "Sin registro";
     return `<div class="week-day ${estado}" title="${texto}"><span>${nombre}</span><strong>${fecha.getDate()}</strong></div>`;
   }).join("");
 }
