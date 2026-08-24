@@ -10,60 +10,86 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 <style>
-  :root{
-    --ink:#121A24;
-    --surface:#1B2530;
-    --surface-2:#232F3D;
-    --paper:#EDE6D6;
-    --paper-dim:#A9AEB6;
-    --gold:#C7A24A;
-    --gold-dim:#8C7438;
-    --stamp:#A3402C;
-    --ok:#5C8568;
-    --line:#2E3A48;
-    --radius:14px;
+  :root, [data-theme="tinta"], [data-theme="medianoche"]{
+    color-scheme:dark;
+    --ink:#121A24; --surface:#1B2530; --surface-2:#232F3D;
+    --paper:#EDE6D6; --paper-dim:#A9AEB6;
+    --gold:#C7A24A; --gold-dim:#8C7438;
+    --stamp:#A3402C; --ok:#5C8568; --line:#2E3A48;
+    --accent-text:#171204; --danger-text:#260D08;
+    --shadow:0 18px 48px rgba(0,0,0,.34); --radius:14px;
   }
-[data-theme="sepia"]{
-  --ink:#2B2118; --surface:#3A2E22; --surface-2:#463829;
-  --paper:#F0E4C8; --paper-dim:#B8A888;
-  --gold:#C48A3D; --gold-dim:#8F6529;
-  --stamp:#8C3B2A; --ok:#6E8F5C; --line:#4A3B29;
-}
-[data-theme="azul"]{
-  --ink:#0D1420; --surface:#141F30; --surface-2:#1C2B40;
-  --paper:#DCE6F0; --paper-dim:#8FA0B8;
-  --gold:#7FB3D5; --gold-dim:#5A85A0;
-  --stamp:#B5495B; --ok:#5C9A8A; --line:#243350;
-}
-[data-theme="bosque"]{
-  --ink:#10190F; --surface:#18241A; --surface-2:#213022;
-  --paper:#E4E8D8; --paper-dim:#9CAA8E;
-  --gold:#A9B84C; --gold-dim:#7C8C38;
-  --stamp:#B5622E; --ok:#5C8568; --line:#2A3B28;
-}
-[data-theme="rosa"]{
-  --ink:#1F0F17; --surface:#2B1620; --surface-2:#3A1E2B;
-  --paper:#F2DCE6; --paper-dim:#B98CA0;
-  --gold:#E0779E; --gold-dim:#B5567A;
-  --stamp:#C23B5A; --ok:#6E8F5C; --line:#4A2536;
-}
-[data-theme="rojo"]{
-  --ink:#1A0E0C; --surface:#2A1512; --surface-2:#391D18;
-  --paper:#F0DCD4; --paper-dim:#B98F84;
-  --gold:#D9542E; --gold-dim:#A83F22;
-  --stamp:#8C2A1A; --ok:#5C8568; --line:#42221C;
-}
+  [data-theme="negro"]{
+    color-scheme:dark;
+    --ink:#030405; --surface:#0A0C0F; --surface-2:#14171C;
+    --paper:#F4F1E9; --paper-dim:#969DA7; --gold:#D0AA4E;
+    --gold-dim:#80672C; --stamp:#C95843; --ok:#68A979; --line:#23272E;
+    --accent-text:#090A08; --danger-text:#FFF3EF; --shadow:0 20px 56px rgba(0,0,0,.62);
+  }
+  [data-theme="sepia"]{
+    color-scheme:dark;
+    --ink:#2B2118; --surface:#3A2E22; --surface-2:#463829;
+    --paper:#F0E4C8; --paper-dim:#B8A888; --gold:#C48A3D;
+    --gold-dim:#8F6529; --stamp:#8C3B2A; --ok:#6E8F5C; --line:#4A3B29;
+    --accent-text:#1A1404; --danger-text:#FFF4EC; --shadow:0 18px 48px rgba(24,15,8,.32);
+  }
+  [data-theme="azul"]{
+    color-scheme:dark;
+    --ink:#0D1420; --surface:#141F30; --surface-2:#1C2B40;
+    --paper:#DCE6F0; --paper-dim:#8FA0B8; --gold:#7FB3D5;
+    --gold-dim:#5A85A0; --stamp:#B5495B; --ok:#5C9A8A; --line:#243350;
+    --accent-text:#0D1420; --danger-text:#FFF5F6; --shadow:0 18px 48px rgba(3,8,16,.36);
+  }
+  [data-theme="bosque"]{
+    color-scheme:dark;
+    --ink:#10190F; --surface:#18241A; --surface-2:#213022;
+    --paper:#E4E8D8; --paper-dim:#9CAA8E; --gold:#A9B84C;
+    --gold-dim:#7C8C38; --stamp:#B5622E; --ok:#5C8568; --line:#2A3B28;
+    --accent-text:#10190F; --danger-text:#FFF4EC; --shadow:0 18px 48px rgba(4,12,4,.36);
+  }
+  [data-theme="rosa"]{
+    color-scheme:dark;
+    --ink:#1F0F17; --surface:#2B1620; --surface-2:#3A1E2B;
+    --paper:#F2DCE6; --paper-dim:#B98CA0; --gold:#E0779E;
+    --gold-dim:#B5567A; --stamp:#C23B5A; --ok:#6E8F5C; --line:#4A2536;
+    --accent-text:#1F0F17; --danger-text:#FFF4F7; --shadow:0 18px 48px rgba(20,4,12,.36);
+  }
+  [data-theme="rojo"]{
+    color-scheme:dark;
+    --ink:#1A0E0C; --surface:#2A1512; --surface-2:#391D18;
+    --paper:#F0DCD4; --paper-dim:#B98F84; --gold:#D9542E;
+    --gold-dim:#A83F22; --stamp:#8C2A1A; --ok:#5C8568; --line:#42221C;
+    --accent-text:#FFF8F4; --danger-text:#FFF4F0; --shadow:0 18px 48px rgba(18,4,2,.38);
+  }
+  [data-theme="papel"]{
+    color-scheme:light;
+    --ink:#EDE2CB; --surface:#F7EEDC; --surface-2:#E3D3B5;
+    --paper:#30291F; --paper-dim:#706454;
+    --gold:#936D28; --gold-dim:#B99451;
+    --stamp:#A34E3B; --ok:#52765C; --line:#CDBD9F;
+    --accent-text:#FFF9EC; --danger-text:#FFF7F2;
+    --shadow:0 18px 48px rgba(82,61,30,.16);
+  }
+  [data-theme="luz"]{
+    color-scheme:light;
+    --ink:#F4F5F7; --surface:#FFFFFF; --surface-2:#E9EDF2;
+    --paper:#1D2733; --paper-dim:#637083;
+    --gold:#84651F; --gold-dim:#C4A24E;
+    --stamp:#AD4B3F; --ok:#427656; --line:#D7DDE5;
+    --accent-text:#FFFFFF; --danger-text:#FFFFFF;
+    --shadow:0 18px 48px rgba(22,31,43,.13);
+  }
 
 body{ transition: background 0.35s ease, color 0.35s ease; }
 
 .theme-switcher{ display:flex; gap:6px; align-items:center; margin-right:4px; }
 .theme-dot{
-  width:16px; height:16px; border-radius:50%;
+  width:16px; height:16px; min-width:16px; border-radius:50%;
   border:2px solid var(--line); cursor:pointer; padding:0;
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow .15s ease;
 }
 .theme-dot:hover{ transform: scale(1.2); }
-.theme-dot.activo{ border-color: var(--paper); }
+.theme-dot.activo{ border-color:var(--paper); box-shadow:none; }
 
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -245,9 +271,9 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
     transition:filter .15s ease, transform .1s ease;
   }
   .btn-control:active{transform:scale(0.98);}
-  .btn-start{background:var(--ok);color:#0E1A12;}
+  .btn-start{background:var(--ok);color:var(--accent-text);}
   .btn-pause{background:var(--surface-2);color:var(--paper);border-color:var(--line);}
-  .btn-stop{background:var(--stamp);color:#2A0E08;}
+  .btn-stop{background:var(--stamp);color:var(--danger-text);}
   .btn-control:hover{filter:brightness(1.1);}
 
   .alarm-banner{
@@ -264,10 +290,11 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
 
   /* ---------- ADMIN ---------- */
   .admin-header{
-    display:flex;justify-content:space-between;align-items:baseline;
-    width:100%;margin-bottom:24px;flex-wrap:wrap;gap:12px;
+    display:flex;justify-content:space-between;align-items:center;
+    width:100%;margin-bottom:30px;flex-wrap:wrap;gap:20px;
   }
-  .admin-header h1{font-family:'Fraunces',serif;font-size:26px;margin:0;}
+  .admin-header h1{font-family:'Fraunces',serif;font-size:32px;line-height:1.1;font-weight:700;margin:0 0 6px;letter-spacing:-.02em;}
+  .admin-header-sub{margin:0;color:var(--paper-dim);font-size:13px;line-height:1.5;}
   .filters{
     display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;width:100%;
   }
@@ -291,9 +318,9 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
 
   .admin-tabs{
     display:flex;
-    gap:28px;
+    gap:34px;
     border-bottom:1px solid var(--line);
-    margin-bottom:22px;
+    margin-bottom:28px;
   }
   .admin-tab-btn{
     background:none;
@@ -301,9 +328,9 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
     border-bottom:2px solid transparent;
     color:var(--paper-dim);
     font-family:'Inter',sans-serif;
-    font-size:14px;
+    font-size:15px;
     font-weight:600;
-    padding:0 0 12px;
+    padding:2px 2px 15px;
     cursor:pointer;
     transition:color 0.15s ease, border-color 0.15s ease;
   }
@@ -340,29 +367,35 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   .rte-editable:empty:before{ content: attr(data-placeholder); color:var(--paper-dim); }
 
   .stat-chart{
-    display:flex; align-items:flex-end; gap:14px;
-    height:200px; padding:10px 4px 0;
-    border-bottom:1px solid var(--line);
-    overflow-x:auto;
+    display:flex; align-items:flex-end; gap:8px;
+    height:230px; padding:22px 10px 0;
+    border-bottom:1px solid var(--line); overflow-x:auto;
+    background:repeating-linear-gradient(to top,transparent 0,transparent 49px,color-mix(in srgb,var(--line) 42%,transparent) 50px);
   }
   .stat-bar-wrap{
-    flex:1; min-width:48px;
+    flex:1; min-width:42px;
     display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
-    height:100%;
+    height:100%;position:relative;
   }
   .stat-bar{
-    width:100%; max-width:56px;
-    border-radius:6px 6px 0 0;
-    transition:height 0.5s ease;
+    width:14px; min-height:2px;
+    border-radius:999px 999px 3px 3px;
+    background:linear-gradient(180deg,color-mix(in srgb,var(--bar-color) 82%,white),var(--bar-color));
+    box-shadow:0 5px 18px color-mix(in srgb,var(--bar-color) 18%,transparent);
+    transition:height 0.5s ease,filter .15s ease;
   }
+  .stat-bar:hover{filter:brightness(1.15);}
   .stat-bar-valor{
-    font-family:'Space Mono',monospace; font-size:11px; color:var(--paper);
-    margin-bottom:4px; white-space:nowrap;
+    font-family:'Space Mono',monospace; font-size:10px; color:var(--paper-dim);
+    margin-bottom:6px; white-space:nowrap;
   }
   .stat-bar-label{
     font-size:11px; color:var(--paper-dim); margin-top:8px; text-align:center;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px;
   }
+  .stat-reference-marker{position:absolute;left:-4px;right:-4px;border-top:2px dashed var(--stamp);opacity:.82;z-index:2;pointer-events:none;}
+  .stat-chart-legend{display:flex;justify-content:flex-end;gap:14px;margin:3px 8px -8px;color:var(--paper-dim);font-size:10px;}
+  .stat-chart-legend span{display:inline-flex;align-items:center;gap:5px;}.stat-chart-legend i{display:inline-block;width:16px;border-top:2px solid var(--gold);}.stat-chart-legend .reference i{border-top:2px dashed var(--stamp);}
 
   table{width:100%;border-collapse:collapse;font-size:13px;}
   thead th{
@@ -371,10 +404,10 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
     text-transform:uppercase;
     font-size:11px;
     letter-spacing:0.06em;
-    padding:0 10px 10px;
+    padding:14px 12px;
     border-bottom:1px solid var(--line);
   }
-  tbody td{padding:10px;border-bottom:1px solid var(--line);}
+  tbody td{padding:13px 12px;border-bottom:1px solid var(--line);line-height:1.45;}
   tbody tr:hover{background:var(--surface);}
   .hrs{font-family:'Space Mono',monospace;}
   .empty-state{
@@ -389,6 +422,12 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   }
   .summary-card .label{font-size:11px;color:var(--paper-dim);text-transform:uppercase;letter-spacing:0.06em;}
   .summary-card .value{font-family:'Space Mono',monospace;font-size:20px;margin-top:4px;}
+  .summary-card .hint{font-size:10px;color:var(--paper-dim);margin-top:4px;}
+  .summary-card.objective{border-color:color-mix(in srgb,var(--gold) 52%,var(--line));background:color-mix(in srgb,var(--gold) 7%,var(--surface));}.summary-card.objective .value{color:var(--gold)}
+  .objetivo-panel{margin:0 0 22px;padding:20px;background:color-mix(in srgb,var(--gold) 4%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 25%,var(--line));border-radius:14px;}
+  .objetivo-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:16px}.objetivo-title{font-size:14px;font-weight:700}.objetivo-note{font-size:11px;color:var(--paper-dim);line-height:1.5;margin-top:4px}.objetivo-kpis{display:grid;grid-template-columns:repeat(3,minmax(115px,1fr));gap:8px;min-width:min(430px,100%)}.objetivo-kpi{padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:10px}.objetivo-kpi span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--paper-dim);margin-bottom:4px}.objetivo-kpi strong{font-family:'Space Mono',monospace;font-size:15px;color:var(--paper)}.objetivo-kpi.destacado strong{color:var(--gold)}
+  .objetivo-layout{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(420px,1.15fr);gap:14px}.objetivo-seccion{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:14px}.objetivo-seccion-titulo{font-size:12px;font-weight:700;margin-bottom:3px}.objetivo-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end;margin-top:12px}.objetivo-field{display:flex;flex-direction:column;gap:5px;min-width:0}.objetivo-field.full{grid-column:1/-1}.objetivo-field label{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--paper-dim);margin:0}.objetivo-field input{margin:0;padding:8px 10px;border-radius:8px;width:100%;min-width:0}.objetivo-controls .filter-btn{justify-self:start}.feriados-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.feriado-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:11px}.feriado-chip button{border:0;background:none;color:var(--stamp);cursor:pointer;padding:0;font-size:14px;line-height:1}
+  .objetivos-lista{display:flex;flex-direction:column;gap:7px;margin-top:12px}.objetivo-persona{display:grid;grid-template-columns:minmax(110px,1fr) 76px 102px auto;gap:8px;align-items:center;padding:9px 10px;background:var(--surface-2);border:1px solid var(--line);border-radius:9px}.objetivo-persona-nombre{font-size:12px;min-width:0}.objetivo-persona-nombre strong,.objetivo-persona-nombre small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.objetivo-persona-nombre small{color:var(--paper-dim);font-size:10px;margin-top:2px}.objetivo-persona input{margin:0;padding:7px 8px;font-size:11px;min-width:0;text-align:center}.objetivo-persona-meta{text-align:right}.objetivo-persona-meta span{display:block;font-size:9px;color:var(--paper-dim);text-transform:uppercase;letter-spacing:.05em}.objetivo-persona-meta strong{font-family:'Space Mono',monospace;font-size:12px;color:var(--gold)}.objetivo-persona .filter-btn{padding:7px 10px;font-size:11px;white-space:nowrap}
 
   .hidden{display:none !important;}
   .loading-text{color:var(--paper-dim);font-size:13px;text-align:center;padding:40px 0;}
@@ -401,6 +440,7 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
     z-index:50;
     padding:20px;
   }
+  #modal-clave-admin{z-index:90;}
   .modal-card{
     background:var(--surface);
     border:1px solid var(--line);
@@ -484,11 +524,96 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
     transition:all .2s ease;font-family:'Inter',sans-serif;
   }
   .btn-disponible.activo{
-    background:var(--ok);color:#0E1A12;
+    background:var(--ok);color:var(--accent-text);
   }
   .btn-disponible.inactivo{
     border-color:var(--paper-dim);color:var(--paper-dim);
   }
+
+  /* ---------- MEJORAS DE INTERFAZ ---------- */
+  button, input, select, textarea, [contenteditable="true"]{font:inherit;}
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+  [contenteditable="true"]:focus-visible{outline:3px solid color-mix(in srgb,var(--gold) 55%,transparent);outline-offset:2px;}
+  .topbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--ink) 92%,transparent);backdrop-filter:blur(14px);}
+  .container.wide{max-width:1180px;}
+  .login-card,.summary-card,.presencia-item,.modal-card{box-shadow:var(--shadow);}
+  input[type=text],input[type=number],input[type=email],input[type=password],input[type=date],select,textarea{
+    background:var(--surface);border:1px solid var(--line);color:var(--paper);
+  }
+  .btn-primary,.filter-btn.active{color:var(--accent-text);}
+  .icon-btn{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);color:var(--paper);border-radius:9px;padding:8px 11px;cursor:pointer;font-size:12px;font-weight:600;}
+  .icon-btn:hover{border-color:var(--gold);}
+  .topbar-user-actions{display:flex;align-items:center;gap:8px;}
+  .section-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;}
+  .section-card:hover{border-color:color-mix(in srgb,var(--line) 55%,var(--paper-dim));}
+  .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+  .toolbar .search-input{width:min(320px,100%);margin:0;padding:9px 12px;border-radius:9px;background:var(--surface);border:1px solid var(--line);color:var(--paper);}
+  .alarm-banner{background:color-mix(in srgb,var(--stamp) 12%,transparent);color:var(--stamp);}
+  .table-shell{width:100%;overflow:auto;border:1px solid var(--line);border-radius:12px;}
+  .table-shell table{min-width:900px;}
+  .table-shell thead{position:sticky;top:0;background:var(--surface);z-index:1;}
+  .stat-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px;}
+  .stat-toolbar h2{font-family:'Fraunces',serif;font-size:21px;margin:0 0 4px;}.stat-toolbar p{margin:0;color:var(--paper-dim);font-size:12px;line-height:1.5;}
+  .chart-mode{display:flex;align-items:center;gap:3px;padding:3px;background:var(--surface);border:1px solid var(--line);border-radius:10px;white-space:nowrap;}
+  .chart-mode-label{font-size:10px;color:var(--paper-dim);text-transform:uppercase;letter-spacing:.06em;padding:0 7px;}
+  .chart-mode-btn{border:0;background:transparent;color:var(--paper-dim);border-radius:7px;padding:7px 10px;font-size:11px;font-weight:600;cursor:pointer;}
+  .chart-mode-btn.active{background:var(--surface-2);color:var(--paper);box-shadow:0 1px 3px rgba(0,0,0,.14);}
+  .stat-filters{padding:12px;background:color-mix(in srgb,var(--surface) 70%,transparent);border:1px solid var(--line);border-radius:12px;}
+  .stat-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:18px;}
+  .stat-kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:15px;box-shadow:0 8px 24px color-mix(in srgb,var(--ink) 8%,transparent);}
+  .stat-kpi .label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--paper-dim);}
+  .stat-kpi .value{font-family:'Space Mono',monospace;font-size:22px;margin-top:6px;}
+  .stat-kpi .hint{font-size:11px;color:var(--paper-dim);margin-top:4px;}
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .stat-panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;min-width:0;overflow:hidden;}
+  .stat-panel.full{grid-column:1/-1;}
+  .stat-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;}.stat-panel-title{font-size:12px;font-weight:700;letter-spacing:.02em;}.stat-panel-note{font-size:11px;color:var(--paper-dim);line-height:1.45;margin-top:3px;}
+  .stat-highlight{font-family:'Space Mono',monospace;font-size:12px;color:var(--gold);white-space:nowrap;background:color-mix(in srgb,var(--gold) 10%,transparent);border-radius:999px;padding:5px 9px;}
+  .stat-line-shell{overflow-x:auto;padding-top:4px;}.stat-line-svg{display:block;width:100%;min-width:520px;height:230px;overflow:visible;}.stat-line-area{opacity:.13}.stat-line-path{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 4px 8px color-mix(in srgb,var(--paper) 10%,transparent));}.stat-reference-path{fill:none;stroke:var(--stamp);stroke-width:2;stroke-dasharray:7 6;stroke-linecap:round;stroke-linejoin:round;opacity:.9}.stat-line-dot{stroke:var(--surface);stroke-width:3;transition:r .15s ease}.stat-line-dot:hover{r:6}.stat-gridline{stroke:var(--line);stroke-width:1;opacity:.5}.stat-line-label{fill:var(--paper-dim);font:10px Inter,sans-serif;text-anchor:middle;}
+  .news-editor-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:16px;margin-bottom:20px;}
+  .news-preview{min-height:180px;background:var(--ink);border:1px dashed var(--line);border-radius:10px;padding:16px;}
+  .news-preview-title{font-family:'Fraunces',serif;font-size:18px;color:var(--gold);margin-bottom:8px;}
+  .news-counter{font-size:11px;color:var(--paper-dim);margin-left:auto;}
+  .news-actions{display:flex;gap:8px;align-items:center;}
+  .news-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;color:var(--paper-dim);font-size:12px;}
+  .news-priority-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  .news-priority-row label{margin:0;white-space:nowrap;}
+  .news-priority-row select{width:100%;padding:8px 10px;border-radius:8px;}
+  .news-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;}
+  .news-card.importante{border-left:4px solid var(--gold);}.news-card.urgente{border-left:4px solid var(--stamp);background:color-mix(in srgb,var(--stamp) 7%,var(--surface));}
+  .news-card-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+  .news-card-title{font-weight:600;font-size:14px;color:var(--gold);}
+  .news-card-actions{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line);}
+  .news-read-state{font-size:11px;color:var(--paper-dim);margin-right:auto;}
+  .priority-badge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;background:var(--surface-2);color:var(--paper-dim);}
+  .priority-badge.importante{background:color-mix(in srgb,var(--gold) 18%,transparent);color:var(--gold);}
+  .priority-badge.urgente{background:color-mix(in srgb,var(--stamp) 18%,transparent);color:var(--stamp);}
+  .urgent-modal-card{border-color:var(--stamp);box-shadow:0 24px 80px color-mix(in srgb,var(--stamp) 22%,rgba(0,0,0,.5));}
+  .urgent-modal-card.importante{border-color:var(--gold);box-shadow:0 24px 80px color-mix(in srgb,var(--gold) 20%,rgba(0,0,0,.5));}
+  .urgent-kicker{color:var(--stamp);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
+  .readers-list{max-height:360px;overflow-y:auto;margin-top:12px;border-top:1px solid var(--line);}
+  .reader-row{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .reader-status{font-size:11px;color:var(--paper-dim);white-space:nowrap;}.reader-status.leida{color:var(--ok);}
+  .timer-presencia{width:100%;max-width:520px;margin-top:22px;}.timer-presencia .presencia-lista{flex-direction:row;flex-wrap:wrap;}.timer-presencia .presencia-item{flex:1 1 180px;}
+  .user-dashboard{width:100%;max-width:680px;display:grid;grid-template-columns:1fr;gap:16px;margin-top:18px;}
+  .user-dashboard .wide-card{grid-column:1/-1;}
+  .user-month-kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 18px;}.user-month-kpi{background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:13px;}.user-month-kpi .label{font-size:10px;color:var(--paper-dim);text-transform:uppercase;letter-spacing:.06em}.user-month-kpi .value{font-family:'Space Mono',monospace;font-size:19px;margin-top:5px;}
+  .week-days{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;}.week-day{display:flex;flex-direction:column;align-items:center;gap:5px;border:1px solid var(--line);border-radius:9px;padding:8px 3px;color:var(--paper-dim);font-size:10px;}.week-day strong{font-family:'Space Mono',monospace;font-size:12px;color:var(--paper)}.week-day.worked{background:color-mix(in srgb,var(--ok) 13%,transparent);border-color:color-mix(in srgb,var(--ok) 55%,var(--line));}.week-day.worked strong{color:var(--ok)}.week-day.missed{background:color-mix(in srgb,var(--stamp) 10%,transparent);border-color:color-mix(in srgb,var(--stamp) 45%,var(--line));}.week-day.missed strong{color:var(--stamp)}.week-day.future{opacity:.45;}
+  #semana-lista-usuario{max-height:330px;overflow-y:auto;overscroll-behavior:contain;padding-right:5px;scrollbar-width:thin;scrollbar-color:var(--gold-dim) transparent;}
+  #semana-lista-usuario::-webkit-scrollbar{width:7px;}#semana-lista-usuario::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:10px;}
+  .toast-region{position:fixed;top:76px;right:20px;z-index:100;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+  .toast{max-width:340px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:10px;padding:11px 14px;font-size:13px;animation:toast-in .2s ease;}
+  .toast.error{border-color:var(--stamp);}.toast.ok{border-color:var(--ok);}
+  @keyframes toast-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  @keyframes panel-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .tab-panel:not(.hidden){animation:panel-in .22s ease}.filter-btn,.icon-btn,.admin-tab-btn,.theme-dot,.btn-link{transition:color .16s ease,background .16s ease,border-color .16s ease,transform .12s ease,filter .16s ease;}.filter-btn:active,.icon-btn:active{transform:scale(.97)}
+  @media(max-width:760px){
+    .topbar{padding:12px 14px;align-items:flex-start}.brand{font-size:15px}.topbar-right{gap:8px;flex-wrap:wrap;justify-content:flex-end}.topbar-right>span{display:none}
+    .container{padding:28px 16px}.admin-tabs{width:100%;overflow-x:auto;gap:20px}.filters{gap:8px}.filter-dates{width:100%;flex-wrap:wrap}.filter-dates input{flex:1;min-width:125px}
+    .admin-header h1{font-size:28px}.admin-header{align-items:flex-start}.stat-toolbar{flex-direction:column}.chart-mode{width:100%;justify-content:flex-end}.chart-mode-label{margin-right:auto}.stat-kpis{grid-template-columns:1fr 1fr}.stat-grid,.news-editor-grid,.user-dashboard{grid-template-columns:1fr}.stat-panel.full,.user-dashboard .wide-card{grid-column:auto}.stat-panel{padding:14px}.stat-panel-head{flex-direction:column}.stat-highlight{white-space:normal}.week-days{gap:4px}.week-day{padding:7px 1px}.timer-presencia .presencia-lista{flex-direction:column}.objetivo-panel{padding:14px}.objetivo-head{flex-direction:column}.objetivo-kpis{grid-template-columns:1fr 1fr 1fr;min-width:0;width:100%}.objetivo-layout{grid-template-columns:1fr}.objetivo-persona{grid-template-columns:minmax(95px,1fr) 68px 88px}.objetivo-persona .filter-btn{grid-column:1/-1;width:100%}
+    .stamp-wrap{width:250px;height:250px}.stamp-wrap svg{width:250px;height:250px}.stamp-time{font-size:34px}
+  }
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important;}}
 </style>
 </head>
 <body>
@@ -497,13 +622,17 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   <div class="brand"><span class="dot"></span> Control de Horas</div>
   <div class="topbar-right">
     <div class="theme-switcher" id="theme-switcher">
-  <button class="theme-dot" data-theme-value="tinta" style="background:#C7A24A" title="Tinta"></button>
-  <button class="theme-dot" data-theme-value="sepia" style="background:#C48A3D" title="Archivo"></button>
-  <button class="theme-dot" data-theme-value="azul" style="background:#7FB3D5" title="Nocturno"></button>
-  <button class="theme-dot" data-theme-value="bosque" style="background:#A9B84C" title="Bosque"></button>
-  <button class="theme-dot" data-theme-value="rosa" style="background:#E0779E" title="Rosa"></button>
-  <button class="theme-dot" data-theme-value="rojo" style="background:#D9542E" title="Rojo"></button>
+  <button class="theme-dot" data-theme-value="negro" style="background:#030405" title="Negro profundo" aria-label="Usar tema Negro profundo"></button>
+  <button class="theme-dot" data-theme-value="tinta" style="background:#C7A24A" title="Tinta" aria-label="Usar tema Tinta"></button>
+  <button class="theme-dot" data-theme-value="sepia" style="background:#C48A3D" title="Archivo" aria-label="Usar tema Archivo"></button>
+  <button class="theme-dot" data-theme-value="azul" style="background:#7FB3D5" title="Nocturno" aria-label="Usar tema Nocturno"></button>
+  <button class="theme-dot" data-theme-value="bosque" style="background:#A9B84C" title="Bosque" aria-label="Usar tema Bosque"></button>
+  <button class="theme-dot" data-theme-value="rosa" style="background:#E0779E" title="Rosa" aria-label="Usar tema Rosa"></button>
+  <button class="theme-dot" data-theme-value="rojo" style="background:#D9542E" title="Rojo" aria-label="Usar tema Rojo"></button>
+  <button class="theme-dot" data-theme-value="papel" style="background:#EDE2CB" title="Papel ahuesado" aria-label="Usar tema Papel ahuesado"></button>
+  <button class="theme-dot" data-theme-value="luz" style="background:#F8F9FB" title="Luz" aria-label="Usar tema Luz"></button>
 </div>
+    <button class="icon-btn hidden" id="btn-floating-timer" aria-pressed="false" title="Abrir una ventana siempre visible sobre otras aplicaciones">▣ Abrir timer flotante</button>
     <span id="topbar-nombre"></span>
     <button class="btn-link" id="btn-logout">Cerrar sesión</button>
   </div>
@@ -559,22 +688,59 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
     Llegaste a 3:30 hs de trabajo activo en esta jornada.
   </div>
 
- <div class="presencia-wrap">
+  <div class="presencia-wrap timer-presencia">
     <div class="presencia-titulo">Trabajando ahora</div>
     <div class="presencia-lista" id="presencia-lista-timer">
       <div class="presencia-vacio">Nadie trabajando en este momento.</div>
     </div>
   </div>
 
-  <div class="noticias-usuario-wrap hidden" id="noticias-usuario-wrap" style="width:100%;max-width:480px;margin-top:24px;">
+ <div class="user-dashboard">
+  <div class="noticias-usuario-wrap section-card wide-card hidden" id="noticias-usuario-wrap">
     <div class="presencia-titulo">Noticias</div>
     <div id="noticias-lista-usuario"></div>
   </div>
 
-  <div class="semana-usuario-wrap" style="width:100%;max-width:480px;margin-top:24px;">
-    <div class="presencia-titulo">Esta semana</div>
+  <div class="section-card wide-card" id="resumen-mes-usuario">
+    <div class="presencia-titulo" id="resumen-mes-titulo">Tu mes</div>
+    <div class="user-month-kpis">
+      <div class="user-month-kpi"><div class="label">Horas trabajadas</div><div class="value" id="resumen-mes-horas">—</div></div>
+      <div class="user-month-kpi"><div class="label">Días con actividad</div><div class="value" id="resumen-mes-dias">—</div></div>
+    </div>
+    <div class="presencia-titulo" style="margin-bottom:9px;">Actividad de esta semana</div>
+    <div class="week-days" id="resumen-dias-semana"><div class="loading-text" style="grid-column:1/-1;padding:12px 0;">Cargando…</div></div>
+  </div>
+
+  <div class="semana-usuario-wrap section-card wide-card">
+    <div class="presencia-titulo">Detalle de esta semana</div>
     <div class="resumen-hoy" id="resumen-semana" style="margin-bottom:10px;">Acumulado: 0h 00m</div>
     <div id="semana-lista-usuario"><div class="loading-text">Cargando…</div></div>
+  </div>
+ </div>
+</div>
+
+<div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+<!-- MODAL: noticia urgente no leída -->
+<div class="modal-overlay hidden" id="modal-noticia-urgente" role="dialog" aria-modal="true" aria-labelledby="urgente-titulo">
+  <div class="modal-card urgent-modal-card" id="aviso-prioritario-card">
+    <div class="urgent-kicker" id="urgente-kicker">Aviso urgente</div>
+    <h2 id="urgente-titulo">—</h2>
+    <div id="urgente-mensaje" style="color:var(--paper-dim);font-size:14px;line-height:1.6;margin-top:12px;"></div>
+    <div class="modal-actions">
+      <button class="btn-control btn-pause" id="urgente-despues">Leer después</button>
+      <button class="btn-control btn-start" id="urgente-marcar-leida">Marcar como leída</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: detalle de lecturas para admin -->
+<div class="modal-overlay hidden" id="modal-lecturas" role="dialog" aria-modal="true" aria-labelledby="lecturas-titulo">
+  <div class="modal-card" style="max-width:520px;">
+    <h2 id="lecturas-titulo">Lecturas de la noticia</h2>
+    <p class="sub" id="lecturas-resumen">—</p>
+    <div class="readers-list" id="lecturas-lista"></div>
+    <div class="modal-actions"><button class="btn-control btn-pause" id="lecturas-cerrar">Cerrar</button></div>
   </div>
 </div>
 
@@ -617,10 +783,25 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   </div>
 </div>
 
+<!-- MODAL: autorización para modificaciones administrativas -->
+<div class="modal-overlay hidden" id="modal-clave-admin" role="dialog" aria-modal="true" aria-labelledby="clave-admin-titulo">
+  <div class="modal-card" style="max-width:400px;">
+    <h2 id="clave-admin-titulo">Autorizar modificación</h2>
+    <p class="sub" id="clave-admin-accion">Ingresá la contraseña administrativa para continuar.</p>
+    <label for="clave-admin-input">Contraseña</label>
+    <input type="password" id="clave-admin-input" autocomplete="off" style="width:100%;margin-bottom:8px;" />
+    <div class="error-msg hidden" id="clave-admin-error">Contraseña incorrecta.</div>
+    <div class="modal-actions">
+      <button class="btn-control btn-pause" id="clave-admin-cancelar">Cancelar</button>
+      <button class="btn-control btn-start" id="clave-admin-confirmar">Autorizar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ADMIN -->
 <div class="container wide hidden" id="view-admin">
   <div class="admin-header">
-    <h1>Panel de horas</h1>
+    <div><h1>Panel de horas</h1><p class="admin-header-sub">Seguimiento, reportes y gestión del trabajo del equipo.</p></div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
       <button class="btn-disponible inactivo" id="btn-disponible">Disponible</button>
       <button class="filter-btn" id="btn-nueva-entrada" style="border-color:var(--ok);color:var(--ok);font-weight:600;">+ Nueva entrada</button>
@@ -657,7 +838,43 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
       </select>
     </div>
 
+    <div class="toolbar">
+      <input type="search" id="filter-busqueda" class="search-input" placeholder="Buscar persona, sello o tarea…" aria-label="Buscar registros" />
+      <button class="icon-btn" id="btn-refresh-admin">↻ Actualizar</button>
+      <button class="icon-btn" id="btn-csv">↓ Exportar CSV</button>
+      <span id="resultados-admin" style="margin-left:auto;color:var(--paper-dim);font-size:12px;"></span>
+    </div>
+
     <div class="summary-row" id="summary-row"></div>
+
+    <section class="objetivo-panel" aria-labelledby="objetivo-panel-titulo">
+      <div class="objetivo-head">
+        <div><div class="objetivo-title" id="objetivo-panel-titulo">Objetivos del mes</div><div class="objetivo-note" id="objetivo-resumen">Referencia actual: lunes a viernes, descontando los feriados registrados.</div></div>
+        <div class="objetivo-kpis">
+          <div class="objetivo-kpi"><span>Días hábiles</span><strong id="objetivo-dias-mes">—</strong></div>
+          <div class="objetivo-kpi"><span>Feriados laborables</span><strong id="objetivo-feriados-mes">—</strong></div>
+          <div class="objetivo-kpi destacado"><span>Objetivo del equipo</span><strong id="objetivo-equipo-mes">—</strong></div>
+        </div>
+      </div>
+      <div class="objetivo-layout">
+        <div class="objetivo-seccion">
+          <div class="objetivo-seccion-titulo">Calendario laboral</div>
+          <div class="objetivo-note">Elegí el mes y registrá únicamente los feriados que deben descontarse.</div>
+          <div class="objetivo-controls">
+            <div class="objetivo-field full"><label for="objetivo-mes">Mes de referencia</label><input type="month" id="objetivo-mes" /></div>
+            <div class="objetivo-field"><label for="feriado-fecha">Fecha del feriado</label><input type="date" id="feriado-fecha" /></div>
+            <div class="objetivo-field"><label for="feriado-nombre">Nombre opcional</label><input type="text" id="feriado-nombre" maxlength="80" placeholder="Feriado" /></div>
+            <button class="filter-btn" id="btn-feriado-agregar">Agregar feriado</button>
+          </div>
+          <div class="feriados-chips" id="feriados-chips"><span class="objetivo-note">Sin feriados registrados.</span></div>
+        </div>
+        <div class="objetivo-seccion">
+          <div class="objetivo-seccion-titulo">Objetivo diario por persona</div>
+          <div class="objetivo-note">Es un valor de referencia actual, no guarda un historial de cambios.</div>
+          <div class="objetivos-lista" id="objetivos-lista"></div>
+        </div>
+      </div>
+    </section>
 
     <div id="admin-table-wrap">
       <div class="loading-text">Cargando registros…</div>
@@ -670,9 +887,19 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
       Mostrar sección a todos
     </label>
 
-    <div style="margin-bottom:16px;">
+    <div class="news-meta" id="news-meta"><span>Cargando noticias…</span></div>
+    <div class="news-editor-grid">
+    <div class="section-card">
       <input type="text" id="noticia-titulo" placeholder="Título"
         style="width:100%;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--paper);font-size:14px;margin-bottom:8px;" />
+      <div class="news-priority-row">
+        <label for="noticia-prioridad">Tipo</label>
+        <select id="noticia-prioridad">
+          <option value="normal">Normal</option>
+          <option value="importante">Importante — abre una ventana hasta leerla</option>
+          <option value="urgente">Urgente — abre una ventana hasta leerla</option>
+        </select>
+      </div>
       <div class="rte-toolbar">
         <button type="button" class="rte-btn" data-cmd="bold" style="font-weight:700;" title="Negrita">N</button>
         <button type="button" class="rte-btn" data-cmd="italic" style="font-style:italic;" title="Cursiva">I</button>
@@ -680,29 +907,56 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
         <input type="color" id="noticia-color" class="rte-color" value="#EDE6D6" title="Color de texto" />
       </div>
       <div id="noticia-mensaje" class="rte-editable" contenteditable="true" data-placeholder="Mensaje…"></div>
-      <button class="filter-btn" id="btn-noticia-publicar" style="border-color:var(--ok);color:var(--ok);font-weight:600;">+ Publicar noticia</button>
+      <div class="news-actions">
+        <button class="filter-btn" id="btn-noticia-publicar" style="border-color:var(--ok);color:var(--ok);font-weight:600;">+ Publicar noticia</button>
+        <button class="btn-link hidden" id="btn-noticia-cancelar">Cancelar edición</button>
+        <span class="news-counter" id="noticia-contador">0 / 2.000</span>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="presencia-titulo">Vista previa</div>
+      <div class="news-preview">
+        <span class="priority-badge" id="noticia-preview-prioridad">Normal</span>
+        <div class="news-preview-title" id="noticia-preview-titulo">Título de la noticia</div>
+        <div id="noticia-preview-mensaje" style="font-size:13px;color:var(--paper-dim);line-height:1.6;">El mensaje aparecerá acá mientras escribís.</div>
+      </div>
+    </div>
     </div>
 
-    <div id="noticias-lista-admin"></div>
+    <div class="section-card" id="noticias-lista-admin"></div>
   </div>
 
   <div class="tab-panel hidden" id="tab-estadisticas">
-    <div class="filters" style="margin-bottom:28px;">
+    <div class="stat-toolbar">
+      <div><h2>Panorama del trabajo</h2><p>Compará carga, evolución y hábitos del equipo para el período seleccionado.</p></div>
+      <div class="chart-mode" role="group" aria-label="Tipo de gráfico para series temporales" title="Se aplica a evolución, franja horaria y días de la semana">
+        <span class="chart-mode-label">Series</span>
+        <button class="chart-mode-btn active" data-chart-mode="barras" aria-pressed="true">Barras</button>
+        <button class="chart-mode-btn" data-chart-mode="curvas" aria-pressed="false">Curvas</button>
+      </div>
+    </div>
+    <div class="filters stat-filters" style="margin-bottom:18px;">
       <button class="filter-btn active" data-stat-range="mes">Este mes</button>
       <button class="filter-btn" data-stat-range="semana">Esta semana</button>
       <button class="filter-btn" data-stat-range="anio">Este año</button>
       <button class="filter-btn" data-stat-range="todo">Todo el historial</button>
+      <select id="stat-usuario" class="filter-btn" aria-label="Filtrar estadísticas por persona" style="cursor:pointer;margin-left:auto;">
+        <option value="todos">Todo el equipo</option>
+      </select>
     </div>
-
-    <div class="presencia-titulo" style="margin-bottom:12px;">Horas por persona</div>
-    <div id="stat-personas-chart" style="margin-bottom:40px;"><div class="loading-text">Cargando…</div></div>
-
-    <div class="presencia-titulo" style="margin-bottom:12px;">Horas por sello</div>
-    <div id="stat-sellos-chart" style="margin-bottom:40px;"><div class="loading-text">Cargando…</div></div>
-
-    <div class="presencia-titulo" style="margin-bottom:4px;">Qué día de la semana se trabaja más</div>
-    <p class="sub" style="margin:0 0 12px;font-size:12px;">Promedio de horas activas por sesión, según el día de la semana — histórico completo, no cambia con el filtro de arriba.</p>
-    <div id="stat-diasemana-chart"><div class="loading-text">Cargando…</div></div>
+    <div class="stat-kpis" id="stat-kpis">
+      <div class="stat-kpi"><div class="label">Horas totales</div><div class="value">—</div></div>
+      <div class="stat-kpi"><div class="label">Promedio por jornada</div><div class="value">—</div></div>
+      <div class="stat-kpi"><div class="label">Jornadas</div><div class="value">—</div></div>
+      <div class="stat-kpi"><div class="label">Personas activas</div><div class="value">—</div></div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-panel"><div class="stat-panel-head"><div><div class="stat-panel-title">Horas por persona</div><div class="stat-panel-note">Tiempo activo acumulado por responsable.</div></div></div><div id="stat-personas-chart"><div class="loading-text">Cargando…</div></div></div>
+      <div class="stat-panel"><div class="stat-panel-head"><div><div class="stat-panel-title">Horas por sello</div><div class="stat-panel-note">Distribución del esfuerzo entre sellos.</div></div></div><div id="stat-sellos-chart"><div class="loading-text">Cargando…</div></div></div>
+      <div class="stat-panel full"><div class="stat-panel-head"><div><div class="stat-panel-title">Evolución frente al objetivo</div><div class="stat-panel-note">Trabajo real y referencia laboral. Fines de semana y feriados registrados tienen objetivo cero.</div></div></div><div id="stat-tendencia-chart"><div class="loading-text">Cargando…</div></div></div>
+      <div class="stat-panel full"><div class="stat-panel-head"><div><div class="stat-panel-title">Franja horaria más utilizada</div><div class="stat-panel-note">Distribución del tiempo activo real en el período seleccionado.</div></div><div class="stat-highlight" id="stat-franja-destacada">—</div></div><div id="stat-horas-chart"><div class="loading-text">Cargando…</div></div></div>
+      <div class="stat-panel full"><div class="stat-panel-head"><div><div class="stat-panel-title">Promedio por día de la semana</div><div class="stat-panel-note">Horas activas promedio por jornada, usando el histórico completo.</div></div></div><div id="stat-diasemana-chart"><div class="loading-text">Cargando…</div></div></div>
+    </div>
   </div>
 </div>
 
@@ -799,15 +1053,65 @@ const show = (el) => el.classList.remove("hidden");
 const hide = (el) => el.classList.add("hidden");
 const RE_HORA = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
 function horaValida(str){ return RE_HORA.test((str || "").trim()); }
+function toast(mensaje, tipo = "ok"){
+  const region = $("toast-region");
+  if(!region) return;
+  const el = document.createElement("div");
+  el.className = `toast ${tipo}`;
+  el.textContent = mensaje;
+  region.appendChild(el);
+  setTimeout(() => el.remove(), 3800);
+}
+
+const CLAVE_MODIFICACIONES_ADMIN = "limonero";
+let resolverClaveAdmin = null;
+
+function cerrarClaveAdmin(autorizado){
+  hide($("modal-clave-admin"));
+  const resolver = resolverClaveAdmin;
+  resolverClaveAdmin = null;
+  if(resolver) resolver(autorizado);
+}
+
+function pedirClaveAdmin(accion){
+  if(!currentPerfil?.is_admin) return Promise.resolve(false);
+  if(resolverClaveAdmin) cerrarClaveAdmin(false);
+  $("clave-admin-accion").textContent = `${accion}. Ingresá la contraseña administrativa para continuar.`;
+  $("clave-admin-input").value = "";
+  hide($("clave-admin-error"));
+  show($("modal-clave-admin"));
+  setTimeout(() => $("clave-admin-input").focus(), 50);
+  return new Promise(resolve => { resolverClaveAdmin = resolve; });
+}
+
+$("clave-admin-cancelar").addEventListener("click", () => cerrarClaveAdmin(false));
+$("clave-admin-confirmar").addEventListener("click", () => {
+  if($("clave-admin-input").value !== CLAVE_MODIFICACIONES_ADMIN){
+    show($("clave-admin-error"));
+    $("clave-admin-input").value = "";
+    $("clave-admin-input").focus();
+    return;
+  }
+  cerrarClaveAdmin(true);
+});
+$("clave-admin-input").addEventListener("input", () => hide($("clave-admin-error")));
+$("clave-admin-input").addEventListener("keydown", e => {
+  if(e.key === "Enter"){ e.preventDefault(); $("clave-admin-confirmar").click(); }
+  if(e.key === "Escape"){ e.preventDefault(); cerrarClaveAdmin(false); }
+});
 
 
 /* ---------- selector de tema ---------- */
 function aplicarTema(tema){
+  const migracion = { medianoche:"tinta" };
+  tema = migracion[tema] || tema;
+  if(!["negro","tinta","sepia","azul","bosque","rosa","rojo","papel","luz"].includes(tema)) tema = "tinta";
   document.documentElement.setAttribute("data-theme", tema);
   document.querySelectorAll(".theme-dot").forEach(d => {
     d.classList.toggle("activo", d.dataset.themeValue === tema);
   });
   localStorage.setItem("rubin-tema", tema);
+  if("documentPictureInPicture" in window && window.documentPictureInPicture.window) sincronizarTemaPip();
 }
 document.querySelectorAll(".theme-dot").forEach(d => {
   d.addEventListener("click", () => aplicarTema(d.dataset.themeValue));
@@ -975,14 +1279,15 @@ async function refrescarEstadoTimer(){
     .from("timer_eventos")
     .select("tipo, creado_en")
     .eq("user_id", currentUser.id)
-    .order("creado_en", { ascending: true });
+    .order("creado_en", { ascending: false })
+    .limit(500);
 
   if(error){
     console.error(error);
     return;
   }
 
-  todosEventosCache = data || [];
+  todosEventosCache = (data || []).reverse();
   const estado = calcularEstadoActual(todosEventosCache);
   aplicarEstadoTimer(estado);
 }
@@ -1000,6 +1305,7 @@ function aplicarEstadoTimer(estado){
       segundos += (Date.now() - estado.desde)/1000;
     }
     $("stamp-time").textContent = fmtHMS(segundos);
+    sincronizarTiempoFlotante(segundos);
 
     const pct = Math.min(1, segundos / META_ALARMA_SEGUNDOS);
     const circ = 779; // 2 * PI * 124, redondeado
@@ -1034,18 +1340,21 @@ function aplicarEstadoTimer(estado){
     show($("controls-idle"));
     $("stamp-status").textContent = "Detenido";
     $("stamp-status").className = "stamp-status";
+    actualizarTimerFlotante("idle");
     hide($("alarm-banner"));
     if(currentUser) cargarQuienEstaTrabajando(); // desaparecer de la lista al toque
   } else if(estado.status === "running"){
     show($("controls-running"));
     $("stamp-status").textContent = "En curso";
     $("stamp-status").className = "stamp-status running";
+    actualizarTimerFlotante("running");
     tickInterval = setInterval(pintar, 1000);
     if(currentUser) cargarQuienEstaTrabajando(); // aparecer en verde al toque
   } else if(estado.status === "paused"){
     show($("controls-paused"));
     $("stamp-status").textContent = "Pausado";
     $("stamp-status").className = "stamp-status paused";
+    actualizarTimerFlotante("paused");
     if(currentUser) cargarQuienEstaTrabajando(); // aparecer en naranja al toque
 
     // Auto-detener si lleva pausado más del límite (probable olvido de reanudar/cerrar)
@@ -1094,13 +1403,34 @@ let dbChannel = null;
 let adminDisponible = false;
 let presenciaTrabajando = []; // [{user_id, estado, nombre, sello}] desde la vista de la base
 let presenciaPollInterval = null;
+let datosPollInterval = null;
 let autoDesactivarInterval = null;
+const realtimeDebounces = {};
+const TAMANO_PAGINA_DB = 500;
+
+async function consultarPaginado(crearConsulta, maxFilas = 10000){
+  const acumulado = [];
+  for(let inicio = 0; inicio < maxFilas; inicio += TAMANO_PAGINA_DB){
+    const fin = Math.min(inicio + TAMANO_PAGINA_DB, maxFilas) - 1;
+    const { data, error } = await crearConsulta(inicio, fin);
+    if(error) return { data: acumulado, error };
+    const lote = data || [];
+    acumulado.push(...lote);
+    if(lote.length < (fin - inicio + 1)) break;
+  }
+  return { data: acumulado, error: null };
+}
+
+function debounceRealtime(clave, funcion, espera = 450){
+  clearTimeout(realtimeDebounces[clave]);
+  realtimeDebounces[clave] = setTimeout(funcion, espera);
+}
 
 // Hora de auto-desactivación: 23:00
 const HORA_DESACTIVACION = 23;
 
 async function cargarQuienEstaTrabajando(){
-  const { data, error } = await sb.from("v_estado_actual_usuarios").select("*");
+  const { data, error } = await sb.from("v_estado_actual_usuarios").select("user_id, estado, nombre, sello").limit(TAMANO_PAGINA_DB);
   if(error){ console.error(error); return; }
   presenciaTrabajando = (data || []).filter(r => r.estado === "running" || r.estado === "paused");
   renderPresencia();
@@ -1110,10 +1440,27 @@ async function iniciarPresencia(){
   // --- Estado de quién está trabajando, leído directo de la base ---
   await cargarQuienEstaTrabajando();
   if(presenciaPollInterval) clearInterval(presenciaPollInterval);
-  presenciaPollInterval = setInterval(cargarQuienEstaTrabajando, 20 * 1000);
+  presenciaPollInterval = setInterval(cargarQuienEstaTrabajando, 60 * 1000);
+
+  // Respaldo liviano si Realtime no está publicado o la conexión se interrumpe.
+  // Solo actualiza el panel visible y evita mostrar estados de carga intermedios.
+  if(datosPollInterval) clearInterval(datosPollInterval);
+  datosPollInterval = setInterval(() => {
+    if(document.visibilityState !== "visible" || !currentUser || !currentPerfil) return;
+    if(currentPerfil.is_admin){
+      if(rangoAdminActual && document.querySelector('[data-tab="horas"]')?.classList.contains("active")){
+        cargarYRenderizarAdmin(rangoAdminActual.desde, rangoAdminActual.hasta, true);
+      }
+      if(document.querySelector('[data-tab="noticias"]')?.classList.contains("active")) cargarNoticiasAdmin();
+    }else{
+      cargarResumenSemana();
+      cargarResumenMes();
+      cargarNoticiasUsuario();
+    }
+  }, 5 * 60 * 1000);
 
   // --- Canal de postgres_changes para el estado del admin ---
-  dbChannel = sb.channel("admin-status-changes")
+  dbChannel = sb.channel("control-horas-live-v2")
     .on("postgres_changes", {
       event: "UPDATE",
       schema: "public",
@@ -1121,7 +1468,27 @@ async function iniciarPresencia(){
       filter: `is_admin=eq.true`
     }, (payload) => {
       // Otro usuario (o la misma sesión) cambió el estado del admin → re-render
-      renderPresencia();
+      cargarEstadoAdminDB();
+    })
+    .on("postgres_changes", { event:"*", schema:"public", table:"timer_eventos" }, () => {
+      debounceRealtime("timer", async () => {
+        await cargarQuienEstaTrabajando();
+        if(currentPerfil?.is_admin){
+          if(rangoAdminActual && document.querySelector('[data-tab="horas"]')?.classList.contains("active")){
+            cargarYRenderizarAdmin(rangoAdminActual.desde, rangoAdminActual.hasta, true);
+          }
+        }else if(currentUser){
+          await refrescarEstadoTimer();
+          cargarResumenSemana();
+          cargarResumenMes();
+        }
+      });
+    })
+    .on("postgres_changes", { event:"*", schema:"public", table:"noticias" }, () => {
+      debounceRealtime("noticias", () => currentPerfil?.is_admin ? cargarNoticiasAdmin() : cargarNoticiasUsuario(), 550);
+    })
+    .on("postgres_changes", { event:"*", schema:"public", table:"noticias_lecturas" }, () => {
+      debounceRealtime("lecturas", () => currentPerfil?.is_admin ? cargarNoticiasAdmin() : cargarNoticiasUsuario(), 550);
     })
     .subscribe();
 
@@ -1195,23 +1562,16 @@ function actualizarBtnDisponible(){
 // (trackPresencia y el hook de beforeunload ya no son necesarios: la lista de
 // "quién está trabajando" ahora se lee directo de la base, no de una conexión en vivo)
 
-async function renderPresencia(){
+function renderPresencia(){
   // Usuarios con timer activo (leído directo de la base, no de una conexión en vivo)
   const presencias = presenciaTrabajando.map(r => ({ nombre: r.nombre, sello: r.sello, estado: r.estado }));
 
   // Estado del admin desde DB (si está disponible)
   let adminItem = null;
   if(!currentPerfil.is_admin){
-    // Usuarios no-admin leen el estado actual de DB
-    const { data } = await sb.rpc("get_admin_status");
-    if(data && data[0]){
-      const { disponible, disponible_hasta } = data[0];
-      const hasta = disponible_hasta ? new Date(disponible_hasta) : null;
-      if(disponible && (!hasta || new Date() < hasta)){
-        // Buscar el nombre del admin desde los perfiles
-        const adminPerfil = Object.values(perfilesCache).find(p => p.is_admin) || { nombre: "Ignacio" };
-        adminItem = { nombre: adminPerfil.nombre || "Admin", estado: "available" };
-      }
+    if(adminDisponible){
+      const adminPerfil = Object.values(perfilesCache).find(p => p.is_admin) || { nombre: "Admin" };
+      adminItem = { nombre: adminPerfil.nombre || "Admin", estado: "available" };
     }
   } else if(adminDisponible){
     adminItem = { nombre: currentPerfil.nombre, estado: "available" };
@@ -1234,7 +1594,7 @@ async function renderPresencia(){
           : p.estado === "paused"
             ? `${p.nombre} · en pausa`
             : p.nombre;
-        return `<div class="presencia-item"><span class="presencia-dot ${dotClass}"></span>${label}</div>`;
+        return `<div class="presencia-item"><span class="presencia-dot ${dotClass}"></span>${escapeHtml(label)}</div>`;
       }).join("");
 
   const listaTimer = $("presencia-lista-timer");
@@ -1247,7 +1607,9 @@ async function renderPresencia(){
    BOTÓN DISPONIBLE / NO DISPONIBLE (solo admin)
    ============================================================ */
 $("btn-disponible").addEventListener("click", async () => {
-  adminDisponible = !adminDisponible;
+  const nuevoEstado = !adminDisponible;
+  if(!await pedirClaveAdmin(nuevoEstado ? "Activar disponibilidad" : "Desactivar disponibilidad")) return;
+  adminDisponible = nuevoEstado;
   actualizarBtnDisponible();
   if(adminDisponible){
     await activarAdminEnDB();
@@ -1314,12 +1676,14 @@ async function despuesDeLogin(user){
     iniciarPanelAdmin();
   } else {
     show($("view-timer"));
+    show($("btn-floating-timer"));
     $("timer-nombre").textContent = perfil.nombre;
     $("timer-sello").textContent = perfil.sello;
     await refrescarEstadoTimer();
-    cargarNoticiasUsuario();
     cargarResumenSemana();
+    cargarResumenMes();
     await chequearSesionPendiente();
+    await cargarNoticiasUsuario();
   }
 }
 
@@ -1339,6 +1703,119 @@ let momentoDetener = null;
 
 $("btn-stop").addEventListener("click", conBloqueo($("btn-stop"), congelarYAbrirModal));
 $("btn-stop-2").addEventListener("click", conBloqueo($("btn-stop-2"), congelarYAbrirModal));
+
+/* ============================================================
+   TIMER FLOTANTE REAL — ventana Picture-in-Picture siempre visible
+   ============================================================ */
+let currentTimerStatus = "idle";
+let ultimoTiempoFlotante = "00:00:00";
+var pipTimerWindow = null;
+
+function actualizarTimerFlotante(status){
+  currentTimerStatus = status;
+  const etiquetas = { idle:"Detenido", running:"En curso", paused:"En pausa" };
+  sincronizarContenidoPip();
+  document.title = status === "idle" ? "Control de Horas" : `${ultimoTiempoFlotante} · ${etiquetas[status]}`;
+}
+
+function sincronizarTiempoFlotante(segundos){
+  ultimoTiempoFlotante = fmtHMS(segundos);
+  sincronizarContenidoPip();
+  if(currentTimerStatus !== "idle"){
+    const etiquetas = { running:"En curso", paused:"En pausa" };
+    document.title = `${ultimoTiempoFlotante} · ${etiquetas[currentTimerStatus]}`;
+  }
+}
+
+function sincronizarContenidoPip(){
+  if(!pipTimerWindow || pipTimerWindow.closed) return;
+  const doc = pipTimerWindow.document;
+  const tiempo = doc.getElementById("pip-time");
+  const estado = doc.getElementById("pip-status");
+  const accion = doc.getElementById("pip-main-action");
+  const detener = doc.getElementById("pip-stop");
+  if(!tiempo || !estado || !accion || !detener) return;
+  const etiquetas = { idle:"Detenido", running:"En curso", paused:"En pausa" };
+  tiempo.textContent = ultimoTiempoFlotante;
+  estado.textContent = etiquetas[currentTimerStatus];
+  estado.dataset.status = currentTimerStatus;
+  accion.textContent = currentTimerStatus === "idle" ? "Iniciar" : currentTimerStatus === "running" ? "Pausar" : "Reanudar";
+  accion.className = currentTimerStatus === "running" ? "secondary" : "primary";
+  detener.hidden = currentTimerStatus === "idle";
+}
+
+function sincronizarTemaPip(){
+  if(!pipTimerWindow || pipTimerWindow.closed) return;
+  const origen = getComputedStyle(document.documentElement);
+  ["--ink","--surface","--surface-2","--paper","--paper-dim","--gold","--stamp","--ok","--line","--accent-text","--danger-text"].forEach(prop => {
+    pipTimerWindow.document.documentElement.style.setProperty(prop, origen.getPropertyValue(prop));
+  });
+}
+
+async function abrirTimerPictureInPicture(){
+  if(!("documentPictureInPicture" in window) || !window.isSecureContext){
+    toast("La ventana flotante real requiere Chrome o Edge de escritorio actualizado.", "error");
+    return;
+  }
+  if(pipTimerWindow && !pipTimerWindow.closed){
+    pipTimerWindow.focus();
+    return;
+  }
+  try{
+    pipTimerWindow = await window.documentPictureInPicture.requestWindow({ width:340, height:230 });
+    const doc = pipTimerWindow.document;
+    doc.documentElement.lang = "es";
+    doc.title = "Timer · Control de Horas";
+    const style = doc.createElement("style");
+    style.textContent = `
+      *{box-sizing:border-box}html,body{margin:0;min-height:100%;}body{display:flex;align-items:center;justify-content:center;background:var(--ink);color:var(--paper);font-family:Inter,system-ui,sans-serif;padding:14px;}
+      main{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 16px 45px rgba(0,0,0,.28)}
+      .brand{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--paper-dim);margin-bottom:7px}.time{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.15}.status{font-size:12px;color:var(--paper-dim);margin:4px 0 14px}.status[data-status="running"]{color:var(--ok)}.status[data-status="paused"]{color:var(--gold)}
+      .controls{display:flex;gap:8px}button{flex:1;border:1px solid transparent;border-radius:8px;padding:9px 10px;font:600 12px Inter,system-ui,sans-serif;cursor:pointer}.primary{background:var(--ok);color:var(--accent-text)}.secondary{background:var(--surface-2);border-color:var(--line);color:var(--paper)}.stop{background:var(--stamp);color:var(--danger-text)}button:active{transform:scale(.98)}
+    `;
+    doc.head.appendChild(style);
+    doc.body.innerHTML = `<main><div class="brand">Control de horas · ${escapeHtml(currentPerfil?.nombre || "")}</div><div class="time" id="pip-time">00:00:00</div><div class="status" id="pip-status">Detenido</div><div class="controls"><button id="pip-main-action" class="primary">Iniciar</button><button id="pip-stop" class="stop" hidden>Detener…</button></div></main>`;
+    sincronizarTemaPip();
+    sincronizarContenidoPip();
+    doc.getElementById("pip-main-action").addEventListener("click", () => {
+      const id = currentTimerStatus === "idle" ? "btn-start" : currentTimerStatus === "running" ? "btn-pause" : "btn-resume";
+      $(id).click();
+    });
+    doc.getElementById("pip-stop").addEventListener("click", () => {
+      window.focus();
+      $(currentTimerStatus === "paused" ? "btn-stop-2" : "btn-stop").click();
+    });
+    pipTimerWindow.addEventListener("pagehide", () => {
+      pipTimerWindow = null;
+      $("btn-floating-timer").setAttribute("aria-pressed", "false");
+      $("btn-floating-timer").textContent = "▣ Abrir timer flotante";
+    });
+    $("btn-floating-timer").setAttribute("aria-pressed", "true");
+    $("btn-floating-timer").textContent = "▣ Cerrar timer flotante";
+  }catch(error){
+    console.error("No se pudo abrir Picture-in-Picture", error);
+    toast("El navegador no permitió abrir la ventana flotante. Probá desde Chrome o Edge.", "error");
+  }
+}
+
+$("btn-floating-timer").textContent = "▣ Abrir timer flotante";
+$("btn-floating-timer").addEventListener("click", async () => {
+  if(pipTimerWindow && !pipTimerWindow.closed) pipTimerWindow.close();
+  else await abrirTimerPictureInPicture();
+});
+document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState !== "visible" || !currentUser || !currentPerfil) return;
+  cargarQuienEstaTrabajando();
+  if(currentPerfil.is_admin){
+    if(rangoAdminActual && document.querySelector('[data-tab="horas"]')?.classList.contains("active")) cargarYRenderizarAdmin(rangoAdminActual.desde, rangoAdminActual.hasta, true);
+    if(document.querySelector('[data-tab="noticias"]')?.classList.contains("active")) cargarNoticiasAdmin();
+  }else{
+    refrescarEstadoTimer();
+    cargarResumenSemana();
+    cargarResumenMes();
+    cargarNoticiasUsuario();
+  }
+});
 
 function congelarYAbrirModal(){
   momentoDetener = new Date();
@@ -1381,6 +1858,7 @@ $("borrar-confirmar").addEventListener("click", async () => {
   }
 
   if(!borrarPendiente) return;
+  if(!await pedirClaveAdmin("Eliminar definitivamente esta entrada")) return;
 
   $("borrar-confirmar").disabled = true;
   $("borrar-confirmar").textContent = "Eliminando…";
@@ -1432,6 +1910,9 @@ $("modal-confirmar").addEventListener("click", async () => {
 let rangoActivo = "hoy";
 let sesionesRango = []; // sesiones del rango de fechas actual, sin filtrar por usuario
 let perfilesCache = {};
+let rangoAdminActual = null;
+let feriadosCache = [];
+let objetivosDisponibles = true;
 
 function calcularRango(tipo){
   const hoy = new Date();
@@ -1469,6 +1950,7 @@ document.querySelectorAll(".admin-tab-btn").forEach(btn => {
       cargarEstadisticas();
       cargarEstadisticaDiaSemana();
     }
+    if(btn.dataset.tab === "noticias") cargarNoticiasAdmin();
   });
 });
 
@@ -1495,6 +1977,11 @@ $("filter-custom").addEventListener("click", () => {
 $("filter-usuario").addEventListener("change", () => {
   renderAdminConFiltros();
 });
+$("filter-busqueda").addEventListener("input", renderAdminConFiltros);
+$("btn-refresh-admin").addEventListener("click", () => {
+  if(rangoAdminActual) cargarYRenderizarAdmin(rangoAdminActual.desde, rangoAdminActual.hasta);
+});
+$("btn-csv").addEventListener("click", exportarCSV);
 
 $("btn-pdf").addEventListener("click", generarPDF);
 
@@ -1503,9 +1990,10 @@ function generarPDF(){
   const doc = new jsPDF();
 
   const usuarioFiltro = $("filter-usuario").value;
+  const sesionesEquipo = sesionesRango.filter(s => esUsuarioEquipo(s.userId));
   const sesiones = usuarioFiltro === "todos"
-    ? sesionesRango
-    : sesionesRango.filter(s => s.userId === usuarioFiltro);
+    ? sesionesEquipo
+    : sesionesEquipo.filter(s => s.userId === usuarioFiltro);
   const nombreFiltro = usuarioFiltro === "todos"
     ? "Todos los responsables"
     : ($("filter-usuario").selectedOptions[0]?.textContent || "");
@@ -1576,13 +2064,153 @@ function generarPDF(){
   doc.save(nombreArchivo);
 }
 
+function claveMes(fecha){
+  const d = new Date(fecha);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+}
+
+function fechaDesdeClave(clave){
+  return new Date(`${clave}T00:00:00`);
+}
+
+function perfilesConObjetivo(usuarioId = "todos"){
+  return Object.values(perfilesCache).filter(p => !p.is_admin && (usuarioId === "todos" || p.id === usuarioId));
+}
+
+function esUsuarioEquipo(userId){
+  return !!perfilesCache[userId] && !perfilesCache[userId].is_admin;
+}
+
+function horasObjetivoPerfil(perfil){
+  const valor = Number(perfil?.horas_diarias_objetivo);
+  return Number.isFinite(valor) ? valor : 3;
+}
+
+function esDiaLaborable(fecha, feriados = new Set(feriadosCache.map(f => f.fecha))){
+  const dia = fecha.getDay();
+  return dia !== 0 && dia !== 6 && !feriados.has(claveFechaLocal(fecha));
+}
+
+function calcularObjetivoPeriodo(desde, hasta, usuarioId = "todos", incluirFuturo = false){
+  const inicio = new Date(desde); inicio.setHours(0,0,0,0);
+  const limiteNatural = new Date(hasta); limiteNatural.setHours(23,59,59,999);
+  const hoy = new Date(); hoy.setHours(23,59,59,999);
+  const limite = incluirFuturo ? limiteNatural : new Date(Math.min(limiteNatural.getTime(), hoy.getTime()));
+  const perfiles = perfilesConObjetivo(usuarioId);
+  const feriados = new Set(feriadosCache.map(f => f.fecha));
+  let segundos = 0;
+  let diasLaborables = 0;
+  let jornadasEsperadas = 0;
+  for(let cursor = new Date(inicio); cursor <= limite; cursor.setDate(cursor.getDate()+1)){
+    if(!esDiaLaborable(cursor, feriados)) continue;
+    diasLaborables++;
+    perfiles.forEach(p => {
+      segundos += horasObjetivoPerfil(p) * 3600;
+      jornadasEsperadas++;
+    });
+  }
+  return { segundos, diasLaborables, jornadasEsperadas, cantidadPersonas: perfiles.length };
+}
+
+function objetivoParaFecha(fecha, usuarioId = "todos"){
+  if(!esDiaLaborable(fecha)) return 0;
+  return perfilesConObjetivo(usuarioId).reduce((total,p) => total + horasObjetivoPerfil(p) * 3600,0);
+}
+
+async function cargarObjetivosLaborales(){
+  const mesActual = claveMes(new Date());
+  if(!$("objetivo-mes").value) $("objetivo-mes").value = mesActual;
+  const { data, error } = await sb.from("timer_feriados").select("fecha, nombre").order("fecha", { ascending:true }).limit(TAMANO_PAGINA_DB);
+  if(error){
+    objetivosDisponibles = false;
+    feriadosCache = [];
+  }else{
+    feriadosCache = data || [];
+  }
+  renderPanelObjetivos();
+}
+
+function renderPanelObjetivos(){
+  const mes = $("objetivo-mes").value || claveMes(new Date());
+  const [anio, numeroMes] = mes.split("-").map(Number);
+  const desde = new Date(anio, numeroMes-1, 1);
+  const hasta = new Date(anio, numeroMes, 0, 23,59,59,999);
+  const feriadosMes = feriadosCache.filter(f => f.fecha.startsWith(mes));
+  const feriadosLaborables = feriadosMes.filter(f => { const dia = fechaDesdeClave(f.fecha).getDay(); return dia !== 0 && dia !== 6; });
+  const referencia = calcularObjetivoPeriodo(desde, hasta, "todos", true);
+  $("objetivo-equipo-mes").textContent = objetivosDisponibles ? fmtHM(referencia.segundos) : "Configurar";
+  $("objetivo-dias-mes").textContent = objetivosDisponibles ? referencia.diasLaborables : "—";
+  $("objetivo-feriados-mes").textContent = objetivosDisponibles ? feriadosLaborables.length : "—";
+  const nombreMes = desde.toLocaleDateString("es-AR",{month:"long",year:"numeric"});
+  $("objetivo-resumen").textContent = objetivosDisponibles
+    ? `${nombreMes.charAt(0).toUpperCase()+nombreMes.slice(1)} · referencia actual, sin historial de cambios.`
+    : "Ejecutá SUPABASE_OBJETIVOS_LABORALES.sql para activar objetivos y feriados.";
+  $("feriados-chips").innerHTML = feriadosMes.length ? feriadosMes.map(f => `<span class="feriado-chip">${escapeHtml(fmtFecha(`${f.fecha}T12:00:00`))} · ${escapeHtml(f.nombre)} <button data-feriado-eliminar="${f.fecha}" aria-label="Eliminar ${escapeAttr(f.nombre)}">×</button></span>`).join("") : '<span class="objetivo-note">Sin feriados registrados para este mes.</span>';
+  $("objetivos-lista").innerHTML = perfilesConObjetivo().sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => {
+    const objetivoMes = referencia.diasLaborables * horasObjetivoPerfil(p) * 3600;
+    return `<div class="objetivo-persona" data-user-id="${p.id}"><span class="objetivo-persona-nombre" title="${escapeAttr(p.nombre)}"><strong>${escapeHtml(p.nombre)}</strong><small>${escapeHtml(p.sello || "Sin sello")}</small></span><input class="objetivo-horas" type="number" min="0" max="24" step="0.25" value="${horasObjetivoPerfil(p)}" aria-label="Horas diarias de ${escapeAttr(p.nombre)}"><span class="objetivo-persona-meta"><span>Objetivo mes</span><strong>${fmtHM(objetivoMes)}</strong></span><button class="filter-btn objetivo-guardar">Guardar</button></div>`;
+  }).join("");
+}
+
+$("objetivo-mes").addEventListener("change", renderPanelObjetivos);
+$("btn-feriado-agregar").addEventListener("click", async () => {
+  const fecha = $("feriado-fecha").value;
+  if(!fecha){ toast("Elegí la fecha del feriado.", "error"); return; }
+  if(!await pedirClaveAdmin("Agregar un feriado")) return;
+  const boton = $("btn-feriado-agregar"); boton.disabled = true;
+  const { error } = await sb.rpc("guardar_feriado", { p_fecha:fecha, p_nombre:$("feriado-nombre").value.trim() || "Feriado" });
+  boton.disabled = false;
+  if(error){ toast("No se pudo guardar. Ejecutá la migración de objetivos.", "error"); return; }
+  $("objetivo-mes").value = fecha.slice(0,7); $("feriado-fecha").value = ""; $("feriado-nombre").value = "";
+  await cargarObjetivosLaborales();
+  renderAdminConFiltros();
+  if(estadisticasCargadas){ cargarEstadisticas(); cargarEstadisticaDiaSemana(); }
+  toast("Feriado agregado.");
+});
+
+$("feriados-chips").addEventListener("click", async e => {
+  const boton = e.target.closest("[data-feriado-eliminar]"); if(!boton) return;
+  if(!await pedirClaveAdmin("Eliminar este feriado")) return;
+  boton.disabled = true;
+  const { error } = await sb.rpc("eliminar_feriado", { p_fecha:boton.dataset.feriadoEliminar });
+  if(error){ boton.disabled = false; toast("No se pudo eliminar el feriado.", "error"); return; }
+  await cargarObjetivosLaborales();
+  renderAdminConFiltros();
+  if(estadisticasCargadas){ cargarEstadisticas(); cargarEstadisticaDiaSemana(); }
+  toast("Feriado eliminado.");
+});
+
+$("objetivos-lista").addEventListener("click", async e => {
+  const boton = e.target.closest(".objetivo-guardar"); if(!boton) return;
+  const fila = boton.closest(".objetivo-persona");
+  const horas = Number(fila.querySelector(".objetivo-horas").value);
+  if(!Number.isFinite(horas) || horas < 0 || horas > 24){ toast("El objetivo debe estar entre 0 y 24 horas.", "error"); return; }
+  if(!await pedirClaveAdmin("Modificar el objetivo laboral de esta persona")) return;
+  boton.disabled = true;
+  const fechaCompatibilidad = perfilesCache[fila.dataset.userId]?.fecha_inicio_objetivo || claveFechaLocal(new Date());
+  const { error } = await sb.rpc("actualizar_objetivo_usuario", { p_user_id:fila.dataset.userId, p_horas:horas, p_fecha_inicio:fechaCompatibilidad });
+  boton.disabled = false;
+  if(error){ toast("No se pudo actualizar el objetivo.", "error"); return; }
+  perfilesCache[fila.dataset.userId].horas_diarias_objetivo = horas;
+  renderPanelObjetivos();
+  renderAdminConFiltros();
+  if(estadisticasCargadas){ cargarEstadisticas(); cargarEstadisticaDiaSemana(); }
+  toast("Objetivo actualizado.");
+});
+
 async function iniciarPanelAdmin(){
-  const { data: perfiles } = await sb.from("timer_perfiles").select("id, nombre, sello, is_admin");
+  let { data: perfiles, error: errorPerfiles } = await sb.from("timer_perfiles").select("id, nombre, sello, is_admin, horas_diarias_objetivo, fecha_inicio_objetivo").limit(TAMANO_PAGINA_DB);
+  if(errorPerfiles){
+    const respaldo = await sb.from("timer_perfiles").select("id, nombre, sello, is_admin").limit(TAMANO_PAGINA_DB);
+    perfiles = respaldo.data || [];
+    objetivosDisponibles = false;
+  }
   perfilesCache = {};
   (perfiles || []).forEach(p => perfilesCache[p.id] = p);
 
   const select = $("filter-usuario");
   (perfiles || [])
+    .filter(p => !p.is_admin)
     .sort((a,b) => a.nombre.localeCompare(b.nombre))
     .forEach(p => {
       const opt = document.createElement("option");
@@ -1591,8 +2219,20 @@ async function iniciarPanelAdmin(){
       select.appendChild(opt);
     });
 
+  const statSelect = $("stat-usuario");
+  (perfiles || [])
+    .filter(p => !p.is_admin)
+    .sort((a,b) => a.nombre.localeCompare(b.nombre))
+    .forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p.id;
+      opt.textContent = `${p.nombre} (${p.sello})`;
+      statSelect.appendChild(opt);
+    });
+
   const { desde, hasta } = calcularRango("hoy");
-  cargarYRenderizarAdmin(desde, hasta);
+  await cargarObjetivosLaborales();
+  await cargarYRenderizarAdmin(desde, hasta);
   cargarConfigGeneral();
   cargarNoticiasAdmin();
 }
@@ -1705,37 +2345,58 @@ function sanitizarHtmlNoticia(html){
 }
 
 async function cargarConfigGeneral(){
-  const { data, error } = await sb.from("config_general").select("*").eq("id", 1).single();
+  const { data, error } = await sb.from("config_general").select("noticias_activas").eq("id", 1).single();
   if(error || !data) return;
   $("noticias-toggle-general").checked = data.noticias_activas;
 }
 
 $("noticias-toggle-general").addEventListener("change", async (e) => {
   const activo = e.target.checked;
+  if(!await pedirClaveAdmin(activo ? "Mostrar la sección de noticias" : "Ocultar la sección de noticias")){
+    e.target.checked = !activo;
+    return;
+  }
   const { error } = await sb.from("config_general").update({ noticias_activas: activo }).eq("id", 1);
   if(error){
     alert("No se pudo actualizar: " + error.message);
     e.target.checked = !activo;
+  }else{
+    toast(activo ? "La sección de noticias quedó visible." : "La sección de noticias quedó oculta.");
   }
 });
 
+let noticiasAdminCache = [];
+let noticiasLecturasCache = [];
+
 async function cargarNoticiasAdmin(){
-  const { data, error } = await sb.from("noticias").select("*").order("creado_en", { ascending: false });
+  const [{ data, error }, { data: lecturas, error: errorLecturas }] = await Promise.all([
+    consultarPaginado((inicio, fin) => sb.from("noticias").select("id, titulo, mensaje, activa, creado_en, prioridad").order("creado_en", { ascending: false }).range(inicio, fin), TAMANO_PAGINA_DB),
+    consultarPaginado((inicio, fin) => sb.from("noticias_lecturas").select("noticia_id, user_id, leido_en").order("leido_en", { ascending: false }).range(inicio, fin))
+  ]);
   const cont = $("noticias-lista-admin");
   if(error){
-    cont.innerHTML = `<div class="loading-text">Error al cargar noticias.</div>`;
+    cont.innerHTML = `<div class="loading-text">No se pudieron cargar las noticias. Ejecutá primero la migración de Supabase.</div>`;
     return;
   }
+  noticiasAdminCache = data || [];
+  noticiasLecturasCache = errorLecturas ? [] : (lecturas || []);
   if(!data || data.length === 0){
     cont.innerHTML = `<div class="loading-text">Todavía no hay noticias cargadas.</div>`;
+    $("news-meta").innerHTML = "<span>0 noticias</span>";
     return;
   }
+  const activas = data.filter(n => n.activa).length;
+  const urgentes = data.filter(n => ["urgente","importante"].includes(n.prioridad) && n.activa).length;
+  const totalUsuarios = Object.values(perfilesCache).filter(p => !p.is_admin).length;
+  $("news-meta").innerHTML = `<span><strong>${data.length}</strong> noticias</span><span><strong>${activas}</strong> activas</span><span><strong>${data.length-activas}</strong> archivadas</span><span><strong>${urgentes}</strong> avisos prioritarios</span>`;
   cont.innerHTML = data.map(n => `
-    <div class="noticia-admin-item" data-id="${n.id}" data-titulo="${escapeAttr(n.titulo)}" data-mensaje-b64="${btoa(unescape(encodeURIComponent(n.mensaje || "")))}" style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);">
+    <div class="noticia-admin-item" data-id="${n.id}" data-prioridad="${n.prioridad || "normal"}" data-titulo="${escapeAttr(n.titulo)}" data-mensaje-b64="${btoa(unescape(encodeURIComponent(n.mensaje || "")))}" style="display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;">
       <div style="flex:1;">
-        <div style="font-weight:600;font-size:14px;">${escapeHtml(n.titulo)}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><span style="font-weight:600;font-size:14px;">${escapeHtml(n.titulo)}</span><span class="priority-badge ${n.prioridad || "normal"}">${n.prioridad || "normal"}</span></div>
+        <div style="font-size:11px;color:var(--paper-dim);margin:3px 0 7px;">${fmtFecha(n.creado_en)} · ${fmtHora(n.creado_en)}</div>
         <div style="font-size:13px;color:var(--paper-dim);white-space:pre-wrap;line-height:1.5;">${sanitizarHtmlNoticia(n.mensaje)}</div>
       </div>
+      <button class="btn-link noticia-lectores" style="color:var(--ok);white-space:nowrap;">${noticiasLecturasCache.filter(l => l.noticia_id === n.id).length}/${totalUsuarios} leídas</button>
       <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--paper-dim);cursor:pointer;white-space:nowrap;">
         <input type="checkbox" class="noticia-activa-check" ${n.activa ? "checked" : ""} />
         activa
@@ -1748,21 +2409,57 @@ async function cargarNoticiasAdmin(){
 
 let noticiaEditandoId = null;
 
+function actualizarPreviewNoticia(){
+  const titulo = $("noticia-titulo").value.trim();
+  const mensaje = sanitizarHtmlNoticia($("noticia-mensaje").innerHTML);
+  const largo = $("noticia-mensaje").textContent.length;
+  $("noticia-preview-titulo").textContent = titulo || "Título de la noticia";
+  $("noticia-preview-mensaje").innerHTML = mensaje || "El mensaje aparecerá acá mientras escribís.";
+  const prioridad = $("noticia-prioridad").value;
+  $("noticia-preview-prioridad").textContent = prioridad;
+  $("noticia-preview-prioridad").className = `priority-badge ${prioridad}`;
+  $("noticia-contador").textContent = `${largo.toLocaleString("es-AR")} / 2.000`;
+  $("noticia-contador").style.color = largo > 2000 ? "var(--stamp)" : "var(--paper-dim)";
+}
+function limpiarFormularioNoticia(){
+  noticiaEditandoId = null;
+  $("noticia-titulo").value = "";
+  $("noticia-mensaje").innerHTML = "";
+  $("noticia-prioridad").value = "normal";
+  const boton = $("btn-noticia-publicar");
+  boton.textContent = "+ Publicar noticia";
+  boton.style.borderColor = "var(--ok)";
+  boton.style.color = "var(--ok)";
+  hide($("btn-noticia-cancelar"));
+  actualizarPreviewNoticia();
+}
+$("noticia-titulo").setAttribute("maxlength", "120");
+$("noticia-titulo").addEventListener("input", actualizarPreviewNoticia);
+$("noticia-mensaje").addEventListener("input", actualizarPreviewNoticia);
+$("noticia-prioridad").addEventListener("change", actualizarPreviewNoticia);
+$("btn-noticia-cancelar").addEventListener("click", limpiarFormularioNoticia);
+
 $("btn-noticia-publicar").addEventListener("click", async () => {
   const titulo = $("noticia-titulo").value.trim();
   const mensajeTexto = $("noticia-mensaje").textContent.trim();
   const mensajeHtml = sanitizarHtmlNoticia($("noticia-mensaje").innerHTML);
+  const prioridad = $("noticia-prioridad").value;
   if(!titulo || !mensajeTexto){
     alert("Completá título y mensaje.");
     return;
   }
+  if(mensajeTexto.length > 2000){
+    toast("La noticia no puede superar los 2.000 caracteres.", "error");
+    return;
+  }
+  if(!await pedirClaveAdmin(noticiaEditandoId ? "Guardar los cambios de esta noticia" : "Publicar una nueva noticia")) return;
   const boton = $("btn-noticia-publicar");
   boton.disabled = true;
   boton.textContent = noticiaEditandoId ? "Guardando…" : "Publicando…";
 
   const { error } = noticiaEditandoId
-    ? await sb.from("noticias").update({ titulo, mensaje: mensajeHtml }).eq("id", noticiaEditandoId)
-    : await sb.from("noticias").insert({ titulo, mensaje: mensajeHtml, activa: true });
+    ? await sb.from("noticias").update({ titulo, mensaje: mensajeHtml, prioridad }).eq("id", noticiaEditandoId)
+    : await sb.from("noticias").insert({ titulo, mensaje: mensajeHtml, prioridad, activa: true });
 
   boton.disabled = false;
 
@@ -1772,12 +2469,8 @@ $("btn-noticia-publicar").addEventListener("click", async () => {
     return;
   }
 
-  noticiaEditandoId = null;
-  boton.textContent = "+ Publicar noticia";
-  boton.style.borderColor = "var(--ok)";
-  boton.style.color = "var(--ok)";
-  $("noticia-titulo").value = "";
-  $("noticia-mensaje").innerHTML = "";
+  toast(noticiaEditandoId ? "Noticia actualizada." : "Noticia publicada.");
+  limpiarFormularioNoticia();
   cargarNoticiasAdmin();
 });
 
@@ -1785,6 +2478,11 @@ $("noticias-lista-admin").addEventListener("change", async (e) => {
   if(!e.target.classList.contains("noticia-activa-check")) return;
   const item = e.target.closest(".noticia-admin-item");
   const id = item.dataset.id;
+  const nuevoEstado = e.target.checked;
+  if(!await pedirClaveAdmin(nuevoEstado ? "Activar esta noticia" : "Archivar esta noticia")){
+    e.target.checked = !nuevoEstado;
+    return;
+  }
   const { error } = await sb.from("noticias").update({ activa: e.target.checked }).eq("id", id);
   if(error){
     alert("No se pudo actualizar: " + error.message);
@@ -1793,15 +2491,22 @@ $("noticias-lista-admin").addEventListener("change", async (e) => {
 });
 
 $("noticias-lista-admin").addEventListener("click", async (e) => {
+  if(e.target.classList.contains("noticia-lectores")){
+    abrirDetalleLecturas(e.target.closest(".noticia-admin-item").dataset.id);
+    return;
+  }
   if(e.target.classList.contains("noticia-editar")){
     const item = e.target.closest(".noticia-admin-item");
     noticiaEditandoId = item.dataset.id;
     $("noticia-titulo").value = item.dataset.titulo;
     $("noticia-mensaje").innerHTML = decodeURIComponent(escape(atob(item.dataset.mensajeB64)));
+    $("noticia-prioridad").value = item.dataset.prioridad || "normal";
     const boton = $("btn-noticia-publicar");
     boton.textContent = "Guardar cambios";
     boton.style.borderColor = "var(--gold)";
     boton.style.color = "var(--gold)";
+    show($("btn-noticia-cancelar"));
+    actualizarPreviewNoticia();
     $("noticia-titulo").scrollIntoView({ behavior: "smooth", block: "center" });
     return;
   }
@@ -1810,32 +2515,48 @@ $("noticias-lista-admin").addEventListener("click", async (e) => {
   const item = e.target.closest(".noticia-admin-item");
   const id = item.dataset.id;
   if(!confirm("¿Borrar esta noticia? No se puede deshacer.")) return;
+  if(!await pedirClaveAdmin("Eliminar definitivamente esta noticia")) return;
   const { error } = await sb.from("noticias").delete().eq("id", id);
   if(error){
     alert("No se pudo borrar: " + error.message);
     return;
   }
   if(noticiaEditandoId === id){
-    noticiaEditandoId = null;
-    $("noticia-titulo").value = "";
-    $("noticia-mensaje").innerHTML = "";
-    $("btn-noticia-publicar").textContent = "+ Publicar noticia";
+    limpiarFormularioNoticia();
   }
+  toast("Noticia eliminada.");
   cargarNoticiasAdmin();
 });
 
-async function cargarYRenderizarAdmin(desde, hasta){
-  $("admin-table-wrap").innerHTML = '<div class="loading-text">Cargando registros…</div>';
+function abrirDetalleLecturas(noticiaId){
+  const noticia = noticiasAdminCache.find(n => n.id === noticiaId);
+  const usuarios = Object.values(perfilesCache).filter(p => !p.is_admin).sort((a,b) => a.nombre.localeCompare(b.nombre));
+  const porUsuario = new Map(noticiasLecturasCache.filter(l => l.noticia_id === noticiaId).map(l => [l.user_id, l]));
+  const cantidad = usuarios.filter(u => porUsuario.has(u.id)).length;
+  $("lecturas-titulo").textContent = noticia?.titulo || "Lecturas de la noticia";
+  $("lecturas-resumen").textContent = `${cantidad} de ${usuarios.length} usuarios marcaron esta noticia como leída.`;
+  $("lecturas-lista").innerHTML = usuarios.length ? usuarios.map(u => {
+    const lectura = porUsuario.get(u.id);
+    return `<div class="reader-row"><span>${escapeHtml(u.nombre)} <small style="color:var(--paper-dim);">· ${escapeHtml(u.sello)}</small></span><span class="reader-status ${lectura ? "leida" : ""}">${lectura ? `Leída · ${fmtFecha(lectura.leido_en)} ${fmtHora(lectura.leido_en)}` : "No leída"}</span></div>`;
+  }).join("") : '<div class="loading-text">No hay usuarios para mostrar.</div>';
+  show($("modal-lecturas"));
+}
+$("lecturas-cerrar").addEventListener("click", () => hide($("modal-lecturas")));
 
-  const { data: eventos, error } = await sb
+async function cargarYRenderizarAdmin(desde, hasta, silencioso = false){
+  rangoAdminActual = { desde, hasta };
+  if(!silencioso) $("admin-table-wrap").innerHTML = '<div class="loading-text">Cargando registros…</div>';
+
+  const { data: eventos, error } = await consultarPaginado((inicio, fin) => sb
     .from("timer_eventos")
     .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos")
     .gte("creado_en", desde.toISOString())
     .lte("creado_en", hasta.toISOString())
-    .order("creado_en", { ascending: true });
+    .order("creado_en", { ascending: true })
+    .range(inicio, fin));
 
   if(error){
-    $("admin-table-wrap").innerHTML = `<div class="empty-state">Error al cargar: ${error.message}</div>`;
+    $("admin-table-wrap").innerHTML = `<div class="empty-state">Error al cargar: ${escapeHtml(error.message)}</div>`;
     return;
   }
 
@@ -1845,37 +2566,137 @@ async function cargarYRenderizarAdmin(desde, hasta){
 
 function renderAdminConFiltros(){
   const usuarioFiltro = $("filter-usuario").value;
-  const sesiones = usuarioFiltro === "todos"
-    ? sesionesRango
-    : sesionesRango.filter(s => s.userId === usuarioFiltro);
+  const termino = $("filter-busqueda").value.trim().toLocaleLowerCase("es");
+  const sesionesEquipo = sesionesRango.filter(s => esUsuarioEquipo(s.userId));
+  let sesiones = usuarioFiltro === "todos"
+    ? sesionesEquipo
+    : sesionesEquipo.filter(s => s.userId === usuarioFiltro);
+
+  if(termino){
+    sesiones = sesiones.filter(s => {
+      const perfil = perfilesCache[s.userId] || {};
+      return [perfil.nombre, perfil.sello, s.tareas].some(v => (v || "").toLocaleLowerCase("es").includes(termino));
+    });
+  }
 
   renderResumen(sesiones);
   renderTablaAdmin(sesiones);
+  $("resultados-admin").textContent = `${sesiones.length} jornada${sesiones.length === 1 ? "" : "s"}`;
+}
+
+function exportarCSV(){
+  const usuarioFiltro = $("filter-usuario").value;
+  const termino = $("filter-busqueda").value.trim().toLocaleLowerCase("es");
+  const sesionesEquipo = sesionesRango.filter(s => esUsuarioEquipo(s.userId));
+  let sesiones = usuarioFiltro === "todos" ? sesionesEquipo : sesionesEquipo.filter(s => s.userId === usuarioFiltro);
+  if(termino) sesiones = sesiones.filter(s => {
+    const p = perfilesCache[s.userId] || {};
+    return [p.nombre,p.sello,s.tareas].some(v => (v || "").toLocaleLowerCase("es").includes(termino));
+  });
+  const celda = v => `"${String(v ?? "").replace(/"/g,'""')}"`;
+  const filas = [["Fecha","Responsable","Sello","Inicio","Fin","Horas activas","Pausas","Tareas"]];
+  sesiones.forEach(s => {
+    const p = perfilesCache[s.userId] || {};
+    filas.push([fmtFecha(s.horaInicio),p.nombre || "Perfil eliminado",p.sello || "",fmtHora(s.horaInicio),s.enCurso ? "En curso" : fmtHora(s.horaFin),fmtHMS(s.segundosActivos),s.pausas,s.tareas || ""]);
+  });
+  const contenido = "\uFEFF" + filas.map(f => f.map(celda).join(";")).join("\r\n");
+  const url = URL.createObjectURL(new Blob([contenido], { type:"text/csv;charset=utf-8" }));
+  const a = document.createElement("a"); a.href = url; a.download = `control-horas_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast(`CSV generado con ${sesiones.length} jornadas.`);
 }
 
 /* ============================================================
    ESTADÍSTICAS — panel admin
    ============================================================ */
 
-/* Dibuja un gráfico de barras simple con CSS, sin librerías externas.
+let statModoGrafico = "barras";
+const statGraficosCache = {};
+
+/* Dibuja barras finas o una curva SVG sin dependencias externas.
    datos: [{label, valorSegundos}] */
-function renderStatChart(contenedorId, datos, colorCss){
+function renderStatChart(contenedorId, datos, colorCss, permiteCurva = true){
+  statGraficosCache[contenedorId] = { datos, colorCss, permiteCurva };
   const cont = $(contenedorId);
-  if(!datos || datos.length === 0){
+  const tieneReferencia = !!datos?.some(d => Number(d.valorReferenciaSegundos) > 0);
+  if(!datos || datos.length === 0 || datos.every(d => d.valorSegundos <= 0) && !tieneReferencia){
     cont.innerHTML = `<div class="loading-text">No hay datos para este período.</div>`;
     return;
   }
-  const max = Math.max(...datos.map(d => d.valorSegundos), 1);
-  cont.innerHTML = `<div class="stat-chart">` + datos.map(d => {
+  if(statModoGrafico === "curvas" && permiteCurva){
+    renderStatLineChart(cont, datos, colorCss);
+    return;
+  }
+  const max = Math.max(...datos.flatMap(d => [d.valorSegundos, Number(d.valorReferenciaSegundos) || 0]), 1);
+  const mostrarValores = datos.length <= 12;
+  const leyenda = tieneReferencia ? '<div class="stat-chart-legend"><span><i></i>Trabajado</span><span class="reference"><i></i>Objetivo</span></div>' : '';
+  cont.innerHTML = leyenda + `<div class="stat-chart">` + datos.map(d => {
     const alturaPct = Math.max(3, (d.valorSegundos / max) * 100);
+    const referencia = Number(d.valorReferenciaSegundos) || 0;
+    const posicionReferencia = Math.max(0, 100-(referencia/max)*100);
+    const etiquetaVisible = d.etiquetaCorta || d.label;
+    const etiquetaDetalle = d.detalleLabel || d.label;
     return `
-      <div class="stat-bar-wrap">
-        <div class="stat-bar-valor">${fmtHM(d.valorSegundos)}</div>
-        <div class="stat-bar" style="height:${alturaPct}%;background:${colorCss};"></div>
-        <div class="stat-bar-label">${escapeHtml(d.label)}</div>
+      <div class="stat-bar-wrap" title="${escapeAttr(etiquetaDetalle)} · trabajado ${fmtHM(d.valorSegundos)}${tieneReferencia ? ` · objetivo ${fmtHM(referencia)}` : ""}">
+        ${tieneReferencia ? `<div class="stat-reference-marker" style="top:${posicionReferencia}%"></div>` : ""}
+        ${mostrarValores ? `<div class="stat-bar-valor">${fmtHM(d.valorSegundos)}</div>` : ""}
+        <div class="stat-bar" style="height:${alturaPct}%;--bar-color:${colorCss};"></div>
+        <div class="stat-bar-label">${escapeHtml(etiquetaVisible)}</div>
       </div>`;
   }).join("") + `</div>`;
 }
+
+function crearRutaCurva(puntos){
+  if(puntos.length === 1) return `M ${puntos[0].x} ${puntos[0].y}`;
+  let ruta = `M ${puntos[0].x} ${puntos[0].y}`;
+  for(let i=0; i<puntos.length-1; i++){
+    const p0 = puntos[i-1] || puntos[i];
+    const p1 = puntos[i];
+    const p2 = puntos[i+1];
+    const p3 = puntos[i+2] || p2;
+    const cp1x = p1.x + (p2.x-p0.x)/6;
+    const cp1y = p1.y + (p2.y-p0.y)/6;
+    const cp2x = p2.x - (p3.x-p1.x)/6;
+    const cp2y = p2.y - (p3.y-p1.y)/6;
+    ruta += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
+  }
+  return ruta;
+}
+
+function renderStatLineChart(cont, datos, colorCss){
+  const ancho = Math.max(520, (datos.length-1)*62 + 48);
+  const alto = 220, izquierda = 24, derecha = 24, arriba = 24, base = 178;
+  const tieneReferencia = datos.some(d => Number(d.valorReferenciaSegundos) > 0);
+  const max = Math.max(...datos.flatMap(d => [d.valorSegundos, Number(d.valorReferenciaSegundos) || 0]), 1);
+  const puntos = datos.map((d,i) => ({
+    x: datos.length === 1 ? ancho/2 : izquierda + i*((ancho-izquierda-derecha)/(datos.length-1)),
+    y: base - (Math.max(0,d.valorSegundos)/max)*(base-arriba),
+    dato:d
+  }));
+  const ruta = crearRutaCurva(puntos);
+  const puntosReferencia = datos.map((d,i) => ({
+    x: datos.length === 1 ? ancho/2 : izquierda + i*((ancho-izquierda-derecha)/(datos.length-1)),
+    y: base - ((Number(d.valorReferenciaSegundos) || 0)/max)*(base-arriba)
+  }));
+  const rutaReferencia = tieneReferencia ? crearRutaCurva(puntosReferencia) : "";
+  const area = `${ruta} L ${puntos[puntos.length-1].x} ${base} L ${puntos[0].x} ${base} Z`;
+  const cadaEtiqueta = Math.max(1, Math.ceil(datos.length/10));
+  const grilla = [0,.33,.66,1].map(f => `<line class="stat-gridline" x1="${izquierda}" x2="${ancho-derecha}" y1="${base-f*(base-arriba)}" y2="${base-f*(base-arriba)}"></line>`).join("");
+  const leyenda = tieneReferencia ? '<div class="stat-chart-legend"><span><i></i>Trabajado</span><span class="reference"><i></i>Objetivo</span></div>' : '';
+  cont.innerHTML = `${leyenda}<div class="stat-line-shell"><svg class="stat-line-svg" viewBox="0 0 ${ancho} ${alto}" role="img" aria-label="Gráfico de curva">${grilla}<path class="stat-line-area" d="${area}" fill="${colorCss}"></path><path class="stat-line-path" d="${ruta}" stroke="${colorCss}"></path>${tieneReferencia ? `<path class="stat-reference-path" d="${rutaReferencia}"></path>` : ""}${puntos.map((p,i) => `<circle class="stat-line-dot" cx="${p.x}" cy="${p.y}" r="4" fill="${colorCss}"><title>${escapeHtml(p.dato.label)} · trabajado ${fmtHM(p.dato.valorSegundos)}${tieneReferencia ? ` · objetivo ${fmtHM(p.dato.valorReferenciaSegundos || 0)}` : ""}</title></circle>${i%cadaEtiqueta===0 || i===puntos.length-1 ? `<text class="stat-line-label" x="${p.x}" y="204">${escapeHtml(p.dato.label)}</text>` : ""}`).join("")}</svg></div>`;
+}
+
+document.querySelectorAll(".chart-mode-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    statModoGrafico = btn.dataset.chartMode;
+    document.querySelectorAll(".chart-mode-btn").forEach(b => {
+      const activo = b === btn;
+      b.classList.toggle("active", activo);
+      b.setAttribute("aria-pressed", String(activo));
+    });
+    Object.entries({ ...statGraficosCache }).forEach(([id, config]) => renderStatChart(id, config.datos, config.colorCss, config.permiteCurva));
+  });
+});
 
 let statRangoActivo = "mes";
 
@@ -1900,23 +2721,39 @@ document.querySelectorAll(".filter-btn[data-stat-range]").forEach(btn => {
   });
 });
 
+$("stat-usuario").addEventListener("change", () => {
+  cargarEstadisticas();
+  cargarEstadisticaDiaSemana();
+});
+
 async function cargarEstadisticas(){
   const { desde, hasta } = calcularRangoStat(statRangoActivo);
-
-  const { data: eventos, error } = await sb
-    .from("timer_eventos")
-    .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos")
-    .gte("creado_en", desde.toISOString())
-    .lte("creado_en", hasta.toISOString())
-    .order("creado_en", { ascending: true });
+  const usuarioStat = $("stat-usuario").value;
+  const { data: eventos, error } = await consultarPaginado((inicio, fin) => {
+    let consulta = sb
+      .from("timer_eventos")
+      .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos")
+      .gte("creado_en", desde.toISOString())
+      .lte("creado_en", hasta.toISOString());
+    if(usuarioStat !== "todos") consulta = consulta.eq("user_id", usuarioStat);
+    return consulta.order("creado_en", { ascending: true }).range(inicio, fin);
+  });
 
   if(error){
     $("stat-personas-chart").innerHTML = `<div class="loading-text">Error al cargar.</div>`;
     $("stat-sellos-chart").innerHTML = "";
+    $("stat-tendencia-chart").innerHTML = "";
+    $("stat-horas-chart").innerHTML = "";
+    $("stat-franja-destacada").textContent = "—";
     return;
   }
 
-  const sesiones = reconstruirSesiones(eventos || []);
+  const eventosEquipo = usuarioStat === "todos" ? (eventos || []).filter(ev => esUsuarioEquipo(ev.user_id)) : (eventos || []);
+  const sesiones = reconstruirSesiones(eventosEquipo);
+  const primeraSesion = sesiones.length ? new Date(Math.min(...sesiones.map(s => new Date(s.horaInicio).getTime()))) : null;
+  const desdeObjetivo = statRangoActivo === "todo"
+    ? (primeraSesion || new Date(Date.now()+86400000))
+    : desde;
 
   const porPersona = {};
   const porSello = {};
@@ -1928,29 +2765,129 @@ async function cargarEstadisticas(){
     porSello[sello] = (porSello[sello] || 0) + s.segundosActivos;
   });
 
+  const objetivoPorPersona = {};
+  const objetivoPorSello = {};
+  perfilesConObjetivo(usuarioStat).forEach(p => {
+    const objetivo = calcularObjetivoPeriodo(desdeObjetivo, hasta, p.id).segundos;
+    porPersona[p.nombre] ||= 0;
+    porSello[p.sello || "—"] ||= 0;
+    objetivoPorPersona[p.nombre] = objetivo;
+    objetivoPorSello[p.sello || "—"] = (objetivoPorSello[p.sello || "—"] || 0) + objetivo;
+  });
+
   const datosPersona = Object.entries(porPersona)
-    .map(([label, valorSegundos]) => ({ label, valorSegundos }))
+    .map(([label, valorSegundos]) => ({ label, valorSegundos, valorReferenciaSegundos:objetivoPorPersona[label] || 0 }))
     .sort((a, b) => b.valorSegundos - a.valorSegundos);
   const datosSello = Object.entries(porSello)
-    .map(([label, valorSegundos]) => ({ label, valorSegundos }))
+    .map(([label, valorSegundos]) => ({ label, valorSegundos, valorReferenciaSegundos:objetivoPorSello[label] || 0 }))
     .sort((a, b) => b.valorSegundos - a.valorSegundos);
 
-  renderStatChart("stat-personas-chart", datosPersona, "var(--gold)");
-  renderStatChart("stat-sellos-chart", datosSello, "var(--ok)");
+  const total = sesiones.reduce((acc,s) => acc + s.segundosActivos, 0);
+  const referenciaPeriodo = calcularObjetivoPeriodo(desdeObjetivo, hasta, usuarioStat);
+  const diferencia = total - referenciaPeriodo.segundos;
+  const cumplimiento = referenciaPeriodo.segundos > 0 ? (total/referenciaPeriodo.segundos)*100 : 0;
+  const claseDiferencia = diferencia >= 0 ? "var(--ok)" : "var(--stamp)";
+  const jornadasConRegistro = new Set(sesiones.filter(s => {
+    const fecha = new Date(s.horaInicio);
+    return esDiaLaborable(fecha) && fecha >= desdeObjetivo && (usuarioStat === "todos" || s.userId === usuarioStat);
+  }).map(s => `${s.userId}:${claveFechaLocal(s.horaInicio)}`)).size;
+  const jornadasSinRegistro = Math.max(0, referenciaPeriodo.jornadasEsperadas-jornadasConRegistro);
+  $("stat-kpis").innerHTML = `
+    <div class="stat-kpi"><div class="label">Horas trabajadas</div><div class="value">${fmtHM(total)}</div><div class="hint">Tiempo activo acumulado</div></div>
+    <div class="stat-kpi"><div class="label">Objetivo al día</div><div class="value">${fmtHM(referenciaPeriodo.segundos)}</div><div class="hint">${referenciaPeriodo.diasLaborables} días hábiles, sin feriados</div></div>
+    <div class="stat-kpi"><div class="label">Diferencia</div><div class="value" style="color:${claseDiferencia}">${diferencia >= 0 ? "+" : "−"}${fmtHM(Math.abs(diferencia))}</div><div class="hint">Respecto de la referencia</div></div>
+    <div class="stat-kpi"><div class="label">Cumplimiento</div><div class="value">${referenciaPeriodo.segundos > 0 ? `${cumplimiento.toFixed(0)}%` : "—"}</div><div class="hint">Trabajado / objetivo</div></div>
+    <div class="stat-kpi"><div class="label">Promedio por jornada</div><div class="value">${sesiones.length ? fmtHM(total/sesiones.length) : "0h 00m"}</div><div class="hint">Sin contar las pausas</div></div>
+    <div class="stat-kpi"><div class="label">Jornadas sin registro</div><div class="value">${jornadasSinRegistro}</div><div class="hint">Excluye sábados, domingos y feriados</div></div>`;
+
+  const agruparPorMes = statRangoActivo === "anio" || statRangoActivo === "todo";
+  const tendencia = {};
+  const inicioSesiones = sesiones.map(s => new Date(s.horaInicio));
+  const inicioDisponible = inicioSesiones.sort((a,b)=>a-b)[0] || new Date();
+  const inicioGrafico = statRangoActivo === "todo" ? new Date(Math.max(desde.getTime(),inicioDisponible.getTime())) : new Date(desde);
+  inicioGrafico.setHours(0,0,0,0);
+  const finGrafico = new Date(Math.min(hasta.getTime(),Date.now())); finGrafico.setHours(23,59,59,999);
+  for(let cursor = new Date(inicioGrafico); cursor <= finGrafico; cursor.setDate(cursor.getDate()+1)){
+    const key = agruparPorMes
+      ? `${cursor.getFullYear()}-${String(cursor.getMonth()+1).padStart(2,"0")}`
+      : claveFechaLocal(cursor);
+    tendencia[key] ||= { real:0, referencia:0 };
+    tendencia[key].referencia += objetivoParaFecha(new Date(cursor), usuarioStat);
+  }
+  sesiones.forEach(s => {
+    const d = new Date(s.horaInicio);
+    const key = agruparPorMes
+      ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`
+      : `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    tendencia[key] ||= { real:0, referencia:0 };
+    tendencia[key].real += s.segundosActivos;
+  });
+  const datosTendencia = Object.entries(tendencia).sort(([a],[b]) => a.localeCompare(b)).map(([key,valores]) => ({
+    label: agruparPorMes ? new Date(`${key}-01T12:00:00`).toLocaleDateString("es-AR",{month:"short",year:"2-digit"}) : new Date(`${key}T12:00:00`).toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"}),
+    valorSegundos: valores.real,
+    valorReferenciaSegundos: valores.referencia
+  }));
+
+  const datosHorarios = calcularDistribucionHoraria(eventosEquipo, Math.min(Date.now(), hasta.getTime()));
+  const franjaPrincipal = datosHorarios.reduce((mejor, actual) => actual.valorSegundos > mejor.valorSegundos ? actual : mejor, datosHorarios[0]);
+  $("stat-franja-destacada").textContent = franjaPrincipal.valorSegundos > 0 ? `${franjaPrincipal.detalleLabel || franjaPrincipal.label} · ${fmtHM(franjaPrincipal.valorSegundos)}` : "Sin actividad";
+
+  renderStatChart("stat-personas-chart", datosPersona, "var(--gold)", false);
+  renderStatChart("stat-sellos-chart", datosSello, "var(--ok)", false);
+  renderStatChart("stat-tendencia-chart", datosTendencia, "var(--gold-dim)");
+  renderStatChart("stat-horas-chart", datosHorarios, "var(--stamp)");
+}
+
+function calcularDistribucionHoraria(eventos, limiteFin){
+  const porHora = Array(24).fill(0);
+  const activoDesde = new Map();
+  const sumarTramo = (inicio, fin) => {
+    let cursor = Math.max(inicio, 0);
+    const cierre = Math.min(fin, limiteFin);
+    while(cursor < cierre){
+      const momento = new Date(cursor);
+      const proximaHora = new Date(cursor);
+      proximaHora.setHours(proximaHora.getHours()+1,0,0,0);
+      const tramoFin = Math.min(cierre, proximaHora.getTime());
+      porHora[momento.getHours()] += Math.max(0,(tramoFin-cursor)/1000);
+      cursor = tramoFin;
+    }
+  };
+  eventos.forEach(ev => {
+    const t = new Date(ev.creado_en).getTime();
+    if(!Number.isFinite(t)) return;
+    if(ev.tipo === "start" || ev.tipo === "resume"){
+      activoDesde.set(ev.user_id, t);
+    }else if(ev.tipo === "pause" || ev.tipo === "stop"){
+      if(activoDesde.has(ev.user_id)) sumarTramo(activoDesde.get(ev.user_id), t);
+      activoDesde.delete(ev.user_id);
+    }
+  });
+  activoDesde.forEach(inicio => sumarTramo(inicio, limiteFin));
+  return porHora.map((valorSegundos,hora) => ({
+    label:`${String(hora).padStart(2,"0")}h`,
+    detalleLabel:`${String(hora).padStart(2,"0")}:00–${String((hora+1)%24).padStart(2,"0")}:00`,
+    valorSegundos
+  }));
 }
 
 async function cargarEstadisticaDiaSemana(){
-  const { data: eventos, error } = await sb
-    .from("timer_eventos")
-    .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos")
-    .order("creado_en", { ascending: true });
+  const usuarioStat = $("stat-usuario").value;
+  const { data: eventos, error } = await consultarPaginado((inicio, fin) => {
+    let consulta = sb
+      .from("timer_eventos")
+      .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos");
+    if(usuarioStat !== "todos") consulta = consulta.eq("user_id", usuarioStat);
+    return consulta.order("creado_en", { ascending: true }).range(inicio, fin);
+  });
 
   if(error){
     $("stat-diasemana-chart").innerHTML = `<div class="loading-text">Error al cargar.</div>`;
     return;
   }
 
-  const sesiones = reconstruirSesiones(eventos || []);
+  const eventosEquipo = usuarioStat === "todos" ? (eventos || []).filter(ev => esUsuarioEquipo(ev.user_id)) : (eventos || []);
+  const sesiones = reconstruirSesiones(eventosEquipo);
 
   const nombresDias = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
   const totalPorDia = [0,0,0,0,0,0,0];
@@ -1963,9 +2900,11 @@ async function cargarEstadisticaDiaSemana(){
   });
 
   const orden = [1,2,3,4,5,6,0]; // mostrar Lunes a Domingo
+  const objetivoDiario = perfilesConObjetivo(usuarioStat).reduce((total,p) => total + horasObjetivoPerfil(p)*3600,0);
   const datos = orden.map(i => ({
     label: nombresDias[i],
-    valorSegundos: cantPorDia[i] > 0 ? totalPorDia[i] / cantPorDia[i] : 0
+    valorSegundos: cantPorDia[i] > 0 ? totalPorDia[i] / cantPorDia[i] : 0,
+    valorReferenciaSegundos: i >= 1 && i <= 5 ? objetivoDiario : 0
   }));
 
   renderStatChart("stat-diasemana-chart", datos, "var(--stamp)");
@@ -1983,33 +2922,120 @@ function fmtHora(iso){
 /* ============================================================
    NOTICIAS Y RESUMEN SEMANAL — vista del usuario
    ============================================================ */
+let noticiasUsuarioCache = [];
+let lecturasUsuarioSet = new Set();
+let urgenteActualId = null;
+const urgentesOmitidasSesion = new Set();
+
 async function cargarNoticiasUsuario(){
   const wrap = $("noticias-usuario-wrap");
   const { data: config } = await sb.from("config_general").select("noticias_activas").eq("id", 1).single();
   if(!config || !config.noticias_activas){
     hide(wrap);
+    hide($("modal-noticia-urgente"));
     return;
   }
 
-  const { data: noticias, error } = await sb
-    .from("noticias")
-    .select("*")
-    .eq("activa", true)
-    .order("creado_en", { ascending: false });
+  const [{ data: noticias, error }, { data: lecturas, error: errorLecturas }] = await Promise.all([
+    sb.from("noticias").select("id, titulo, mensaje, activa, creado_en, prioridad").eq("activa", true).order("creado_en", { ascending: false }).limit(TAMANO_PAGINA_DB),
+    sb.from("noticias_lecturas").select("noticia_id, leido_en").eq("user_id", currentUser.id).limit(TAMANO_PAGINA_DB)
+  ]);
 
-  if(error || !noticias || noticias.length === 0){
+  if(error || errorLecturas || !noticias || noticias.length === 0){
     hide(wrap);
+    if(error || errorLecturas) console.error("No se pudieron cargar lecturas de noticias", error || errorLecturas);
     return;
   }
 
-  $("noticias-lista-usuario").innerHTML = noticias.map(n => `
-    <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;">
-      <div style="font-weight:600;font-size:14px;color:var(--gold);margin-bottom:4px;">${escapeHtml(n.titulo)}</div>
+  noticiasUsuarioCache = noticias;
+  lecturasUsuarioSet = new Set((lecturas || []).map(l => l.noticia_id));
+  renderNoticiasUsuario();
+  show(wrap);
+  mostrarSiguienteUrgente();
+}
+
+function renderNoticiasUsuario(){
+  $("noticias-lista-usuario").innerHTML = noticiasUsuarioCache.map(n => `
+    <div class="news-card ${n.prioridad || "normal"}">
+      <div class="news-card-head"><span class="news-card-title">${escapeHtml(n.titulo)}</span><span class="priority-badge ${n.prioridad || "normal"}">${n.prioridad || "normal"}</span></div>
+      <div style="font-size:11px;color:var(--paper-dim);margin-bottom:7px;">${fmtFecha(n.creado_en)} · ${fmtHora(n.creado_en)}</div>
       <div style="font-size:13px;color:var(--paper-dim);line-height:1.5;white-space:pre-wrap;">${sanitizarHtmlNoticia(n.mensaje)}</div>
+      <div class="news-card-actions">
+        <span class="news-read-state">${lecturasUsuarioSet.has(n.id) ? "✓ Leída" : "● No leída"}</span>
+        <button class="filter-btn noticia-lectura-btn" data-id="${n.id}" data-leida="${lecturasUsuarioSet.has(n.id)}" style="padding:5px 10px;font-size:11px;">${lecturasUsuarioSet.has(n.id) ? "Marcar no leída" : "Marcar leída"}</button>
+      </div>
     </div>
   `).join("");
-  show(wrap);
 }
+
+$("noticias-lista-usuario").addEventListener("click", async (e) => {
+  const boton = e.target.closest(".noticia-lectura-btn");
+  if(!boton) return;
+  boton.disabled = true;
+  const ok = await cambiarEstadoLectura(boton.dataset.id, boton.dataset.leida !== "true", false);
+  boton.disabled = false;
+  if(ok){
+    renderNoticiasUsuario();
+    mostrarSiguienteUrgente();
+  }
+});
+
+async function cambiarEstadoLectura(noticiaId, marcarLeida, notificar = true){
+  const consulta = marcarLeida
+    ? sb.from("noticias_lecturas").insert({ noticia_id: noticiaId, user_id: currentUser.id })
+    : sb.from("noticias_lecturas").delete().eq("noticia_id", noticiaId).eq("user_id", currentUser.id);
+  const { error } = await consulta;
+  if(error && error.code !== "23505"){
+    toast("No se pudo actualizar el estado de lectura.", "error");
+    return false;
+  }
+  if(marcarLeida){
+    lecturasUsuarioSet.add(noticiaId);
+  }else{
+    lecturasUsuarioSet.delete(noticiaId);
+    // Si se vuelve a marcar como no leída, el aviso reaparece recién en el próximo ingreso.
+    urgentesOmitidasSesion.add(noticiaId);
+  }
+  if(notificar) toast(marcarLeida ? "Noticia marcada como leída." : "Noticia marcada como no leída.");
+  return true;
+}
+
+function mostrarSiguienteUrgente(){
+  if(!$("modal-noticia-urgente").classList.contains("hidden")) return;
+  if(!$("modal-pendiente").classList.contains("hidden")) return;
+  const pendientes = noticiasUsuarioCache.filter(n => ["urgente","importante"].includes(n.prioridad) && !lecturasUsuarioSet.has(n.id) && !urgentesOmitidasSesion.has(n.id));
+  const noticia = pendientes.find(n => n.prioridad === "urgente") || pendientes[0];
+  if(!noticia){ urgenteActualId = null; return; }
+  urgenteActualId = noticia.id;
+  const esUrgente = noticia.prioridad === "urgente";
+  $("urgente-kicker").textContent = esUrgente ? "Aviso urgente · lectura obligatoria" : "Aviso importante";
+  $("urgente-kicker").style.color = noticia.prioridad === "urgente" ? "var(--stamp)" : "var(--gold)";
+  $("aviso-prioritario-card").className = `modal-card urgent-modal-card ${noticia.prioridad === "importante" ? "importante" : ""}`;
+  $("urgente-despues").classList.toggle("hidden", esUrgente);
+  $("urgente-marcar-leida").textContent = esUrgente ? "Leído" : "Marcar como leída";
+  $("urgente-titulo").textContent = noticia.titulo;
+  $("urgente-mensaje").innerHTML = sanitizarHtmlNoticia(noticia.mensaje);
+  show($("modal-noticia-urgente"));
+}
+
+$("urgente-despues").addEventListener("click", () => {
+  if(urgenteActualId) urgentesOmitidasSesion.add(urgenteActualId);
+  urgenteActualId = null;
+  hide($("modal-noticia-urgente"));
+  setTimeout(mostrarSiguienteUrgente, 150);
+});
+$("urgente-marcar-leida").addEventListener("click", async () => {
+  if(!urgenteActualId) return;
+  const id = urgenteActualId;
+  $("urgente-marcar-leida").disabled = true;
+  const ok = await cambiarEstadoLectura(id, true);
+  $("urgente-marcar-leida").disabled = false;
+  if(!ok) return;
+  urgenteActualId = null;
+  hide($("modal-noticia-urgente"));
+  renderNoticiasUsuario();
+  setTimeout(mostrarSiguienteUrgente, 150);
+});
 
 async function cargarResumenSemana(){
   const { desde, hasta } = calcularRango("semana");
@@ -2019,7 +3045,8 @@ async function cargarResumenSemana(){
     .eq("user_id", currentUser.id)
     .gte("creado_en", desde.toISOString())
     .lte("creado_en", hasta.toISOString())
-    .order("creado_en", { ascending: true });
+    .order("creado_en", { ascending: true })
+    .limit(TAMANO_PAGINA_DB);
 
   const cont = $("semana-lista-usuario");
   if(error){
@@ -2046,6 +3073,51 @@ async function cargarResumenSemana(){
       <div style="font-family:'Space Mono',monospace;color:var(--gold);">${fmtHMS(s.segundosActivos)}</div>
     </div>
   `).join("");
+}
+
+function claveFechaLocal(fecha){
+  const d = new Date(fecha);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
+async function cargarResumenMes(){
+  if(!currentUser || currentPerfil?.is_admin) return;
+  const ahora = new Date();
+  const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+  const inicioSemana = new Date(ahora);
+  inicioSemana.setDate(ahora.getDate()-((ahora.getDay()+6)%7));
+  inicioSemana.setHours(0,0,0,0);
+  const desdeConsulta = inicioSemana < inicioMes ? inicioSemana : inicioMes;
+  const { data:eventos, error } = await sb.from("timer_eventos")
+    .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos")
+    .eq("user_id", currentUser.id)
+    .gte("creado_en", desdeConsulta.toISOString())
+    .lte("creado_en", ahora.toISOString())
+    .order("creado_en", { ascending:true })
+    .limit(TAMANO_PAGINA_DB);
+  if(error){
+    $("resumen-mes-horas").textContent = "—";
+    $("resumen-mes-dias").textContent = "—";
+    return;
+  }
+  const sesiones = reconstruirSesiones(eventos || []);
+  const sesionesMes = sesiones.filter(s => new Date(s.horaInicio) >= inicioMes);
+  const totalMes = sesionesMes.reduce((acc,s) => acc+s.segundosActivos,0);
+  const diasMes = new Set(sesionesMes.map(s => claveFechaLocal(s.horaInicio)));
+  const diasSemanaTrabajados = new Set(sesiones.filter(s => new Date(s.horaInicio) >= inicioSemana).map(s => claveFechaLocal(s.horaInicio)));
+  const nombreMes = ahora.toLocaleDateString("es-AR",{month:"long",year:"numeric"});
+  $("resumen-mes-titulo").textContent = `Tu mes · ${nombreMes.charAt(0).toUpperCase()+nombreMes.slice(1)}`;
+  $("resumen-mes-horas").textContent = fmtHM(totalMes);
+  $("resumen-mes-dias").textContent = `${diasMes.size}`;
+  const nombres = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
+  const hoy = new Date(ahora); hoy.setHours(0,0,0,0);
+  $("resumen-dias-semana").innerHTML = nombres.map((nombre,i) => {
+    const fecha = new Date(inicioSemana); fecha.setDate(inicioSemana.getDate()+i);
+    const trabajo = diasSemanaTrabajados.has(claveFechaLocal(fecha));
+    const estado = fecha > hoy ? "future" : trabajo ? "worked" : "missed";
+    const texto = fecha > hoy ? "Pendiente" : trabajo ? "Con registro" : "Sin registro";
+    return `<div class="week-day ${estado}" title="${texto}"><span>${nombre}</span><strong>${fecha.getDate()}</strong></div>`;
+  }).join("");
 }
 
 /* ============================================================
@@ -2102,22 +3174,49 @@ $("pendiente-confirmar").addEventListener("click", async () => {
   const haySiguiente = await chequearSesionPendiente();
   if(!haySiguiente){
     await refrescarEstadoTimer();
+    mostrarSiguienteUrgente();
   }
 });
 
+function referenciaResumenActual(){
+  const botonActivo = document.querySelector(".filter-btn[data-range].active");
+  const tipo = botonActivo?.dataset.range || "personalizado";
+  let desde = rangoAdminActual?.desde ? new Date(rangoAdminActual.desde) : new Date();
+  let hasta = rangoAdminActual?.hasta ? new Date(rangoAdminActual.hasta) : new Date();
+  let etiqueta = "Objetivo del período";
+  if(tipo === "hoy"){
+    etiqueta = "Objetivo de hoy";
+  }else if(tipo === "semana"){
+    etiqueta = "Objetivo de la semana";
+    hasta = new Date(desde); hasta.setDate(hasta.getDate()+6); hasta.setHours(23,59,59,999);
+  }else if(tipo === "mes"){
+    etiqueta = "Objetivo del mes";
+    hasta = new Date(desde.getFullYear(),desde.getMonth()+1,0,23,59,59,999);
+  }
+  const usuarioFiltro = $("filter-usuario").value;
+  const referencia = calcularObjetivoPeriodo(desde,hasta,usuarioFiltro,true);
+  const contexto = usuarioFiltro === "todos"
+    ? `Equipo · ${referencia.cantidadPersonas} personas`
+    : (perfilesCache[usuarioFiltro]?.nombre || "Usuario seleccionado");
+  return { etiqueta, segundos:referencia.segundos, contexto };
+}
+
 function renderResumen(sesiones){
-  const totalPorSello = {};
+  const usuariosEquipo = perfilesConObjetivo().sort((a,b) => a.nombre.localeCompare(b.nombre));
+  const totalPorUsuario = Object.fromEntries(usuariosEquipo.map(p => [p.id,0]));
   let totalGeneral = 0;
   sesiones.forEach(s => {
-    const sello = perfilesCache[s.userId]?.sello || "—";
-    totalPorSello[sello] = (totalPorSello[sello]||0) + s.segundosActivos;
+    if(!esUsuarioEquipo(s.userId)) return;
+    totalPorUsuario[s.userId] = (totalPorUsuario[s.userId]||0) + s.segundosActivos;
     totalGeneral += s.segundosActivos;
   });
 
   let html = `<div class="summary-card"><div class="label">Total del período</div><div class="value">${fmtHM(totalGeneral)}</div></div>`;
-  for(const sello in totalPorSello){
-    html += `<div class="summary-card"><div class="label">${sello}</div><div class="value">${fmtHM(totalPorSello[sello])}</div></div>`;
-  }
+  const objetivo = referenciaResumenActual();
+  html += `<div class="summary-card objective"><div class="label">${escapeHtml(objetivo.etiqueta)}</div><div class="value">${fmtHM(objetivo.segundos)}</div><div class="hint">${escapeHtml(objetivo.contexto)}</div></div>`;
+  usuariosEquipo.forEach(perfil => {
+    html += `<div class="summary-card"><div class="label">${escapeHtml(perfil.nombre)}</div><div class="value">${fmtHM(totalPorUsuario[perfil.id] || 0)}</div><div class="hint">${escapeHtml(perfil.sello || "Sin sello")}</div></div>`;
+  });
   $("summary-row").innerHTML = html || "";
 }
 
@@ -2142,8 +3241,8 @@ let html = `<table><thead><tr>
       : "—";
     html += `<tr>
       <td>${fmtFecha(s.horaInicio)}</td>
-      <td>${perfil?.nombre || "(perfil eliminado)"}</td>
-      <td>${perfil?.sello || "—"}</td>
+      <td>${escapeHtml(perfil?.nombre || "(perfil eliminado)")}</td>
+      <td>${escapeHtml(perfil?.sello || "—")}</td>
       <td class="hrs">${fmtHora(s.horaInicio)}</td>
       <td class="hrs">${s.enCurso ? "En curso" : fmtHora(s.horaFin)}</td>
       <td>${s.pausas > 0 ? s.pausas : "—"}</td>
@@ -2154,7 +3253,7 @@ let html = `<table><thead><tr>
     </tr>`;
   }
   html += "</tbody></table>";
-  $("admin-table-wrap").innerHTML = html;
+  $("admin-table-wrap").innerHTML = `<div class="table-shell">${html}</div>`;
 
   // Conectar los botones de editar que acaban de renderizarse
  document.querySelectorAll(".btn-editar").forEach(btn => {
@@ -2166,6 +3265,7 @@ let html = `<table><thead><tr>
       $("editar-fecha").value = inicio.toISOString().slice(0, 10);
       $("editar-inicio").value = inicio.toTimeString().slice(0, 5);
       $("editar-fin").value = fin.toTimeString().slice(0, 5);
+      $("editar-cruza-medianoche").checked = inicio.toDateString() !== fin.toDateString();
       $("editar-tareas").value = btn.dataset.tareas;
       $("editar-ajuste").value = Math.round((Number(btn.dataset.ajuste) || 0) / 60);
       hide($("editar-error"));
@@ -2192,7 +3292,7 @@ function escapeHtml(texto){
 }
 
 function escapeAttr(texto){
-  return (texto || "").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  return String(texto || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 /* ============================================================
@@ -2203,6 +3303,7 @@ $("btn-nueva-entrada").addEventListener("click", () => {
   const sel = $("nueva-usuario");
   sel.innerHTML = "";
   Object.values(perfilesCache)
+    .filter(p => !p.is_admin)
     .sort((a,b) => a.nombre.localeCompare(b.nombre))
     .forEach(p => {
       const opt = document.createElement("option");
@@ -2215,6 +3316,7 @@ $("btn-nueva-entrada").addEventListener("click", () => {
   $("nueva-inicio").value = "";
   $("nueva-fin").value = "";
   $("nueva-tareas").value = "";
+  $("nueva-cruza-medianoche").checked = false;
   hide($("nueva-error"));
   show($("modal-nueva"));
 });
@@ -2254,13 +3356,15 @@ $("nueva-confirmar").addEventListener("click", async () => {
     return;
   }
 
+  if(!await pedirClaveAdmin("Agregar una nueva entrada de horas")) return;
+
   $("nueva-confirmar").disabled = true;
   $("nueva-confirmar").textContent = "Guardando…";
 
   // Insertar evento start
-  const { error: errStart } = await sb.from("timer_eventos").insert({
+  const { data: inicioCreado, error: errStart } = await sb.from("timer_eventos").insert({
     user_id: userId, tipo: "start", creado_en: tsInicio.toISOString()
-  });
+  }).select("id").single();
 
   if(errStart){
     $("nueva-error").textContent = "Error al guardar inicio: " + errStart.message;
@@ -2279,6 +3383,7 @@ $("nueva-confirmar").addEventListener("click", async () => {
   $("nueva-confirmar").textContent = "Guardar entrada";
 
   if(errStop){
+    if(inicioCreado?.id) await sb.from("timer_eventos").delete().eq("id", inicioCreado.id);
     $("nueva-error").textContent = "Error al guardar fin: " + errStop.message;
     show($("nueva-error"));
     return;
@@ -2323,12 +3428,19 @@ $("editar-confirmar").addEventListener("click", async () => {
 
   const tsInicio = new Date(`${fecha}T${inicio}:00`);
   const tsFin = new Date(`${fecha}T${fin}:00`);
+  if($("editar-cruza-medianoche").checked){
+    tsFin.setDate(tsFin.getDate() + 1);
+  }
 
   if(tsFin <= tsInicio){
-    $("editar-error").textContent = "La hora de fin debe ser posterior a la de inicio.";
+    $("editar-error").textContent = $("editar-cruza-medianoche").checked
+      ? "Revisá los horarios: incluso cruzando la medianoche, el fin debe ser posterior al inicio."
+      : "La hora de fin debe ser posterior a la de inicio. Si cruza medianoche, tildá esa opción.";
     show($("editar-error"));
     return;
   }
+
+  if(!await pedirClaveAdmin("Editar esta entrada de horas")) return;
 
   $("editar-confirmar").disabled = true;
   $("editar-confirmar").textContent = "Guardando…";
