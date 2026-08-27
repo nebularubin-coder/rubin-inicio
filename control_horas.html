@@ -374,11 +374,13 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   }
   .stat-bar-wrap{
     flex:1; min-width:42px;
-    display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+    display:grid; grid-template-rows:18px minmax(0,1fr) 24px;
+    align-items:end; justify-items:center;
     height:100%;position:relative;
   }
+  .stat-bar-plot{grid-row:2;position:relative;width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;}
   .stat-bar{
-    width:14px; min-height:2px;
+    width:14px; min-height:0;
     border-radius:999px 999px 3px 3px;
     background:linear-gradient(180deg,color-mix(in srgb,var(--bar-color) 82%,white),var(--bar-color));
     box-shadow:0 5px 18px color-mix(in srgb,var(--bar-color) 18%,transparent);
@@ -387,10 +389,10 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   .stat-bar:hover{filter:brightness(1.15);}
   .stat-bar-valor{
     font-family:'Space Mono',monospace; font-size:10px; color:var(--paper-dim);
-    margin-bottom:6px; white-space:nowrap;
+    grid-row:1;align-self:start; white-space:nowrap;
   }
   .stat-bar-label{
-    font-size:11px; color:var(--paper-dim); margin-top:8px; text-align:center;
+    grid-row:3;font-size:11px; color:var(--paper-dim); padding-top:8px; text-align:center;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px;
   }
   .stat-reference-marker{position:absolute;left:-4px;right:-4px;border-top:2px dashed var(--stamp);opacity:.82;z-index:2;pointer-events:none;}
@@ -598,7 +600,7 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   .user-dashboard{width:100%;max-width:680px;display:grid;grid-template-columns:1fr;gap:16px;margin-top:18px;}
   .user-dashboard .wide-card{grid-column:1/-1;}
   .user-summary-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.user-summary-tabs{display:flex;gap:3px;padding:3px;background:var(--ink);border:1px solid var(--line);border-radius:10px}.user-summary-tab{border:0;background:transparent;color:var(--paper-dim);border-radius:7px;padding:6px 10px;font-size:10px;font-weight:600;cursor:pointer}.user-summary-tab.active{background:var(--surface-2);color:var(--paper);box-shadow:0 1px 3px rgba(0,0,0,.12)}
-  .user-month-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0 18px;}.user-month-kpi{background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:13px;}.user-month-kpi .label{font-size:10px;color:var(--paper-dim);text-transform:uppercase;letter-spacing:.06em}.user-month-kpi .value{font-family:'Space Mono',monospace;font-size:19px;margin-top:5px;}.user-month-kpi.highlight{border-color:color-mix(in srgb,var(--gold) 48%,var(--line));background:color-mix(in srgb,var(--gold) 6%,var(--ink))}.user-month-kpi.highlight .value{color:var(--gold)}
+  .user-month-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0 18px;}.user-month-kpi{background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:13px;}.user-month-kpi .label{font-size:10px;color:var(--paper-dim);text-transform:uppercase;letter-spacing:.06em}.user-month-kpi .value{font-family:'Space Mono',monospace;font-size:19px;margin-top:5px;}.user-month-kpi .hint{color:var(--paper-dim);font-size:10px;line-height:1.35;margin-top:6px}.user-month-kpi.highlight{border-color:color-mix(in srgb,var(--gold) 48%,var(--line));background:color-mix(in srgb,var(--gold) 6%,var(--ink))}.user-month-kpi.highlight .value{color:var(--gold)}.user-month-kpi.positive .value{color:var(--ok)}.user-month-kpi.negative .value{color:var(--stamp)}
   .week-days{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;}.week-day{display:flex;flex-direction:column;align-items:center;gap:5px;border:1px solid var(--line);border-radius:9px;padding:8px 3px;color:var(--paper-dim);font-size:10px;}.week-day strong{font-family:'Space Mono',monospace;font-size:12px;color:var(--paper)}.week-day.worked{background:color-mix(in srgb,var(--ok) 13%,transparent);border-color:color-mix(in srgb,var(--ok) 55%,var(--line));}.week-day.worked strong{color:var(--ok)}.week-day.missed{background:color-mix(in srgb,var(--stamp) 10%,transparent);border-color:color-mix(in srgb,var(--stamp) 45%,var(--line));}.week-day.missed strong{color:var(--stamp)}.week-day.future{opacity:.45;}
   #semana-lista-usuario{max-height:330px;overflow-y:auto;overscroll-behavior:contain;padding-right:5px;scrollbar-width:thin;scrollbar-color:var(--gold-dim) transparent;}
   #semana-lista-usuario::-webkit-scrollbar{width:7px;}#semana-lista-usuario::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:10px;}
@@ -713,9 +715,9 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
     </div>
     <div class="user-month-kpis">
       <div class="user-month-kpi"><div class="label">Horas trabajadas</div><div class="value" id="resumen-mes-horas">—</div></div>
-      <div class="user-month-kpi highlight"><div class="label">Objetivo</div><div class="value" id="resumen-usuario-objetivo">—</div></div>
+      <div class="user-month-kpi highlight"><div class="label">Objetivo hasta hoy</div><div class="value" id="resumen-usuario-objetivo">—</div></div>
       <div class="user-month-kpi"><div class="label">Avance del objetivo</div><div class="value" id="resumen-usuario-cumplimiento">—</div></div>
-      <div class="user-month-kpi"><div class="label">Días con actividad</div><div class="value" id="resumen-mes-dias">—</div></div>
+      <div class="user-month-kpi" id="resumen-usuario-diferencia-card"><div class="label">Diferencia hasta hoy</div><div class="value" id="resumen-usuario-diferencia">—</div><div class="hint" id="resumen-usuario-diferencia-hint">Respecto del objetivo acumulado</div></div>
     </div>
     <div class="presencia-titulo" style="margin-bottom:9px;">Actividad de esta semana</div>
     <div class="week-days" id="resumen-dias-semana"><div class="loading-text" style="grid-column:1/-1;padding:12px 0;">Cargando…</div></div>
@@ -942,7 +944,7 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
       <div class="chart-mode" role="group" aria-label="Tipo de gráfico para series temporales" title="Se aplica a evolución, franja horaria y días de la semana">
         <span class="chart-mode-label">Series</span>
         <button class="chart-mode-btn active" data-chart-mode="barras" aria-pressed="true">Barras</button>
-        <button class="chart-mode-btn" data-chart-mode="curvas" aria-pressed="false">Curvas</button>
+        <button class="chart-mode-btn" data-chart-mode="curvas" aria-pressed="false">Líneas</button>
       </div>
     </div>
     <div class="filters stat-filters" style="margin-bottom:18px;">
@@ -2724,36 +2726,26 @@ function renderStatChart(contenedorId, datos, colorCss, permiteCurva = true){
   const mostrarValores = datos.length <= 12;
   const leyenda = tieneReferencia ? '<div class="stat-chart-legend"><span><i></i>Trabajado</span><span class="reference"><i></i>Objetivo</span></div>' : '';
   cont.innerHTML = leyenda + `<div class="stat-chart">` + datos.map(d => {
-    const alturaPct = Math.max(3, (d.valorSegundos / max) * 100);
+    const alturaPct = Math.max(0, (d.valorSegundos / max) * 100);
     const referencia = Number(d.valorReferenciaSegundos) || 0;
     const posicionReferencia = Math.max(0, 100-(referencia/max)*100);
     const etiquetaVisible = d.etiquetaCorta || d.label;
     const etiquetaDetalle = d.detalleLabel || d.label;
     return `
       <div class="stat-bar-wrap" title="${escapeAttr(etiquetaDetalle)} · trabajado ${fmtHM(d.valorSegundos)}${tieneReferencia ? ` · objetivo ${fmtHM(referencia)}` : ""}">
-        ${tieneReferencia ? `<div class="stat-reference-marker" style="top:${posicionReferencia}%"></div>` : ""}
         ${mostrarValores ? `<div class="stat-bar-valor">${fmtHM(d.valorSegundos)}</div>` : ""}
-        <div class="stat-bar" style="height:${alturaPct}%;--bar-color:${colorCss};"></div>
+        <div class="stat-bar-plot">
+          ${tieneReferencia ? `<div class="stat-reference-marker" style="top:${posicionReferencia}%"></div>` : ""}
+          <div class="stat-bar" style="height:${alturaPct}%;--bar-color:${colorCss};"></div>
+        </div>
         <div class="stat-bar-label">${escapeHtml(etiquetaVisible)}</div>
       </div>`;
   }).join("") + `</div>`;
 }
 
-function crearRutaCurva(puntos){
-  if(puntos.length === 1) return `M ${puntos[0].x} ${puntos[0].y}`;
-  let ruta = `M ${puntos[0].x} ${puntos[0].y}`;
-  for(let i=0; i<puntos.length-1; i++){
-    const p0 = puntos[i-1] || puntos[i];
-    const p1 = puntos[i];
-    const p2 = puntos[i+1];
-    const p3 = puntos[i+2] || p2;
-    const cp1x = p1.x + (p2.x-p0.x)/6;
-    const cp1y = p1.y + (p2.y-p0.y)/6;
-    const cp2x = p2.x - (p3.x-p1.x)/6;
-    const cp2y = p2.y - (p3.y-p1.y)/6;
-    ruta += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
-  }
-  return ruta;
+function crearRutaLineal(puntos){
+  if(!puntos.length) return "";
+  return puntos.map((p,i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ");
 }
 
 function renderStatLineChart(cont, datos, colorCss){
@@ -2766,17 +2758,17 @@ function renderStatLineChart(cont, datos, colorCss){
     y: base - (Math.max(0,d.valorSegundos)/max)*(base-arriba),
     dato:d
   }));
-  const ruta = crearRutaCurva(puntos);
+  const ruta = crearRutaLineal(puntos);
   const puntosReferencia = datos.map((d,i) => ({
     x: datos.length === 1 ? ancho/2 : izquierda + i*((ancho-izquierda-derecha)/(datos.length-1)),
     y: base - ((Number(d.valorReferenciaSegundos) || 0)/max)*(base-arriba)
   }));
-  const rutaReferencia = tieneReferencia ? crearRutaCurva(puntosReferencia) : "";
+  const rutaReferencia = tieneReferencia ? crearRutaLineal(puntosReferencia) : "";
   const area = `${ruta} L ${puntos[puntos.length-1].x} ${base} L ${puntos[0].x} ${base} Z`;
   const cadaEtiqueta = Math.max(1, Math.ceil(datos.length/10));
   const grilla = [0,.33,.66,1].map(f => `<line class="stat-gridline" x1="${izquierda}" x2="${ancho-derecha}" y1="${base-f*(base-arriba)}" y2="${base-f*(base-arriba)}"></line>`).join("");
   const leyenda = tieneReferencia ? '<div class="stat-chart-legend"><span><i></i>Trabajado</span><span class="reference"><i></i>Objetivo</span></div>' : '';
-  cont.innerHTML = `${leyenda}<div class="stat-line-shell"><svg class="stat-line-svg" viewBox="0 0 ${ancho} ${alto}" role="img" aria-label="Gráfico de curva">${grilla}<path class="stat-line-area" d="${area}" fill="${colorCss}"></path><path class="stat-line-path" d="${ruta}" stroke="${colorCss}"></path>${tieneReferencia ? `<path class="stat-reference-path" d="${rutaReferencia}"></path>` : ""}${puntos.map((p,i) => `<circle class="stat-line-dot" cx="${p.x}" cy="${p.y}" r="4" fill="${colorCss}"><title>${escapeHtml(p.dato.label)} · trabajado ${fmtHM(p.dato.valorSegundos)}${tieneReferencia ? ` · objetivo ${fmtHM(p.dato.valorReferenciaSegundos || 0)}` : ""}</title></circle>${i%cadaEtiqueta===0 || i===puntos.length-1 ? `<text class="stat-line-label" x="${p.x}" y="204">${escapeHtml(p.dato.label)}</text>` : ""}`).join("")}</svg></div>`;
+  cont.innerHTML = `${leyenda}<div class="stat-line-shell"><svg class="stat-line-svg" viewBox="0 0 ${ancho} ${alto}" role="img" aria-label="Gráfico de líneas">${grilla}<path class="stat-line-area" d="${area}" fill="${colorCss}"></path><path class="stat-line-path" d="${ruta}" stroke="${colorCss}"></path>${tieneReferencia ? `<path class="stat-reference-path" d="${rutaReferencia}"></path>` : ""}${puntos.map((p,i) => `<circle class="stat-line-dot" cx="${p.x}" cy="${p.y}" r="4" fill="${colorCss}"><title>${escapeHtml(p.dato.label)} · trabajado ${fmtHM(p.dato.valorSegundos)}${tieneReferencia ? ` · objetivo ${fmtHM(p.dato.valorReferenciaSegundos || 0)}` : ""}</title></circle>${i%cadaEtiqueta===0 || i===puntos.length-1 ? `<text class="stat-line-label" x="${p.x}" y="204">${escapeHtml(p.dato.label)}</text>` : ""}`).join("")}</svg></div>`;
 }
 
 document.querySelectorAll(".chart-mode-btn").forEach(btn => {
@@ -3174,16 +3166,13 @@ let resumenUsuarioRango = "mes";
 function calcularRangoResumenUsuario(tipo){
   const ahora = new Date();
   const desde = new Date(ahora);
-  let hastaObjetivo = new Date(ahora);
+  const hastaObjetivo = new Date(ahora); hastaObjetivo.setHours(23,59,59,999);
   if(tipo === "hoy"){
     desde.setHours(0,0,0,0);
-    hastaObjetivo.setHours(23,59,59,999);
   }else if(tipo === "semana"){
     desde.setDate(ahora.getDate()-((ahora.getDay()+6)%7)); desde.setHours(0,0,0,0);
-    hastaObjetivo = new Date(desde); hastaObjetivo.setDate(desde.getDate()+6); hastaObjetivo.setHours(23,59,59,999);
   }else{
     desde.setDate(1); desde.setHours(0,0,0,0);
-    hastaObjetivo = new Date(ahora.getFullYear(),ahora.getMonth()+1,0,23,59,59,999);
   }
   return { desde, hastaDatos:ahora, hastaObjetivo };
 }
@@ -3213,15 +3202,16 @@ async function cargarResumenMes(){
     $("resumen-mes-horas").textContent = "—";
     $("resumen-usuario-objetivo").textContent = "—";
     $("resumen-usuario-cumplimiento").textContent = "—";
-    $("resumen-mes-dias").textContent = "—";
+    $("resumen-usuario-diferencia").textContent = "—";
+    $("resumen-usuario-diferencia-hint").textContent = "No se pudieron cargar los datos";
     return;
   }
   const sesiones = reconstruirSesiones(eventos || []);
   const sesionesRango = sesiones.filter(s => new Date(s.horaInicio) >= desde && new Date(s.horaInicio) <= hastaDatos);
   const total = sesionesRango.reduce((acc,s) => acc+s.segundosActivos,0);
-  const diasActividad = new Set(sesionesRango.map(s => claveFechaLocal(s.horaInicio)));
-  const objetivo = calcularObjetivoPeriodo(desde,hastaObjetivo,currentUser.id,true).segundos;
+  const objetivo = calcularObjetivoPeriodo(desde,hastaObjetivo,currentUser.id).segundos;
   const cumplimiento = objetivo > 0 ? (total/objetivo)*100 : 0;
+  const diferencia = total-objetivo;
   const titulos = {
     hoy:`Tu día · ${ahora.toLocaleDateString("es-AR",{day:"2-digit",month:"long"})}`,
     semana:`Tu semana · ${desde.toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"})}–${hastaObjetivo.toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"})}`,
@@ -3232,7 +3222,20 @@ async function cargarResumenMes(){
   $("resumen-mes-horas").textContent = fmtHM(total);
   $("resumen-usuario-objetivo").textContent = fmtHM(objetivo);
   $("resumen-usuario-cumplimiento").textContent = objetivo > 0 ? `${cumplimiento.toFixed(0)}%` : "—";
-  $("resumen-mes-dias").textContent = `${diasActividad.size}`;
+  const tarjetaDiferencia = $("resumen-usuario-diferencia-card");
+  tarjetaDiferencia.classList.remove("positive","negative");
+  if(diferencia > 0){
+    tarjetaDiferencia.classList.add("positive");
+    $("resumen-usuario-diferencia").textContent = `+${fmtHM(diferencia)}`;
+    $("resumen-usuario-diferencia-hint").textContent = "Por encima del objetivo hasta hoy";
+  }else if(diferencia < 0){
+    tarjetaDiferencia.classList.add("negative");
+    $("resumen-usuario-diferencia").textContent = `−${fmtHM(Math.abs(diferencia))}`;
+    $("resumen-usuario-diferencia-hint").textContent = "Horas que faltan para alcanzar el objetivo";
+  }else{
+    $("resumen-usuario-diferencia").textContent = "0h 00m";
+    $("resumen-usuario-diferencia-hint").textContent = "Objetivo alcanzado hasta hoy";
+  }
 
   const diasSemanaTrabajados = new Set(sesiones.filter(s => new Date(s.horaInicio) >= inicioSemana).map(s => claveFechaLocal(s.horaInicio)));
   const nombres = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
