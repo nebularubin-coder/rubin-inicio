@@ -2331,9 +2331,66 @@ async function iniciarPanelAdmin(){
   cargarNoticiasAdmin();
 }
 
+function inicioDiaLocal(timestamp){
+  const d = new Date(timestamp);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+}
+
+/* Parte una jornada (start..stop, con sus intervalos activos ya armados) en un
+   tramo por cada día local que toca, acreditando a cada uno solo el tiempo
+   activo que realmente ocurrió ese día. Los tramos conservan el startId/stopId
+   reales para que Editar/Borrar siempre actúen sobre la jornada completa,
+   nunca sobre el corte visual de medianoche. */
+function partirSesionPorDia(actual){
+  const finReal = actual.enCurso ? Date.now() : new Date(actual.horaFin).getTime();
+  const base = {
+    userId: actual.userId, startId: actual.startId, stopId: actual.stopId,
+    horaInicioReal: actual.horaInicio, horaFinReal: actual.horaFin,
+    tareas: actual.tareas || "", ajusteSegundosReal: actual.ajusteSegundos || 0
+  };
+
+  if(inicioDiaLocal(new Date(actual.horaInicio).getTime()) === inicioDiaLocal(finReal)){
+    const segundosActivos = actual.intervalos.reduce((acc,[a,b]) => acc+(b-a)/1000, 0) + (actual.ajusteSegundos || 0);
+    return [{ ...base, horaInicio: actual.horaInicio, horaFin: actual.horaFin, pausas: actual.pausas, segundosActivos, enCurso: actual.enCurso }];
+  }
+
+  const tramos = [];
+  let diaInicio = inicioDiaLocal(new Date(actual.horaInicio).getTime());
+  while(diaInicio <= finReal){
+    const diaFin = diaInicio + 24*60*60*1000;
+    const esPrimerTramo = tramos.length === 0;
+    const esUltimoTramo = diaFin > finReal;
+
+    let segundosActivos = 0;
+    let pausasDelTramo = 0;
+    for(const [a,b] of actual.intervalos){
+      const clipA = Math.max(a, diaInicio);
+      const clipB = Math.min(b, diaFin);
+      if(clipB > clipA) segundosActivos += (clipB-clipA)/1000;
+      if(b > diaInicio && b <= diaFin && b < finReal) pausasDelTramo += 1;
+    }
+    if(esUltimoTramo) segundosActivos += (actual.ajusteSegundos || 0);
+
+    tramos.push({
+      ...base,
+      horaInicio: esPrimerTramo ? actual.horaInicio : new Date(diaInicio).toISOString(),
+      horaFin: esUltimoTramo ? actual.horaFin : new Date(diaFin-1).toISOString(),
+      pausas: pausasDelTramo,
+      segundosActivos,
+      enCurso: esUltimoTramo ? actual.enCurso : false
+    });
+
+    diaInicio = diaFin;
+  }
+  return tramos;
+}
+
 /* Reconstruye, a partir de eventos ordenados por fecha, una lista de
    SESIONES (cada start..stop), con hora de inicio, hora de fin,
-   cantidad de pausas y segundos activos (sin contar el tiempo pausado). */
+   cantidad de pausas y segundos activos (sin contar el tiempo pausado).
+   Una jornada que cruza la medianoche se devuelve partida en un tramo por
+   día, cada uno acreditado con las horas que realmente le corresponden. */
 function reconstruirSesiones(eventosOrdenados){
   const porUsuario = {};
   for(const ev of eventosOrdenados){
@@ -2349,19 +2406,20 @@ function reconstruirSesiones(eventosOrdenados){
       const t = new Date(ev.creado_en).getTime();
 
       if(ev.tipo === "start"){
-        actual = { userId, startId: ev.id, stopId: null, horaInicio: ev.creado_en, horaFin: null, pausas: 0, segundosActivos: 0, corriendoDesde: t, enCurso: true };
+        if(actual) sesiones.push(...partirSesionPorDia(actual));
+        actual = { userId, startId: ev.id, stopId: null, horaInicio: ev.creado_en, horaFin: null, pausas: 0, intervalos: [], corriendoDesde: t, enCurso: true, tareas: "", ajusteSegundos: 0 };
       } else if(ev.tipo === "resume"){
         if(actual) actual.corriendoDesde = t;
       } else if(ev.tipo === "pause"){
         if(actual && actual.corriendoDesde !== null){
-          actual.segundosActivos += (t - actual.corriendoDesde)/1000;
+          actual.intervalos.push([actual.corriendoDesde, t]);
           actual.corriendoDesde = null;
           actual.pausas += 1;
         }
       } else if(ev.tipo === "stop"){
         if(actual){
           if(actual.corriendoDesde !== null){
-            actual.segundosActivos += (t - actual.corriendoDesde)/1000;
+            actual.intervalos.push([actual.corriendoDesde, t]);
             actual.corriendoDesde = null;
           }
           actual.horaFin = ev.creado_en;
@@ -2369,8 +2427,7 @@ function reconstruirSesiones(eventosOrdenados){
           actual.enCurso = false;
           actual.tareas = ev.detalle || "";
           actual.ajusteSegundos = ev.ajuste_segundos || 0;
-          actual.segundosActivos += actual.ajusteSegundos;
-          sesiones.push(actual);
+          sesiones.push(...partirSesionPorDia(actual));
           actual = null;
         }
       }
@@ -2378,9 +2435,9 @@ function reconstruirSesiones(eventosOrdenados){
 
     if(actual){
       if(actual.corriendoDesde !== null){
-        actual.segundosActivos += (Date.now() - actual.corriendoDesde)/1000;
+        actual.intervalos.push([actual.corriendoDesde, Date.now()]);
       }
-      sesiones.push(actual);
+      sesiones.push(...partirSesionPorDia(actual));
     }
   }
 
@@ -2391,15 +2448,16 @@ function reconstruirSesiones(eventosOrdenados){
    NOTICIAS — panel admin
    ============================================================ */
 
-// Barra de herramientas del editor (negrita, cursiva, subrayado, color)
-// Forzamos que el navegador use <span style="color:..."> en vez de <font color="...">,
-// que es una etiqueta vieja que nuestro sanitizador no reconoce (por eso se perdía el color).
-document.execCommand("styleWithCSS", false, true);
-
+// Barra de herramientas del editor (negrita, cursiva, subrayado, color).
+// Negrita/cursiva/subrayado necesitan "styleWithCSS" en false para que el
+// navegador use las etiquetas semánticas <b>/<i>/<u> (las que el sanitizador
+// reconoce). El color, en cambio, sí necesita "styleWithCSS" en true para que
+// el navegador use <span style="color:..."> en vez de la vieja <font color="...">,
+// que el sanitizador no reconoce.
 document.querySelectorAll(".rte-toolbar .rte-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     $("noticia-mensaje").focus();
-    document.execCommand("styleWithCSS", false, true);
+    document.execCommand("styleWithCSS", false, false);
     document.execCommand(btn.dataset.cmd, false, null);
   });
 });
@@ -2641,11 +2699,18 @@ async function cargarYRenderizarAdmin(desde, hasta, silencioso = false){
   rangoAdminActual = { desde, hasta };
   if(!silencioso) $("admin-table-wrap").innerHTML = '<div class="loading-text">Cargando registros…</div>';
 
+  // Traemos eventos hasta "ahora" (no solo hasta el límite del rango elegido):
+  // una jornada puede empezar dentro del rango y cerrarse (pausa/stop) después
+  // de cruzar la medianoche o el fin de mes. Si cortáramos justo en "hasta",
+  // esa pausa/stop quedaría fuera de la consulta y la jornada se vería como
+  // "en curso" para siempre, recalculando el tiempo en cada refresco.
+  const hastaConsulta = new Date(Math.max(hasta.getTime(), Date.now()));
+
   const { data: eventos, error } = await consultarPaginado((inicio, fin) => sb
     .from("timer_eventos")
     .select("id, user_id, tipo, creado_en, detalle, ajuste_segundos")
     .gte("creado_en", desde.toISOString())
-    .lte("creado_en", hasta.toISOString())
+    .lte("creado_en", hastaConsulta.toISOString())
     .order("creado_en", { ascending: true })
     .order("id", { ascending: true })
     .range(inicio, fin));
@@ -2655,7 +2720,8 @@ async function cargarYRenderizarAdmin(desde, hasta, silencioso = false){
     return;
   }
 
-  sesionesRango = reconstruirSesiones(eventos || []);
+  sesionesRango = reconstruirSesiones(eventos || [])
+    .filter(s => new Date(s.horaInicio) >= desde && new Date(s.horaInicio) <= hasta);
   renderAdminConFiltros();
 }
 
@@ -3365,10 +3431,10 @@ let html = `<table><thead><tr>
   for(const s of ordenadas){
     const perfil = perfilesCache[s.userId];
   const editBtn = (!s.enCurso && s.stopId && s.startId)
-      ? `<button class="filter-btn btn-editar" data-stop="${s.stopId}" data-start="${s.startId}" data-inicio="${s.horaInicio}" data-fin="${s.horaFin}" data-tareas="${escapeAttr(s.tareas)}" data-ajuste="${s.ajusteSegundos || 0}" style="font-size:11px;padding:4px 10px;white-space:nowrap;">Editar</button>`
-      : "—";
+      ? `<button class="filter-btn btn-editar" data-stop="${s.stopId}" data-start="${s.startId}" data-inicio="${s.horaInicioReal}" data-fin="${s.horaFinReal}" data-tareas="${escapeAttr(s.tareas)}" data-ajuste="${s.ajusteSegundosReal || 0}" style="font-size:11px;padding:4px 10px;white-space:nowrap;">Editar</button>`
+      : (s.enCurso ? `<button class="filter-btn btn-detener" data-userid="${s.userId}" data-inicio="${s.horaInicio}" style="font-size:11px;padding:4px 10px;white-space:nowrap;border-color:var(--gold);color:var(--gold);">Detener</button>` : "—");
     const borrarBtn = (!s.enCurso && s.stopId && s.startId)
-      ? `<button class="filter-btn btn-borrar" data-userid="${s.userId}" data-inicio="${s.horaInicio}" data-fin="${s.horaFin}" style="font-size:11px;padding:4px 10px;white-space:nowrap;border-color:var(--stamp);color:var(--stamp);">Borrar</button>`
+      ? `<button class="filter-btn btn-borrar" data-userid="${s.userId}" data-inicio="${s.horaInicioReal}" data-fin="${s.horaFinReal}" style="font-size:11px;padding:4px 10px;white-space:nowrap;border-color:var(--stamp);color:var(--stamp);">Borrar</button>`
       : "—";
     html += `<tr>
       <td>${fmtFecha(s.horaInicio)}</td>
@@ -3401,6 +3467,33 @@ let html = `<table><thead><tr>
       $("editar-ajuste").value = Math.round((Number(btn.dataset.ajuste) || 0) / 60);
       hide($("editar-error"));
       show($("modal-editar"));
+    });
+  });
+
+  // Corte manual de una jornada que quedó "en curso" (por ejemplo porque el
+  // aviso automático de 4hs no llegó a dispararse en el navegador de la persona).
+  document.querySelectorAll(".btn-detener").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const perfil = perfilesCache[btn.dataset.userid];
+      const nombre = perfil?.nombre || "esta persona";
+      if(!confirm(`¿Detener ahora mismo la jornada en curso de ${nombre}? Se va a registrar el corte con la hora actual.`)) return;
+      if(!await pedirClaveAdmin(`Detener manualmente la jornada en curso de ${nombre}`)) return;
+
+      btn.disabled = true;
+      btn.textContent = "Deteniendo…";
+
+      const { error } = await sb.from("timer_eventos").insert({
+        user_id: btn.dataset.userid, tipo: "stop", creado_en: new Date().toISOString()
+      });
+
+      if(error){
+        alert("No se pudo detener: " + error.message);
+        btn.disabled = false;
+        btn.textContent = "Detener";
+        return;
+      }
+
+      if(rangoAdminActual) cargarYRenderizarAdmin(rangoAdminActual.desde, rangoAdminActual.hasta);
     });
   });
 
