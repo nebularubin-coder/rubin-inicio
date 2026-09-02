@@ -2005,15 +2005,66 @@ $("btn-csv").addEventListener("click", exportarCSV);
 
 $("btn-pdf").addEventListener("click", generarPDF);
 
+/* Dibuja una "tarjeta" (rectángulo redondeado con label/valor/hint) igual a
+   las que se ven en pantalla en el panel de horas. acento=true la pinta con
+   el estilo dorado de la tarjeta "Objetivo". */
+function dibujarTarjetaPDF(doc, x, y, w, h, label, valor, hint, acento, valueFontSize = 13){
+  if(acento){
+    doc.setFillColor(252, 247, 233);
+    doc.setDrawColor(199, 162, 74);
+  } else {
+    doc.setFillColor(250, 250, 249);
+    doc.setDrawColor(224, 221, 214);
+  }
+  doc.setLineWidth(0.3);
+  doc.roundedRect(x, y, w, h, 2, 2, "FD");
+
+  // Alto de línea aproximado (mm) para no pisar el valor con el hint en
+  // tarjetas más chicas (las de "horas por persona" usan una fuente menor).
+  const valueLineH = valueFontSize * 0.3528 * 1.15;
+  const labelY = y + 6;
+  const valueY = labelY + valueLineH;
+  const hintY = valueY + 4.5;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7.5);
+  doc.setTextColor(140, 133, 120);
+  doc.text(label.toUpperCase(), x + 4, labelY, { maxWidth: w - 8 });
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(valueFontSize);
+  doc.setTextColor(acento ? 168 : 35, acento ? 128 : 35, acento ? 45 : 35);
+  doc.text(valor, x + 4, valueY);
+
+  if(hint){
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.setTextColor(150, 143, 130);
+    doc.text(hint, x + 4, Math.min(hintY, y + h - 3), { maxWidth: w - 8 });
+  }
+}
+
 function generarPDF(){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 14;
+  const contentWidth = pageWidth - margin * 2;
 
+  // Mismos filtros que se ven en pantalla: usuario y término de búsqueda.
   const usuarioFiltro = $("filter-usuario").value;
+  const termino = $("filter-busqueda").value.trim().toLocaleLowerCase("es");
   const sesionesEquipo = sesionesRango.filter(s => esUsuarioEquipo(s.userId));
-  const sesiones = usuarioFiltro === "todos"
+  let sesiones = usuarioFiltro === "todos"
     ? sesionesEquipo
     : sesionesEquipo.filter(s => s.userId === usuarioFiltro);
+  if(termino){
+    sesiones = sesiones.filter(s => {
+      const perfil = perfilesCache[s.userId] || {};
+      return [perfil.nombre, perfil.sello, s.tareas].some(v => (v || "").toLocaleLowerCase("es").includes(termino));
+    });
+  }
   const nombreFiltro = usuarioFiltro === "todos"
     ? "Todos los responsables"
     : ($("filter-usuario").selectedOptions[0]?.textContent || "");
@@ -2028,30 +2079,64 @@ function generarPDF(){
     rangoTexto = "—";
   }
 
-  doc.setFontSize(16);
-  doc.text("Control de Horas", 14, 18);
-  doc.setFontSize(10);
-  doc.setTextColor(100);
-  doc.text(`Período: ${rangoTexto}    ·    Filtro: ${nombreFiltro}`, 14, 25);
-  doc.text(`Generado: ${new Date().toLocaleString("es-AR")}`, 14, 30);
+  let y = 18;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(17);
+  doc.setTextColor(30, 30, 30);
+  doc.text("Control de Horas", margin, y);
 
-  const totalPorSello = {};
-  let totalGeneral = 0;
-  sesiones.forEach(s => {
-    const sello = perfilesCache[s.userId]?.sello || "—";
-    totalPorSello[sello] = (totalPorSello[sello]||0) + s.segundosActivos;
-    totalGeneral += s.segundosActivos;
-  });
+  y += 6.5;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(110, 110, 110);
+  const metaLineas = [`Período: ${rangoTexto}`, `Responsable: ${nombreFiltro}`];
+  if(termino) metaLineas.push(`Búsqueda: "${$("filter-busqueda").value.trim()}"`);
+  doc.text(metaLineas.join("   ·   "), margin, y);
+  y += 5;
+  doc.text(`Generado: ${new Date().toLocaleString("es-AR")}`, margin, y);
+  y += 8;
 
-  const resumenLineas = [`Total del período: ${fmtHM(totalGeneral)}`];
-  for(const sello in totalPorSello){
-    resumenLineas.push(`${sello}: ${fmtHM(totalPorSello[sello])}`);
+  // ---- Tarjetas: Total del período / Objetivo del período / Días hábiles ----
+  const totalGeneral = sesiones.reduce((acc, s) => acc + s.segundosActivos, 0);
+  const objetivo = referenciaResumenActual();
+
+  const gap = 4;
+  const cardW1 = (contentWidth - gap * 2) / 3;
+  const cardH1 = 23;
+  dibujarTarjetaPDF(doc, margin, y, cardW1, cardH1, "Total del período", fmtHM(totalGeneral), null, false);
+  dibujarTarjetaPDF(doc, margin + cardW1 + gap, y, cardW1, cardH1, objetivo.etiqueta, fmtHM(objetivo.segundos), objetivo.contexto, true);
+  dibujarTarjetaPDF(doc, margin + (cardW1 + gap) * 2, y, cardW1, cardH1, "Días hábiles", objetivo.diasLaborables != null ? String(objetivo.diasLaborables) : "—", "Sin sábados, domingos ni feriados", false);
+  y += cardH1 + 7;
+
+  // ---- Tarjetas por persona ----
+  const usuariosEquipo = perfilesConObjetivo().sort((a, b) => a.nombre.localeCompare(b.nombre));
+  if(usuariosEquipo.length){
+    const totalPorUsuario = {};
+    sesiones.forEach(s => { totalPorUsuario[s.userId] = (totalPorUsuario[s.userId] || 0) + s.segundosActivos; });
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setTextColor(120, 113, 100);
+    doc.text("HORAS POR PERSONA", margin, y);
+    y += 4;
+
+    const porFila = 4;
+    const cardW2 = (contentWidth - gap * (porFila - 1)) / porFila;
+    const cardH2 = 20;
+    usuariosEquipo.forEach((perfil, i) => {
+      const col = i % porFila;
+      const fila = Math.floor(i / porFila);
+      const x = margin + col * (cardW2 + gap);
+      const yy = y + fila * (cardH2 + gap);
+      dibujarTarjetaPDF(doc, x, yy, cardW2, cardH2, perfil.nombre, fmtHM(totalPorUsuario[perfil.id] || 0), perfil.sello || "Sin sello", false, 11);
+    });
+    y += Math.ceil(usuariosEquipo.length / porFila) * (cardH2 + gap) + 4;
   }
-  doc.setFontSize(10);
-  doc.setTextColor(20);
-  doc.text(resumenLineas.join("   |   "), 14, 38);
 
-  const ordenadas = [...sesiones].sort((a,b) => new Date(b.horaInicio) - new Date(a.horaInicio));
+  if(y > pageHeight - 40){ doc.addPage(); y = 20; }
+
+  // ---- Tabla de registros (con los mismos filtros ya aplicados arriba) ----
+  const ordenadas = [...sesiones].sort((a, b) => new Date(b.horaInicio) - new Date(a.horaInicio));
   const filas = ordenadas.map(s => {
     const perfil = perfilesCache[s.userId];
     return [
@@ -2066,17 +2151,27 @@ function generarPDF(){
     ];
   });
 
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8.5);
+  doc.setTextColor(120, 113, 100);
+  doc.text(`REGISTROS (${filas.length})`, margin, y);
+  y += 3;
+
   if(filas.length === 0){
-    doc.setFontSize(11);
-    doc.text("No hay registros en este período.", 14, 50);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(120, 120, 120);
+    doc.text("No hay registros para los filtros aplicados.", margin, y + 7);
   } else {
     doc.autoTable({
-      head: [["Fecha","Responsable","Sello","Inicio","Fin","Pausas","Horas activas","Tareas realizadas"]],
+      head: [["Fecha", "Responsable", "Sello", "Inicio", "Fin", "Pausas", "Horas activas", "Tareas realizadas"]],
       body: filas,
-      startY: 44,
-      styles: { fontSize: 8, textColor: 30 },
-      headStyles: { fillColor: [199,162,74], textColor: 20 },
-      columnStyles: { 7: { cellWidth: 60 } }
+      startY: y + 2,
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 8, textColor: 40, cellPadding: 3 },
+      headStyles: { fillColor: [199, 162, 74], textColor: 20 },
+      alternateRowStyles: { fillColor: [250, 248, 244] },
+      columnStyles: { 7: { cellWidth: "auto" } }
     });
   }
 
@@ -3395,7 +3490,7 @@ function referenciaResumenActual(){
   const contexto = usuarioFiltro === "todos"
     ? `Equipo · ${referencia.cantidadPersonas} personas`
     : (perfilesCache[usuarioFiltro]?.nombre || "Usuario seleccionado");
-  return { etiqueta, segundos:referencia.segundos, contexto };
+  return { etiqueta, segundos:referencia.segundos, contexto, diasLaborables:referencia.diasLaborables };
 }
 
 function renderResumen(sesiones){
