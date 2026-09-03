@@ -450,6 +450,8 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
     padding:28px;
     max-width:420px;
     width:100%;
+    max-height:calc(100vh - 40px);
+    overflow-y:auto;
   }
   .modal-card h2{
     font-family:'Fraunces',serif;
@@ -817,7 +819,6 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
       <button class="btn-disponible inactivo" id="btn-disponible">Disponible</button>
       <button class="filter-btn" id="btn-nueva-entrada" style="border-color:var(--ok);color:var(--ok);font-weight:600;">+ Nueva entrada</button>
-      <button class="filter-btn" id="btn-pdf" style="border-color:var(--gold);color:var(--gold);font-weight:600;">⬇ Descargar PDF</button>
     </div>
   </div>
 
@@ -854,6 +855,7 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
       <input type="search" id="filter-busqueda" class="search-input" placeholder="Buscar persona, sello o tarea…" aria-label="Buscar registros" />
       <button class="icon-btn" id="btn-refresh-admin">↻ Actualizar</button>
       <button class="icon-btn" id="btn-csv">↓ Exportar CSV</button>
+      <button class="icon-btn" id="btn-pdf" style="border-color:var(--gold);color:var(--gold);font-weight:600;">⬇ Descargar PDF</button>
       <span id="resultados-admin" style="margin-left:auto;color:var(--paper-dim);font-size:12px;"></span>
     </div>
 
