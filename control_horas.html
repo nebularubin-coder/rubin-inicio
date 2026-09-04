@@ -315,6 +315,15 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   }
   .filter-dates{display:flex;gap:8px;align-items:center;}
   .filter-dates input{margin-bottom:0;width:140px;}
+  .mes-navegador{display:flex;align-items:center;gap:8px;}
+  .mes-nav-flecha{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--paper);cursor:pointer;font-size:18px;line-height:1;padding:0;flex-shrink:0;}
+  .mes-nav-flecha:hover{border-color:var(--gold);color:var(--gold);}
+  .mes-nav-actual{min-width:150px;text-align:center;}
+  .filtros-mas-wrap{position:relative;}
+  .filtros-dropdown{position:absolute;top:calc(100% + 8px);left:0;z-index:30;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;min-width:260px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;}
+  .filtros-dropdown .filter-btn{width:100%;text-align:left;}
+  .filtros-dropdown .filter-dates{flex-wrap:wrap;padding-top:6px;margin-top:2px;border-top:1px solid var(--line);}
+  .filtros-dropdown .filter-dates input{width:auto;flex:1;min-width:110px;}
 
   .admin-tabs{
     display:flex;
@@ -415,9 +424,12 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   .empty-state{
     text-align:center;color:var(--paper-dim);padding:60px 0;font-size:14px;
   }
-  .summary-row{
-    display:flex;gap:18px;flex-wrap:wrap;margin-bottom:22px;
-  }
+  .summary-row{margin-bottom:22px;}
+  .summary-cards-top{display:flex;gap:18px;flex-wrap:wrap;}
+  .summary-section-title{font-size:11px;font-weight:700;color:var(--paper-dim);text-transform:uppercase;letter-spacing:.07em;margin:18px 0 10px;}
+  .summary-row-personas{display:flex;gap:12px;flex-wrap:wrap;}
+  .summary-row-personas .summary-card{min-width:120px;padding:11px 15px;}
+  .summary-row-personas .summary-card .value{font-size:17px;}
   .summary-card{
     background:var(--surface);border:1px solid var(--line);
     border-radius:10px;padding:14px 18px;min-width:140px;
@@ -429,7 +441,22 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   .objetivo-panel{margin:0 0 22px;padding:20px;background:color-mix(in srgb,var(--gold) 4%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 25%,var(--line));border-radius:14px;}
   .objetivo-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:16px}.objetivo-title{font-size:14px;font-weight:700}.objetivo-note{font-size:11px;color:var(--paper-dim);line-height:1.5;margin-top:4px}.objetivo-kpis{display:grid;grid-template-columns:repeat(3,minmax(115px,1fr));gap:8px;min-width:min(430px,100%)}.objetivo-kpi{padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:10px}.objetivo-kpi span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--paper-dim);margin-bottom:4px}.objetivo-kpi strong{font-family:'Space Mono',monospace;font-size:15px;color:var(--paper)}.objetivo-kpi.destacado strong{color:var(--gold)}
   .objetivo-layout{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(420px,1.15fr);gap:14px}.objetivo-seccion{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:14px}.objetivo-seccion-titulo{font-size:12px;font-weight:700;margin-bottom:3px}.objetivo-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end;margin-top:12px}.objetivo-field{display:flex;flex-direction:column;gap:5px;min-width:0}.objetivo-field.full{grid-column:1/-1}.objetivo-field label{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--paper-dim);margin:0}.objetivo-field input{margin:0;padding:8px 10px;border-radius:8px;width:100%;min-width:0}.objetivo-controls .filter-btn{justify-self:start}.feriados-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.feriado-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:11px}.feriado-chip button{border:0;background:none;color:var(--stamp);cursor:pointer;padding:0;font-size:14px;line-height:1}
-  .objetivos-lista{display:flex;flex-direction:column;gap:7px;margin-top:12px}.objetivo-persona{display:grid;grid-template-columns:minmax(110px,1fr) 76px 102px auto;gap:8px;align-items:center;padding:9px 10px;background:var(--surface-2);border:1px solid var(--line);border-radius:9px}.objetivo-persona-nombre{font-size:12px;min-width:0}.objetivo-persona-nombre strong,.objetivo-persona-nombre small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.objetivo-persona-nombre small{color:var(--paper-dim);font-size:10px;margin-top:2px}.objetivo-persona input{margin:0;padding:7px 8px;font-size:11px;min-width:0;text-align:center}.objetivo-persona-meta{text-align:right}.objetivo-persona-meta span{display:block;font-size:9px;color:var(--paper-dim);text-transform:uppercase;letter-spacing:.05em}.objetivo-persona-meta strong{font-family:'Space Mono',monospace;font-size:12px;color:var(--gold)}.objetivo-persona .filter-btn{padding:7px 10px;font-size:11px;white-space:nowrap}
+  .objetivos-lista{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .objetivo-persona{padding:11px 12px;background:var(--surface-2);border:1px solid var(--line);border-radius:9px}
+  .objetivo-persona-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+  .objetivo-persona-nombre{font-size:12px;min-width:0}
+  .objetivo-persona-nombre strong,.objetivo-persona-nombre small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .objetivo-persona-nombre small{color:var(--paper-dim);font-size:10px;margin-top:2px}
+  .objetivo-persona-meta{text-align:right;flex-shrink:0}
+  .objetivo-persona-meta span{display:block;font-size:9px;color:var(--paper-dim);text-transform:uppercase;letter-spacing:.05em}
+  .objetivo-persona-meta strong{font-family:'Space Mono',monospace;font-size:12px;color:var(--gold)}
+  .objetivo-vigente-desde{font-size:10px;color:var(--paper-dim);margin-top:6px}
+  .objetivo-persona-controles{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+  .objetivo-persona-controles label{display:flex;flex-direction:column;gap:4px;font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--paper-dim)}
+  .objetivo-persona-controles input{margin:0;padding:7px 8px;font-size:11px;border-radius:8px}
+  .objetivo-persona-controles .objetivo-horas{width:64px;text-align:center}
+  .objetivo-persona-controles .objetivo-desde{width:142px}
+  .objetivo-persona-controles .filter-btn{padding:7px 14px;font-size:11px;white-space:nowrap;margin-left:auto}
 
   .hidden{display:none !important;}
   .loading-text{color:var(--paper-dim);font-size:13px;text-align:center;padding:40px 0;}
@@ -615,7 +642,7 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
   @media(max-width:760px){
     .topbar{padding:12px 14px;align-items:flex-start}.brand{font-size:15px}.topbar-right{gap:8px;flex-wrap:wrap;justify-content:flex-end}.topbar-right>span{display:none}
     .container{padding:28px 16px}.admin-tabs{width:100%;overflow-x:auto;gap:20px}.filters{gap:8px}.filter-dates{width:100%;flex-wrap:wrap}.filter-dates input{flex:1;min-width:125px}
-    .admin-header h1{font-size:28px}.admin-header{align-items:flex-start}.stat-toolbar{flex-direction:column}.chart-mode{width:100%;justify-content:flex-end}.chart-mode-label{margin-right:auto}.stat-kpis{grid-template-columns:1fr 1fr}.stat-grid,.news-editor-grid,.user-dashboard{grid-template-columns:1fr}.stat-panel.full,.user-dashboard .wide-card{grid-column:auto}.stat-panel{padding:14px}.stat-panel-head{flex-direction:column}.stat-highlight{white-space:normal}.week-days{gap:4px}.week-day{padding:7px 1px}.timer-presencia .presencia-lista{flex-direction:column}.objetivo-panel{padding:14px}.objetivo-head{flex-direction:column}.objetivo-kpis{grid-template-columns:1fr 1fr 1fr;min-width:0;width:100%}.objetivo-layout{grid-template-columns:1fr}.objetivo-persona{grid-template-columns:minmax(95px,1fr) 68px 88px}.objetivo-persona .filter-btn{grid-column:1/-1;width:100%}.user-month-kpis{grid-template-columns:1fr 1fr}.user-summary-head{align-items:flex-start}.user-summary-tabs{width:100%}.user-summary-tab{flex:1}
+    .admin-header h1{font-size:28px}.admin-header{align-items:flex-start}.stat-toolbar{flex-direction:column}.chart-mode{width:100%;justify-content:flex-end}.chart-mode-label{margin-right:auto}.stat-kpis{grid-template-columns:1fr 1fr}.stat-grid,.news-editor-grid,.user-dashboard{grid-template-columns:1fr}.stat-panel.full,.user-dashboard .wide-card{grid-column:auto}.stat-panel{padding:14px}.stat-panel-head{flex-direction:column}.stat-highlight{white-space:normal}.week-days{gap:4px}.week-day{padding:7px 1px}.timer-presencia .presencia-lista{flex-direction:column}.objetivo-panel{padding:14px}.objetivo-head{flex-direction:column}.objetivo-kpis{grid-template-columns:1fr 1fr 1fr;min-width:0;width:100%}.objetivo-layout{grid-template-columns:1fr}.objetivo-persona-controles{flex-direction:column;align-items:stretch}.objetivo-persona-controles .objetivo-desde{width:100%}.objetivo-persona-controles .filter-btn{margin-left:0;width:100%}.mes-nav-actual{min-width:0;flex:1}.filtros-dropdown{left:auto;right:0;min-width:240px}.user-month-kpis{grid-template-columns:1fr 1fr}.user-summary-head{align-items:flex-start}.user-summary-tabs{width:100%}.user-summary-tab{flex:1}
     .stamp-wrap{width:250px;height:250px}.stamp-wrap svg{width:250px;height:250px}.stamp-time{font-size:34px}
   }
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important;}}
@@ -837,14 +864,25 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
 
   <div class="tab-panel" id="tab-horas">
     <div class="filters">
-      <button class="filter-btn active" data-range="hoy">Hoy</button>
-      <button class="filter-btn" data-range="semana">Esta semana</button>
-      <button class="filter-btn" data-range="mes">Este mes</button>
-      <div class="filter-dates">
-        <input type="date" id="filter-desde" />
-        <span style="color:var(--paper-dim);font-size:13px;">a</span>
-        <input type="date" id="filter-hasta" />
-        <button class="filter-btn" id="filter-custom">Aplicar</button>
+      <div class="mes-navegador">
+        <button type="button" class="mes-nav-flecha" id="mes-nav-anterior" aria-label="Mes anterior">‹</button>
+        <button type="button" class="filter-btn mes-nav-actual" id="mes-nav-boton" data-range="">—</button>
+        <button type="button" class="mes-nav-flecha" id="mes-nav-siguiente" aria-label="Mes siguiente">›</button>
+      </div>
+      <div class="filtros-mas-wrap">
+        <button type="button" class="icon-btn" id="filtros-mas-toggle" aria-expanded="false">Más filtros ▾</button>
+        <div class="filtros-dropdown hidden" id="filtros-dropdown">
+          <button class="filter-btn active" data-range="hoy">Hoy</button>
+          <button class="filter-btn" data-range="semana">Esta semana</button>
+          <button class="filter-btn" data-range="mes">Este mes</button>
+          <button class="filter-btn" data-range="mes_pasado">Mes pasado</button>
+          <div class="filter-dates">
+            <input type="date" id="filter-desde" />
+            <span style="color:var(--paper-dim);font-size:13px;">a</span>
+            <input type="date" id="filter-hasta" />
+            <button class="filter-btn" id="filter-custom">Aplicar</button>
+          </div>
+        </div>
       </div>
       <select id="filter-usuario" class="filter-btn" style="cursor:pointer;">
         <option value="todos">Todos los responsables</option>
@@ -884,7 +922,7 @@ body{ transition: background 0.35s ease, color 0.35s ease; }
         </div>
         <div class="objetivo-seccion">
           <div class="objetivo-seccion-titulo">Objetivo diario por persona</div>
-          <div class="objetivo-note">Es un valor de referencia actual, no guarda un historial de cambios.</div>
+          <div class="objetivo-note">Cada cambio queda guardado con la fecha desde la que rige, así los reportes de meses anteriores no se alteran.</div>
           <div class="objetivos-lista" id="objetivos-lista"></div>
         </div>
       </div>
@@ -1683,7 +1721,7 @@ async function despuesDeLogin(user){
 
   currentPerfil = perfil;
   perfilesCache[perfil.id] = perfil;
-  await Promise.all([cargarInicioHistoricoEquipo(), cargarFeriadosBase()]);
+  await Promise.all([cargarInicioHistoricoEquipo(), cargarFeriadosBase(), cargarObjetivosHistorial()]);
   hide($("view-login"));
   show($("topbar"));
   $("topbar-nombre").textContent = `${perfil.nombre} · ${perfil.sello}`;
@@ -1932,6 +1970,7 @@ let sesionesRango = []; // sesiones del rango de fechas actual, sin filtrar por 
 let perfilesCache = {};
 let rangoAdminActual = null;
 let feriadosCache = [];
+let objetivosHistorialCache = []; // [{user_id, horas_diarias, vigente_desde}], una fila por cada cambio de objetivo
 let objetivosDisponibles = true;
 let inicioHistoricoEquipo = null;
 let iniciosHistoricosUsuarios = {};
@@ -1951,8 +1990,24 @@ function calcularRango(tipo){
   } else if(tipo === "mes"){
     inicio.setDate(1);
     inicio.setHours(0,0,0,0);
+  } else if(tipo === "mes_pasado"){
+    inicio.setMonth(inicio.getMonth()-1, 1);
+    inicio.setHours(0,0,0,0);
+    fin.setDate(0); // día 0 del mes actual = último día del mes anterior
+    fin.setHours(23,59,59,999);
+  } else if(tipo && tipo.startsWith("mes:")){
+    const [anio, mesNum] = tipo.slice(4).split("-").map(Number);
+    inicio.setFullYear(anio, mesNum-1, 1);
+    inicio.setHours(0,0,0,0);
+    fin.setFullYear(anio, mesNum, 0); // día 0 del mes siguiente = último día de este mes
+    fin.setHours(23,59,59,999);
   }
   return { desde: inicio, hasta: fin };
+}
+
+function etiquetaMes(fecha){
+  const texto = fecha.toLocaleDateString("es-AR", { month:"long", year:"numeric" });
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
 
 /* ============================================================
@@ -1976,15 +2031,69 @@ document.querySelectorAll(".admin-tab-btn").forEach(btn => {
   });
 });
 
+/* La etiqueta del botón "Más filtros" refleja cuál de esos filtros está
+   activo, aunque estén escondidos dentro del desplegable — así no da la
+   sensación de que "no hay nada elegido" cuando en realidad sí lo hay. */
+function actualizarEtiquetaFiltrosMas(){
+  const activo = document.querySelector(".filter-btn[data-range].active");
+  const etiquetas = { hoy:"Hoy", semana:"Esta semana", mes:"Este mes", mes_pasado:"Mes pasado" };
+  let texto = "Más filtros";
+  if(activo && activo.id !== "mes-nav-boton"){
+    texto = etiquetas[activo.dataset.range] || activo.textContent;
+  } else if(!activo){
+    texto = "Personalizado";
+  }
+  $("filtros-mas-toggle").textContent = `${texto} ▾`;
+}
+
+function activarRangoDesdeBoton(btn){
+  document.querySelectorAll(".filter-btn[data-range]").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  rangoActivo = btn.dataset.range;
+  const { desde, hasta } = calcularRango(rangoActivo);
+  cargarYRenderizarAdmin(desde, hasta);
+  actualizarEtiquetaFiltrosMas();
+}
+
 document.querySelectorAll(".filter-btn[data-range]").forEach(btn => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".filter-btn[data-range]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    rangoActivo = btn.dataset.range;
-    const { desde, hasta } = calcularRango(rangoActivo);
-    cargarYRenderizarAdmin(desde, hasta);
+    activarRangoDesdeBoton(btn);
+    hide($("filtros-dropdown"));
   });
 });
+
+/* ---------- Navegador de meses (‹ Mes actual ›) ----------
+   Independiente de los botones rápidos: siempre representa un mes
+   calendario completo y queda "estacionado" ahí hasta la próxima flecha,
+   sin importar qué otro filtro se haya usado mientras tanto. */
+let mesNavegado = new Date();
+
+function actualizarBotonMesNavegador(){
+  const clave = `${mesNavegado.getFullYear()}-${String(mesNavegado.getMonth()+1).padStart(2,"0")}`;
+  $("mes-nav-boton").dataset.range = `mes:${clave}`;
+  $("mes-nav-boton").textContent = etiquetaMes(mesNavegado);
+}
+actualizarBotonMesNavegador();
+actualizarEtiquetaFiltrosMas();
+
+function navegarMes(delta){
+  mesNavegado = new Date(mesNavegado.getFullYear(), mesNavegado.getMonth()+delta, 1);
+  actualizarBotonMesNavegador();
+  activarRangoDesdeBoton($("mes-nav-boton"));
+  hide($("filtros-dropdown"));
+}
+$("mes-nav-anterior").addEventListener("click", () => navegarMes(-1));
+$("mes-nav-siguiente").addEventListener("click", () => navegarMes(1));
+
+/* ---------- Desplegable "Más filtros" ---------- */
+$("filtros-mas-toggle").addEventListener("click", (e) => {
+  e.stopPropagation();
+  const abierto = !$("filtros-dropdown").classList.contains("hidden");
+  if(abierto){ hide($("filtros-dropdown")); } else { show($("filtros-dropdown")); }
+  $("filtros-mas-toggle").setAttribute("aria-expanded", String(!abierto));
+});
+$("filtros-dropdown").addEventListener("click", (e) => e.stopPropagation());
+document.addEventListener("click", () => hide($("filtros-dropdown")));
 
 $("filter-custom").addEventListener("click", () => {
   const desdeVal = $("filter-desde").value;
@@ -1994,6 +2103,8 @@ $("filter-custom").addEventListener("click", () => {
   const desde = new Date(desdeVal + "T00:00:00");
   const hasta = new Date(hastaVal + "T23:59:59");
   cargarYRenderizarAdmin(desde, hasta);
+  actualizarEtiquetaFiltrosMas();
+  hide($("filtros-dropdown"));
 });
 
 $("filter-usuario").addEventListener("change", () => {
@@ -2110,8 +2221,11 @@ function generarPDF(){
   dibujarTarjetaPDF(doc, margin + (cardW1 + gap) * 2, y, cardW1, cardH1, "Días hábiles", objetivo.diasLaborables != null ? String(objetivo.diasLaborables) : "—", "Sin sábados, domingos ni feriados", false);
   y += cardH1 + 7;
 
-  // ---- Tarjetas por persona ----
-  const usuariosEquipo = perfilesConObjetivo().sort((a, b) => a.nombre.localeCompare(b.nombre));
+  // ---- Tarjetas por persona (solo tiene sentido viendo a todo el equipo:
+  // si ya se filtró a una persona, "Total del período" ya es ese número) ----
+  const usuariosEquipo = usuarioFiltro === "todos"
+    ? perfilesConObjetivo().sort((a, b) => a.nombre.localeCompare(b.nombre))
+    : [];
   if(usuariosEquipo.length){
     const totalPorUsuario = {};
     sesiones.forEach(s => { totalPorUsuario[s.userId] = (totalPorUsuario[s.userId] || 0) + s.segundosActivos; });
@@ -2255,6 +2369,31 @@ async function cargarFeriadosBase(){
   else feriadosCache = data || [];
 }
 
+/* Historial de objetivos diarios por persona: cada fila es "desde tal fecha,
+   el objetivo de esta persona es tantas horas". Reemplaza el uso del valor
+   plano de timer_perfiles para que un cambio de horas (por ejemplo, por un
+   aumento de contrato) no reescriba retroactivamente los reportes ya cerrados. */
+async function cargarObjetivosHistorial(){
+  const { data, error } = await consultarPaginado((inicio, fin) => sb.from("timer_objetivos_historial")
+    .select("user_id, horas_diarias, vigente_desde")
+    .order("vigente_desde", { ascending:true })
+    .range(inicio, fin));
+  objetivosHistorialCache = error ? [] : (data || []);
+}
+
+/* Horas diarias objetivo que estaban vigentes para "userId" en "fecha".
+   Si no hay historial cargado (todavía no se corrió la migración, o el
+   perfil es nuevo), cae al valor plano de timer_perfiles como respaldo. */
+function horasObjetivoVigente(userId, fecha){
+  const clave = claveFechaLocal(fecha);
+  let mejor = null;
+  for(const h of objetivosHistorialCache){
+    if(h.user_id !== userId || h.vigente_desde > clave) continue;
+    if(!mejor || h.vigente_desde > mejor.vigente_desde) mejor = h;
+  }
+  return mejor ? Number(mejor.horas_diarias) : horasObjetivoPerfil(perfilesCache[userId]);
+}
+
 function perfilesConObjetivo(usuarioId = "todos"){
   return Object.values(perfilesCache).filter(p => !p.is_admin && (usuarioId === "todos" || p.id === usuarioId));
 }
@@ -2289,7 +2428,7 @@ function calcularObjetivoPeriodo(desde, hasta, usuarioId = "todos", incluirFutur
     perfiles.forEach(p => {
       const inicioPersona = inicioHistoricoDeUsuario(p.id);
       if(!inicioPersona || cursor < inicioPersona) return;
-      segundos += horasObjetivoPerfil(p) * 3600;
+      segundos += horasObjetivoVigente(p.id, cursor) * 3600;
       jornadasEsperadas++;
       huboObjetivoDia = true;
     });
@@ -2303,14 +2442,14 @@ function objetivoParaFecha(fecha, usuarioId = "todos"){
   if(!esDiaLaborable(fecha)) return 0;
   return perfilesConObjetivo(usuarioId).reduce((total,p) => {
     const inicioPersona = inicioHistoricoDeUsuario(p.id);
-    return !inicioPersona || diaEvaluado < inicioPersona ? total : total + horasObjetivoPerfil(p) * 3600;
+    return !inicioPersona || diaEvaluado < inicioPersona ? total : total + horasObjetivoVigente(p.id, diaEvaluado) * 3600;
   },0);
 }
 
 async function cargarObjetivosLaborales(){
   const mesActual = claveMes(new Date());
   if(!$("objetivo-mes").value) $("objetivo-mes").value = mesActual;
-  await cargarFeriadosBase();
+  await Promise.all([cargarFeriadosBase(), cargarObjetivosHistorial()]);
   renderPanelObjetivos();
 }
 
@@ -2327,12 +2466,27 @@ function renderPanelObjetivos(){
   $("objetivo-feriados-mes").textContent = objetivosDisponibles ? feriadosLaborables.length : "—";
   const nombreMes = desde.toLocaleDateString("es-AR",{month:"long",year:"numeric"});
   $("objetivo-resumen").textContent = objetivosDisponibles
-    ? `${nombreMes.charAt(0).toUpperCase()+nombreMes.slice(1)} · referencia actual, sin historial de cambios.`
+    ? `${nombreMes.charAt(0).toUpperCase()+nombreMes.slice(1)} · cada cambio de horas queda con fecha propia, no afecta meses ya cerrados.`
     : "Ejecutá SUPABASE_OBJETIVOS_LABORALES.sql para activar objetivos y feriados.";
   $("feriados-chips").innerHTML = feriadosMes.length ? feriadosMes.map(f => `<span class="feriado-chip">${escapeHtml(fmtFecha(`${f.fecha}T12:00:00`))} · ${escapeHtml(f.nombre)} <button data-feriado-eliminar="${f.fecha}" aria-label="Eliminar ${escapeAttr(f.nombre)}">×</button></span>`).join("") : '<span class="objetivo-note">Sin feriados registrados para este mes.</span>';
+  const hoyClave = claveFechaLocal(new Date());
   $("objetivos-lista").innerHTML = perfilesConObjetivo().sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => {
     const objetivoMes = calcularObjetivoPeriodo(desde, hasta, p.id, true).segundos;
-    return `<div class="objetivo-persona" data-user-id="${p.id}"><span class="objetivo-persona-nombre" title="${escapeAttr(p.nombre)}"><strong>${escapeHtml(p.nombre)}</strong><small>${escapeHtml(p.sello || "Sin sello")}</small></span><input class="objetivo-horas" type="number" min="0" max="24" step="0.25" value="${horasObjetivoPerfil(p)}" aria-label="Horas diarias de ${escapeAttr(p.nombre)}"><span class="objetivo-persona-meta"><span>Objetivo mes</span><strong>${fmtHM(objetivoMes)}</strong></span><button class="filter-btn objetivo-guardar">Guardar</button></div>`;
+    const vigenteDesde = objetivosHistorialCache
+      .filter(h => h.user_id === p.id && h.vigente_desde <= hoyClave)
+      .sort((a,b) => b.vigente_desde.localeCompare(a.vigente_desde))[0]?.vigente_desde || p.fecha_inicio_objetivo;
+    return `<div class="objetivo-persona" data-user-id="${p.id}">
+      <div class="objetivo-persona-top">
+        <span class="objetivo-persona-nombre" title="${escapeAttr(p.nombre)}"><strong>${escapeHtml(p.nombre)}</strong><small>${escapeHtml(p.sello || "Sin sello")}</small></span>
+        <span class="objetivo-persona-meta"><span>Objetivo mes</span><strong>${fmtHM(objetivoMes)}</strong></span>
+      </div>
+      ${vigenteDesde ? `<div class="objetivo-vigente-desde">Objetivo actual vigente desde ${escapeHtml(fmtFecha(`${vigenteDesde}T12:00:00`))}</div>` : ""}
+      <div class="objetivo-persona-controles">
+        <label>Horas diarias<input class="objetivo-horas" type="number" min="0" max="24" step="0.25" value="${horasObjetivoPerfil(p)}" aria-label="Horas diarias de ${escapeAttr(p.nombre)}"></label>
+        <label>Aplicar cambio desde<input class="objetivo-desde" type="date" value="${hoyClave}" aria-label="Aplicar el nuevo objetivo de ${escapeAttr(p.nombre)} desde"></label>
+        <button class="filter-btn objetivo-guardar">Guardar</button>
+      </div>
+    </div>`;
   }).join("");
 }
 
@@ -2368,14 +2522,24 @@ $("objetivos-lista").addEventListener("click", async e => {
   const boton = e.target.closest(".objetivo-guardar"); if(!boton) return;
   const fila = boton.closest(".objetivo-persona");
   const horas = Number(fila.querySelector(".objetivo-horas").value);
+  const fechaDesde = fila.querySelector(".objetivo-desde").value;
   if(!Number.isFinite(horas) || horas < 0 || horas > 24){ toast("El objetivo debe estar entre 0 y 24 horas.", "error"); return; }
+  if(!fechaDesde){ toast("Elegí desde qué fecha aplica el nuevo objetivo.", "error"); return; }
   if(!await pedirClaveAdmin("Modificar el objetivo laboral de esta persona")) return;
   boton.disabled = true;
-  const fechaCompatibilidad = perfilesCache[fila.dataset.userId]?.fecha_inicio_objetivo || claveFechaLocal(new Date());
-  const { error } = await sb.rpc("actualizar_objetivo_usuario", { p_user_id:fila.dataset.userId, p_horas:horas, p_fecha_inicio:fechaCompatibilidad });
+  // El nuevo valor queda registrado con la fecha elegida (por defecto, hoy):
+  // los reportes de fechas anteriores a esa siguen usando el objetivo previo.
+  const { error } = await sb.rpc("actualizar_objetivo_usuario", { p_user_id:fila.dataset.userId, p_horas:horas, p_fecha_inicio:fechaDesde });
   boton.disabled = false;
   if(error){ toast("No se pudo actualizar el objetivo.", "error"); return; }
-  perfilesCache[fila.dataset.userId].horas_diarias_objetivo = horas;
+  await cargarObjetivosHistorial();
+  const actual = objetivosHistorialCache
+    .filter(h => h.user_id === fila.dataset.userId && h.vigente_desde <= claveFechaLocal(new Date()))
+    .sort((a,b) => b.vigente_desde.localeCompare(a.vigente_desde))[0];
+  if(actual && perfilesCache[fila.dataset.userId]){
+    perfilesCache[fila.dataset.userId].horas_diarias_objetivo = actual.horas_diarias;
+    perfilesCache[fila.dataset.userId].fecha_inicio_objetivo = actual.vigente_desde;
+  }
   renderPanelObjetivos();
   renderAdminConFiltros();
   if(estadisticasCargadas){ cargarEstadisticas(); cargarEstadisticaDiaSemana(); }
@@ -3496,6 +3660,7 @@ function referenciaResumenActual(){
 }
 
 function renderResumen(sesiones){
+  const usuarioFiltro = $("filter-usuario").value;
   const usuariosEquipo = perfilesConObjetivo().sort((a,b) => a.nombre.localeCompare(b.nombre));
   const totalPorUsuario = Object.fromEntries(usuariosEquipo.map(p => [p.id,0]));
   let totalGeneral = 0;
@@ -3505,13 +3670,25 @@ function renderResumen(sesiones){
     totalGeneral += s.segundosActivos;
   });
 
-  let html = `<div class="summary-card"><div class="label">Total del período</div><div class="value">${fmtHM(totalGeneral)}</div></div>`;
+  let html = `<div class="summary-cards-top">`;
+  html += `<div class="summary-card"><div class="label">Total del período</div><div class="value">${fmtHM(totalGeneral)}</div></div>`;
   const objetivo = referenciaResumenActual();
   html += `<div class="summary-card objective"><div class="label">${escapeHtml(objetivo.etiqueta)}</div><div class="value">${fmtHM(objetivo.segundos)}</div><div class="hint">${escapeHtml(objetivo.contexto)}</div></div>`;
-  usuariosEquipo.forEach(perfil => {
-    html += `<div class="summary-card"><div class="label">${escapeHtml(perfil.nombre)}</div><div class="value">${fmtHM(totalPorUsuario[perfil.id] || 0)}</div><div class="hint">${escapeHtml(perfil.sello || "Sin sello")}</div></div>`;
-  });
-  $("summary-row").innerHTML = html || "";
+  html += `</div>`;
+
+  // El desglose por persona solo tiene sentido viendo a todo el equipo junto:
+  // si ya filtraste a una sola persona, el "Total del período" de arriba es
+  // exactamente ese número, y repetirlo en una grilla llena de tarjetas en
+  // cero del resto del equipo solo genera confusión.
+  if(usuarioFiltro === "todos" && usuariosEquipo.length){
+    html += `<div class="summary-section-title">Horas por persona</div><div class="summary-row-personas">`;
+    usuariosEquipo.forEach(perfil => {
+      html += `<div class="summary-card"><div class="label">${escapeHtml(perfil.nombre)}</div><div class="value">${fmtHM(totalPorUsuario[perfil.id] || 0)}</div><div class="hint">${escapeHtml(perfil.sello || "Sin sello")}</div></div>`;
+    });
+    html += `</div>`;
+  }
+
+  $("summary-row").innerHTML = html;
 }
 
 function renderTablaAdmin(sesiones){
